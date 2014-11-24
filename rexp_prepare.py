@@ -3,7 +3,7 @@
 import sys, os
 from subprocess import call
 
-print "usage: rex_prepare.py NumberOfPairedReads File_1.fastq File_2.fastq [PREFIX]\n"
+print "\nUsage: rexp_prepare.py NumberOfPairedReads File_1.fastq File_2.fastq [PREFIX]\n"
 
 ##read parameters
 #number of reads
@@ -57,7 +57,8 @@ shuffle = "shuffleSequences_fastq.pl %s %s %s" % (rr1+"_paired"+suffix+".subset"
 fastq_to_fasta = """awk 'BEGIN{P=1}{if(P==1||P==2){gsub(/^[@]/,">");print}; if(P==4)P=0; P++}' %s > %s""" % (rrr1+"_all.fastq", rrr1+"_all.fasta")
 
 #Try to run Trimmomatic
-if rr1+"_paired"+suffix and rr2+"_paired"+suffix not in files:
+
+if rr1+"_paired"+suffix not in files or rr2+"_paired"+suffix not in files:
     try:
         print "Running Trimmomatic\n"
         call(trimmomatic, shell = True)
@@ -75,7 +76,7 @@ except:
 
 #Try to run shuffling
 try:
-    print "Running Shuffling\n"
+    print "\nRunning Shuffling\n"
     call(shuffle, shell = True)
 except:
     print "Shffling could not run. Try again.\n"
