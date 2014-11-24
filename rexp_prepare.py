@@ -40,6 +40,8 @@ rrr1 = r1[:rrr1]
 rr2 = r2.find(".")
 rr2 = r2[:rr2]
 
+print rrr1
+
 with open(r1) as myfile:
     head = [next(myfile) for x in xrange(2)]
 len_reads = str(len(head[1])-1)
@@ -54,7 +56,7 @@ fastq_pe_random = "fastq-pe-random.py %s %s %s" % (rr1+"_paired"+suffix, rr2+"_p
 shuffle = "shuffleSequences_fastq.pl %s %s %s" % (rr1+"_paired"+suffix+".subset", rr2+"_paired"+suffix+".subset", rrr1+"_all.fastq")
 
 #convert fastq to fasta
-fastq_to_fasta = """awk 'BEGIN{P=1}{if(P==1||P==2){gsub(/^[@]/,">");print}; if(P==4)P=0; P++}' %s > %s""" % (rrr1+"_all.fastq", rrr1+"_all.fasta")
+fastq_to_fasta = """awk 'BEGIN{P=1}{if(P==1||P==2){gsub(/^[@]/,">");print}; if(P==4)P=0; P++}' %s > %s""" % (rrr1+"_all.fastq", rrr1+"_all_"+prefix+str(sel_reads)+".fasta")
 
 #Try to run Trimmomatic
 
@@ -69,7 +71,7 @@ else:
 
 #Try to run fastq pe random
 try:
-    print "Running Fastq-pe-random\n"
+    print "Running Fastq-pe-random"
     call(fastq_pe_random, shell = True)
 except:
     print "Fastq-pe-random could not run. Try again.\n"
@@ -79,7 +81,31 @@ try:
     print "\nRunning Shuffling\n"
     call(shuffle, shell = True)
 except:
-    print "Shffling could not run. Try again.\n"
+    print "Shuffling could not run. Try again.\n"
+
+#open output
+fqtemp = open("%s_all_temp.fastq" % (rrr1) ,"w")
+
+#read modified fasta file
+fastq = open(rrr1+"_all.fastq").readlines()
+
+#add prefix and suffix
+for x in range(0,len(fastq)):
+    if x%8 == 0:
+        line = fastq[x]
+        line = line.split(" ")
+        line = ">%s%s%s" % (prefix,line[0][1:],"/1\n")
+    elif x%8 == 4:
+        line = fastq[x]
+        line = line.split(" ")
+        line = ">%s%s%s" % (prefix,line[0][1:],"/2\n")
+    else:
+        line = fastq[x]
+    fqtemp.write(line)
+
+fqtemp.close()
+
+call("mv %s %s" % (rrr1+"_all_temp.fastq",rrr1+"_all.fastq"), shell=True)
 
 #Try to convert to fasta format
 try:
@@ -88,25 +114,3 @@ try:
     call(fastq_to_fasta, shell = True)
 except:
     print "Fastq to fasta could not run. Try again.\n"
-
-#open output
-ready = open("%s_all_ready_%s.fasta" % (rrr1,sel_reads) ,"w")
-
-#read modified fasta file
-fasta = open(rrr1+"_all.fasta").readlines()
-
-#add prefix and suffix
-for x in range(0,len(fasta)):
-    if x%4 == 0:
-        line = fasta[x]
-        line = line.split(" ")
-        line = ">%s%s%s" % (prefix,line[0][1:],"/1\n")
-    elif x%4 == 2:
-        line = fasta[x]
-        line = line.split(" ")
-        line = ">%s%s%s" % (prefix,line[0][1:],"/2\n")
-    else:
-        line = fasta[x]
-    ready.write(line)
-
-ready.close()
