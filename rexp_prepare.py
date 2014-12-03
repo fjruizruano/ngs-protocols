@@ -42,27 +42,32 @@ rr2 = r2[:rr2]
 
 print rrr1
 
-with open(r1) as myfile:
-    head = [next(myfile) for x in xrange(2)]
-len_reads = str(len(head[1])-1)
+#with open(r1) as myfile:
+#    head = [next(myfile) for x in xrange(2)]
+#len_reads = str(len(head[1])-1)
 
 #Trimming with Trimmomatic
-trimmomatic = "trimmomatic PE -phred33 %s %s %s %s %s %s ILLUMINACLIP:/usr/local/lib/Trimmomatic-0.32/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:30 MINLEN:%s" % (r1, r2, rr1+"_paired"+suffix, rr1+"_unpaired"+suffix, rr2+"_paired"+suffix, rr2+"_unpaired"+suffix, len_reads)
+trimmomatic = "trimmomatic PE -phred33 %s %s %s %s %s %s ILLUMINACLIP:/usr/local/lib/Trimmomatic-0.32/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:30 MINLEN:%s" % (r1, r2, rr1+"_paired.fastq", rr1+"_unpaired.fastq", rr2+"_paired.fastq", rr2+"_unpaired.fastq", "101")
 
 #random selection of reads
-fastq_pe_random = "fastq-pe-random.py %s %s %s" % (rr1+"_paired"+suffix, rr2+"_paired"+suffix, sel_reads)
+
+fastq_pe_random_1 = "seqtk sample -s 100 %s %s > %s" % (rr1+"_paired.fastq",sel_reads,rr1+"_paired.fastq.subset")
+fastq_pe_random_2 = "seqtk sample -s 100 %s %s > %s" % (rr2+"_paired.fastq",sel_reads,rr2+"_paired.fastq.subset")
+
+#fastq_pe_random = "fastq-pe-random.py %s %s %s" % (rr1+"_paired"+suffix, rr2+"_paired"+suffix, sel_reads)
 
 #shuffle reads
-shuffle = "shuffleSequences_fastq.pl %s %s %s" % (rr1+"_paired"+suffix+".subset", rr2+"_paired"+suffix+".subset", rrr1+"_all.fastq")
+shuffle = "shuffleSequences_fastq.pl %s %s %s" % (rr1+"_paired.fastq.subset", rr2+"_paired.fastq.subset", rrr1+"_all_"+prefix+str(sel_reads)+".fastq")
 
 #convert fastq to fasta
-fastq_to_fasta = """awk 'BEGIN{P=1}{if(P==1||P==2){gsub(/^[@]/,">");print}; if(P==4)P=0; P++}' %s > %s""" % (rrr1+"_all.fastq", rrr1+"_all_"+prefix+str(sel_reads)+".fasta")
+fastq_to_fasta =  "seqtk seq -a %s > %s" % (rrr1+"_all_"+prefix+str(sel_reads)+".fastq",rrr1+"_all_"+prefix+str(sel_reads)+".fasta")
 
 #Try to run Trimmomatic
 
-if rr1+"_paired"+suffix not in files or rr2+"_paired"+suffix not in files:
+if rr1+"_paired.fastq" not in files or rr2+"_paired.fastq" not in files:
     try:
         print "Running Trimmomatic\n"
+        print trimmomatic
         call(trimmomatic, shell = True)
     except:
         print "Trimmomatic could not run. Try again.\n"
@@ -72,24 +77,29 @@ else:
 #Try to run fastq pe random
 try:
     print "Running Fastq-pe-random"
-    call(fastq_pe_random, shell = True)
+    print fastq_pe_random_1
+    call(fastq_pe_random_1, shell = True)
+    print fastq_pe_random_2
+    call(fastq_pe_random_2, shell = True)
 except:
     print "Fastq-pe-random could not run. Try again.\n"
 
 #Try to run shuffling
 try:
-    print "\nRunning Shuffling\n"
+    print "\nRunning Shuffling"
+    print shuffle+"\n"
     call(shuffle, shell = True)
 except:
     print "Shuffling could not run. Try again.\n"
 
 #open output
-fqtemp = open("%s_all_temp.fastq" % (rrr1) ,"w")
+fqtemp = open("%s_all_%s%s_temp.fastq" % (rrr1,prefix,str(sel_reads)) ,"w")
 
 #read modified fasta file
-fastq = open(rrr1+"_all.fastq").readlines()
+print "Editing "+ rrr1+"_all_"+prefix+str(sel_reads)+".fastq\n"
+fastq = open(rrr1+"_all_"+prefix+str(sel_reads)+".fastq").readlines()
 
-#add prefix and suffix
+#add prefix
 for x in range(0,len(fastq)):
     if x%8 == 0:
         line = fastq[x]
@@ -105,12 +115,14 @@ for x in range(0,len(fastq)):
 
 fqtemp.close()
 
-call("mv %s %s" % (rrr1+"_all_temp.fastq",rrr1+"_all.fastq"), shell=True)
+call("mv %s %s" % (rrr1+"_all_"+prefix+str(sel_reads)+"_temp.fastq",rrr1+"_all_"+prefix+str(sel_reads)+".fastq"), shell=True)
 
 #Try to convert to fasta format
 try:
-    print "Running Fastq to fasta\n"
-#    print fastq_to_fasta
+    print "Running Fastq to fasta"
+    print fastq_to_fasta
     call(fastq_to_fasta, shell = True)
 except:
     print "Fastq to fasta could not run. Try again.\n"
+
+print "\nWe\'re done!\n"
