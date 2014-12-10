@@ -12,13 +12,21 @@ try:
 except:
     file = raw_input("Introduce index.tab file: ")
 
+try:
+    tag_len = sys.argv[3]
+    tag_len = int(tag_len)
+except:
+    tag_len = raw_input("Introduce tag length (integer): ")
+    tag_len = int(tag_len)
+
+
 # load index.tab file
 def load_index(file):
     dictio = {}
     for line in file:
         line = line.split()
         num = line[1]
-        dictio[line[1][2:]] = line[0]
+        dictio[line[1][tag_len:]] = line[0]
     return dictio
 
 def load_members(members):
