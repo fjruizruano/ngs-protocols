@@ -48,7 +48,7 @@ final_set = set()
 
 for memb in membs:
     if memb in index:
-        final_set.add(index[memb][3:-2])
+        final_set.add(index[memb][tag_len:-2])
 
 w = open("member_reads.txt","w")
 w.write("\n".join(final_set))
