@@ -85,7 +85,7 @@ if rr1+"_paired.fastq" not in files or rr2+"_paired.fastq" not in files:
     try:
         print "Running Fastq-combine-pe"
         print fastq_combine_pe
-#        call(fastq_combine_pe,shell=True)
+        call(fastq_combine_pe,shell=True)
         tag = "_trimmed_clipped_stillpaired.fastq"
         call("mv %s %s" % (rr1+tag,rr1+"_paired.fastq"),shell=True)
         call("mv %s %s" % (rr2+tag,rr2+"_paired.fastq"),shell=True)
