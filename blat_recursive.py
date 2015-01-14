@@ -32,17 +32,11 @@ for file in lis:
         if f.startswith("tmp_queries_") and f.endswith(".fa"):
             splits.append(f)
     splits.sort()
-#    w = open("tmp_script.sh","w")
     commands = []
     for n in range(0,len(splits)):
         com = "blat %s %s %s" % (splits[n],db,splits[n]+".blat")
         commands.append(com)
 
-#    for n in range(0,len(splits)-1):
-#        w.write("blat %s %s %s &\n" % (splits[n],db,splits[n]+".blat"))
-#    w.write("blat %s %s %s &\n" % (splits[-1],db,splits[-1]+".blat"))
-#    w.close()
-#    call("sh tmp_script.sh",shell=True)
     processes = [Popen(cmd, shell=True) for cmd in commands]
     for p in processes:
         p.wait()
@@ -54,4 +48,4 @@ for file in lis:
         w.write("".join(blat[5:]))
     w.close()
 
-call("rm tmp_script.sh tmp_queries_*", shell=True)
+call("rm tmp_queries_*", shell=True)
