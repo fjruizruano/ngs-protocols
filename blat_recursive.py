@@ -5,6 +5,8 @@ from subprocess import call, Popen
 from os import listdir
 from os.path import isfile, join
 
+print "\nUsage: blat_recursive.py NumberOfThreads ListOfSequences Reference\n"
+
 try:
     threads = sys.argv[1]
 except:
@@ -34,7 +36,7 @@ for file in lis:
     splits.sort()
     commands = []
     for n in range(0,len(splits)):
-        com = "blat %s %s %s" % (splits[n],db,splits[n]+".blat")
+        com = "blat %s %s %s" % (db,splits[n],splits[n]+".blat")
         commands.append(com)
 
     processes = [Popen(cmd, shell=True) for cmd in commands]
