@@ -32,7 +32,7 @@ except:
     threads = raw_input("Introduce number of threads: ")
 
 def RunRM(ref,reads,threads):
-    call("RepeatMasker -pa %s -s -a -nolow -no_is -lib %s %s" % (threads, ref, reads), shell=True)
+    call("RepeatMasker -pa %s -a -nolow -no_is -lib %s %s" % (threads, ref, reads), shell=True)
 def GetDIV(reads):
     call("calcDivergenceFromAlign.pl -s %s %s" % (reads+".divsum",reads+".align"), shell=True)
     file = open(reads+".divsum").readlines()
@@ -57,7 +57,10 @@ for n in range(0,(len(ref_seq)-window+step)/step):
     seq_file.write(">tmp\n%s\n" % sequence)
     seq_file.close()
     RunRM(ref+".tmp",reads,threads)
-    x = GetDIV(reads)
+    try:
+        x = GetDIV(reads)
+    except:
+        x = "---"
     list_div.append(x)
     call("rm %s.tmp" % ref, shell=True)
     call("rm %s.*" % reads, shell=True)
