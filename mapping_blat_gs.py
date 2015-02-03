@@ -3,7 +3,7 @@
 import sys, os
 from subprocess import call
 
-print "\nUsage: finding_sequences.py ListOfSequences Reference NumberOfThreads\n"
+print "\nUsage: mapping_blat_gs.py ListOfSequences Reference NumberOfThreads [nomap]\n"
 
 try:
     lista = sys.argv[1]
@@ -19,6 +19,11 @@ try:
     threads = sys.argv[3]
 except:
     threads = raw_input("Intruduce number of threads: ")
+
+try:
+    map_question = sys.argv[4]
+except:
+    pass
 
 
 files = open(lista).readlines()
@@ -73,17 +78,18 @@ for n in range(0,len(files)/2):
     call("rm %s" % file2+".fq",shell=True)
     
     # gsMapper
-    call("runMapping -ref %s -read %s %s" % (reference, file1[:-3]+".sel.fq", file2[:-3]+".sel.fq"), shell=True)
+    if map_question != "nomap":
+        call("runMapping -ref %s -read %s %s" % (reference, file1[:-3]+".sel.fq", file2[:-3]+".sel.fq"), shell=True)
 
-    # change name
-    file_name = file1.split(".")
-    file_name = file_name[0]
-    ff = os.listdir(".")
-    fm = []
-    for f in ff:
-        if f.endswith("_runMapping"):
-            fm.append(f)
-    call("mv %s %s" % (fm[-1],file_name+"_mapping"), shell=True)
+        # change name
+        file_name = file1.split(".")
+        file_name = file_name[0]
+        ff = os.listdir(".")
+        fm = []
+        for f in ff:
+            if f.endswith("_runMapping"):
+                fm.append(f)
+        call("mv %s %s" % (fm[-1],file_name+"_mapping"), shell=True)
 
-    # Index bam file
-    call("samtools index %s_mapping/454Contigs.bam" % file_name, shell=True) 
+        # Index bam file
+        call("samtools index %s_mapping/454Contigs.bam" % file_name, shell=True) 
