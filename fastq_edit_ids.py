@@ -17,6 +17,8 @@ extension = ext[-1]
 
 data = open(file).readlines()
 
+li = open("list_checked.txt","w")
+
 for line in data:
     line = line[:-1]
     print line
@@ -41,12 +43,15 @@ for line in data:
     if sp != -1:
         print line+" with uncorrect format, editing ids."
         if extension == "fq" or extension == "fastq":
-            call("""sed 's/%s/%s/g' %s > %s""" % (id[sp:], "\/"+side, line, name), shell=True)
+            call("fastool --append /%s %s > %s" % (side, line, name), shell=True)
         elif extension == "gz":
-            call("aunpack %s" % (line), shell=True)
-            call("""sed -i 's/%s/%s/g' %s && mv %s %s""" % (id[sp:], "\/"+side, line[:-3], line[:-3], name), shell=True)
+            call("zcat %s | fastool --append /%s > %s" % (line,side,name), shell=True)
+        li.write(name+"\n")
     elif id[-2:] == "/%s" % side:
         call("ln -sf %s %s" % (line, name), shell=True)
         print line+" with the correct format, nothing happens."
+        li.write(name+"\n")
     else:
         print line+": Something wrong happens, check file."
+
+li.close()
