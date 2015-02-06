@@ -77,8 +77,16 @@ for n in range(0,len(files)/2):
 #    call("rm %s" % file1+".fq",shell=True)
 #    call("rm %s" % file2+".fq",shell=True)
     
+    #RepeatMasker and Abundance/Divergence analysis
+    if map_question == "div" or map_question == "mapdiv":
+        call("seqtk seq -a %s > %s" % (file1[:-3]+".sel.fq", file1[:-3]+".sel.fa"), shell=True)
+        call("seqtk seq -a %s > %s" % (file2[:-3]+".sel.fq", file2[:-3]+".sel.fa"), shell=True)
+        call("shuffleSequences_fasta.pl %s %s %s" % (file1[:-3]+".sel.fa", file2[:-3]+".sel.fa", file1[:-3]+".all.fa"), shell=True)
+        call("RepeatMasker -pa %s -a -nolow -no_is -lib %s %s" % (threads, reference, file1[:-3]+".all.fa"), shell=True)
+        call("calcDivergenceFromAlign.pl -s %s %s" % (file1[:-3]+".all.fa.align.divsum", file1[:-3]+".all.fa.align"), shell=True)
+
     # gsMapper
-    if map_question == "map" or map_question == "mapdiv":
+    elif map_question == "map" or map_question == "mapdiv":
         call("runMapping -cpu %s -ref %s -read %s %s" % (threads, reference, file1[:-3]+".sel.fq", file2[:-3]+".sel.fq"), shell=True)
 
         # change name
@@ -93,14 +101,6 @@ for n in range(0,len(files)/2):
 
         # Index bam file
         call("samtools index %s_mapping/454Contigs.bam" % file_name, shell=True)
-
-    #RepeatMasker and Abundance/Divergence analysis
-    elif map_question == "div" or map_question == "mapdiv":
-        call("seqtk seq -a %s > %s" % (file1[:-3]+".sel.fq", file1[:-3]+".sel.fa"), shell=True)
-        call("seqtk seq -a %s > %s" % (file2[:-3]+".sel.fq", file2[:-3]+".sel.fa"), shell=True)
-        call("shuffleSequences.pl %s %s %s" % (file1[:-3]+".sel.fa", file2[:-3]+".sel.fa", file1[:-3]+".all.fa"), shell=True)
-        call("RepeatMasker -pa %s -a -nolow -no_is -lib %s %s" % (threads, reference, file1[:-3]+".all.fa"), shell=True)
-        call("calcDivergenceFromAlign.pl -s %s %s" % (file1[:-3]+".all.fa.align.divsum", file1[:-3]+".all.fa.align"), shell=True)
 
     #Nothing more happens
     elif map_question == "nomap":
