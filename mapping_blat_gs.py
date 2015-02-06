@@ -86,7 +86,7 @@ for n in range(0,len(files)/2):
         call("calcDivergenceFromAlign.pl -s %s %s" % (file1[:-3]+".all.fa.align.divsum", file1[:-3]+".all.fa.align"), shell=True)
 
     # gsMapper
-    elif map_question == "map" or map_question == "mapdiv":
+    if map_question == "map" or map_question == "mapdiv":
         call("runMapping -cpu %s -ref %s -read %s %s" % (threads, reference, file1[:-3]+".sel.fq", file2[:-3]+".sel.fq"), shell=True)
 
         # change name
@@ -103,5 +103,5 @@ for n in range(0,len(files)/2):
         call("samtools index %s_mapping/454Contigs.bam" % file_name, shell=True)
 
     #Nothing more happens
-    elif map_question == "nomap":
+    if map_question == "nomap":
         pass
