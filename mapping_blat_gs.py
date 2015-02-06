@@ -3,7 +3,7 @@
 import sys, os
 from subprocess import call
 
-print "\nUsage: mapping_blat_gs.py ListOfSequences Reference NumberOfThreads [nomap]\n"
+print "\nUsage: mapping_blat_gs.py ListOfSequences Reference NumberOfThreads [map/div/mapdiv/nomap]\n"
 
 try:
     lista = sys.argv[1]
@@ -66,20 +66,20 @@ for n in range(0,len(files)/2):
     call("extract_reads_blat.py %s" % file1[:-3]+".all.psl", shell=True)
 
     # convert GZ to FASTQ and shuffle
-    call("seqtk seq -a %s > %s" % (file1, file1+".fq"), shell=True)
-    call("seqtk seq -a %s > %s" % (file2, file2+".fq"), shell=True)
+#    call("seqtk seq -a %s > %s" % (file1, file1+".fq"), shell=True)
+#    call("seqtk seq -a %s > %s" % (file2, file2+".fq"), shell=True)
 
     # get reads
     call("seqtk subseq %s %s > %s" % (file1,file1[:-3]+".all.psl.list",file1[:-3]+".sel.fq"), shell=True)
     call("seqtk subseq %s %s > %s" % (file2,file1[:-3]+".all.psl.list",file2[:-3]+".sel.fq"), shell=True)
 
     # remove FASTQ files
-    call("rm %s" % file1+".fq",shell=True)
-    call("rm %s" % file2+".fq",shell=True)
+#    call("rm %s" % file1+".fq",shell=True)
+#    call("rm %s" % file2+".fq",shell=True)
     
     # gsMapper
-    if map_question != "nomap":
-        call("runMapping -ref %s -read %s %s" % (reference, file1[:-3]+".sel.fq", file2[:-3]+".sel.fq"), shell=True)
+    if map_question == "map" or map_question == "mapdiv":
+        call("runMapping -cpu %s -ref %s -read %s %s" % (threads, reference, file1[:-3]+".sel.fq", file2[:-3]+".sel.fq"), shell=True)
 
         # change name
         file_name = file1.split(".")
@@ -92,4 +92,16 @@ for n in range(0,len(files)/2):
         call("mv %s %s" % (fm[-1],file_name+"_mapping"), shell=True)
 
         # Index bam file
-        call("samtools index %s_mapping/454Contigs.bam" % file_name, shell=True) 
+        call("samtools index %s_mapping/454Contigs.bam" % file_name, shell=True)
+
+    #RepeatMasker and Abundance/Divergence analysis
+    elif map_question == "div" or map_question == "mapdiv":
+        call("seqtk seq -a %s > %s" % (file1[:-3]+".sel.fq", file1[:-3]+".sel.fa"), shell=True)
+        call("seqtk seq -a %s > %s" % (file2[:-3]+".sel.fq", file2[:-3]+".sel.fa"), shell=True)
+        call("shuffleSequences.pl %s %s %s" % (file1[:-3]+".sel.fa", file2[:-3]+".sel.fa", file1[:-3]+".all.fa"), shell=True)
+        call("RepeatMasker -pa %s -a -nolow -no_is -lib %s %s" % (threads, reference, file1[:-3]+".all.fa"), shell=True)
+        call("calcDivergenceFromAlign.pl -s %s %s" % (file1[:-3]+".all.fa.align.divsum", file1[:-3]+".all.fa.align"), shell=True)
+
+    #Nothing more happens
+    elif map_question == "nomap":
+        pass
