@@ -2,6 +2,9 @@
 
 import sys, os
 from subprocess import call
+from commands import getstatusoutput
+from os import listdir
+from os.path import isfile, join
 
 print "\nUsage: mapping_blat_gs.py ListOfSequences Reference NumberOfThreads [map/div/mapdiv/nomap]\n"
 
@@ -82,7 +85,22 @@ for n in range(0,len(files)/2):
         call("seqtk seq -a %s > %s" % (file1[:-3]+".sel.fq", file1[:-3]+".sel.fa"), shell=True)
         call("seqtk seq -a %s > %s" % (file2[:-3]+".sel.fq", file2[:-3]+".sel.fa"), shell=True)
         call("shuffleSequences_fasta.pl %s %s %s" % (file1[:-3]+".sel.fa", file2[:-3]+".sel.fa", file1[:-3]+".all.fa"), shell=True)
-        call("RepeatMasker -pa %s -a -nolow -no_is -lib %s %s" % (threads, reference, file1[:-3]+".all.fa"), shell=True)
+        n_nucs = getstatusoutput("""grep -v ">" %s | wc | awk '{print $3-$1}'""" % (file1[:-3]+".all.fa"))
+        n_nucs = int(n_nucs[1])
+        n_division = n_nucs/10**8
+        if n_division > 0:
+            call("faSplit sequence %s %s %s" % (file1[:-3]+".all.fa",str(n_division+1),file1[:-3]+".split.."), shell=True)
+            onlyfiles = [f for f in listdir(".") if isfile(join(".",f))]
+            splits = []
+            for f in onlyfiles:
+                if f.startswith(file1[:-3]+".split.") and f.endswith(".fa"):
+                    splits.append(f)
+            splits.sort()
+            for n in range(0,len(splits)):
+                call("RepeatMasker -pa %s -a -nolow -no_is -lib %s %s" % (threads, reference, splits[n]), shell=True)
+                call("cat %s >> %s" % (splits[n]+".align",file1[:-3]+".all.fa.align"), shell=True)
+        elif n_division == 0:
+            call("RepeatMasker -pa %s -a -nolow -no_is -lib %s %s" % (threads, reference, file1[:-3]+".all.fa"), shell=True)
         call("calcDivergenceFromAlign.pl -s %s %s" % (file1[:-3]+".all.fa.align.divsum", file1[:-3]+".all.fa.align"), shell=True)
 
     # gsMapper
