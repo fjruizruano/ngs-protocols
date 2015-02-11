@@ -33,13 +33,23 @@ except:
 
 def RunRM(ref,reads,threads):
     call("RepeatMasker -pa %s -a -nolow -no_is -lib %s %s" % (threads, ref, reads), shell=True)
+
 def GetDIV(reads):
     call("calcDivergenceFromAlign.pl -s %s %s" % (reads+".divsum",reads+".align"), shell=True)
+    call("cp %s pruebecilla" % (reads+".divsum"),shell=True)
     file = open(reads+".divsum").readlines()
     data = file[7]
     data = data.split()
     data = data[3]
-    return data
+    start_table = ""
+    for n in range(0,len(file)):
+        if file[n] == "Coverage for each repeat class and divergence (Kimura)\n":
+            start_table = n
+    sum = 0
+    for line in file[start_table+2:]:
+        num = line.split()
+        sum += int(num[1])
+    return data, sum
 
 reference = SeqIO.parse(open(ref),"fasta")
 ref_seq = ""
@@ -65,11 +75,11 @@ for n in range(0,(len(ref_seq)-window+step)/step):
     call("rm %s.tmp" % ref, shell=True)
     call("rm %s.*" % reads, shell=True)
     log_file = open("log_"+reads,"a")
-    log_file.write("File number %s of %s: %s\n" % (str(n+1), str((len(ref_seq)-window+window)/step), x))
+    log_file.write("File number %s of %s: %s\t%s\n" % (str(n+1), str((len(ref_seq)-window+window)/step), x[0], x[1]))
     log_file.close()
 
 w = open(reads+".divergence", "w")
 for element in list_div:
-   w.write((str(element)+"\n")*step)
+   w.write((str(element[0])+"\t"+str(element[1])+"\n")*step)
 w.close()
 log_file.close()
