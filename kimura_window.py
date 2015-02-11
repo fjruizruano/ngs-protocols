@@ -69,7 +69,7 @@ for n in range(0,(len(ref_seq)-window+step)/step):
     log_file.close()
 
 w = open(reads+".divergence", "w")
-w.write("\n".join(list_div))
+for element in list_div:
+   w.write((str(element)+"\n")*step)
 w.close()
-
 log_file.close()
