@@ -36,7 +36,6 @@ def RunRM(ref,reads,threads):
 
 def GetDIV(reads):
     call("calcDivergenceFromAlign.pl -s %s %s" % (reads+".divsum",reads+".align"), shell=True)
-    call("cp %s pruebecilla" % (reads+".divsum"),shell=True)
     file = open(reads+".divsum").readlines()
     data = file[7]
     data = data.split()
@@ -75,7 +74,7 @@ for n in range(0,(len(ref_seq)-window+step)/step):
     call("rm %s.tmp" % ref, shell=True)
     call("rm %s.*" % reads, shell=True)
     log_file = open("log_"+reads,"a")
-    log_file.write("File number %s of %s: %s\t%s\n" % (str(n+1), str((len(ref_seq)-window+window)/step), x[0], x[1]))
+    log_file.write("File number %s of %s\t%s\t%s\n" % (str(n+1), str((len(ref_seq)-window+window)/step), x[0], x[1]))
     log_file.close()
 
 w = open(reads+".divergence", "w")

@@ -36,7 +36,7 @@ for file in lis:
     splits.sort()
     commands = []
     for n in range(0,len(splits)):
-        com = "blat %s %s %s" % (db,splits[n],splits[n]+".blat")
+        com = "blat -stepSize=5 -repMatch=2253 -minScore=0 -minIdentity=0 %s %s %s" % (db,splits[n],splits[n]+".blat")
         commands.append(com)
 
     processes = [Popen(cmd, shell=True) for cmd in commands]
