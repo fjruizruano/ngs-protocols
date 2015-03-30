@@ -12,7 +12,7 @@ for file in files:
     extensions = file.split(".")
     if extensions[-1] == "gz":
         call("""zcat %s | paste - - - - | cut -f2 | tr -d '\n' | wc -c""" % (file), shell=True)
-    elif extensions[-1] == "fq" or extensiones[-1] == "fastq":
+    elif extensions[-1] == "fq" or extensions[-1] == "fastq":
         call("""cat %s | paste - - - - | cut -f2 | tr -d '\n' | wc -c""" % (file), shell=True)
     else:
         print "Nothing happens. Please, check format and extension."
