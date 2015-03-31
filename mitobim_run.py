@@ -23,7 +23,7 @@ except:
 
 manifest = """echo "\n#manifest file for basic mapping assembly with illumina data using MIRA 4\n\nproject = initial-mapping-testpool-to-Salpinus-mt\n\njob=genome,mapping,accurate\n\nparameters = -NW:mrnl=0 -AS:nop=1 SOLEXA_SETTINGS -CO:msr=no\n\nreadgroup\nis_reference\ndata = reference.fa\nstrain = Salpinus-mt-genome\n\nreadgroup = reads\ndata = reads.fastq\ntechnology = solexa\nstrain = testpool\n" > manifest.conf"""
 
-miramito = """mira manifest.conf && MITObim_1.8.pl --clean -start 1 -end 1000 -sample testpool -ref Salpinus_mt_genome -readpool reads.fastq -maf initial-mapping-testpool-to-Salpinus-mt_assembly/initial-mapping-testpool-to-Salpinus-mt_d_results/initial-mapping-testpool-to-Salpinus-mt_out.maf &> log"""
+miramito = """mira manifest.conf && MITObim_1.8.pl --clean -start 1 -end 1000 -sample testpool -ref Salpinus_mt_genome -readpool reads.fastq -maf initial-mapping-testpool-to-Salpinus-mt_assembly/initial-mapping-testpool-to-Salpinus-mt_d_results/initial-mapping-testpool-to-Salpinus-mt_out.maf > log"""
 
 miramitoout = """/testpool-Salpinus_mt_genome_assembly/testpool-Salpinus_mt_genome_d_results/testpool-Salpinus_mt_genome_out_testpool.unpadded.fasta"""
 
@@ -38,7 +38,7 @@ for npair in range(0,npairs):
     paironesplit = pairone.split(".")
     if paironesplit[-1] == "gz":
         name = ".".join(paironesplit[0:-2])
-    elif paironesplit[-2] == "fastq" or paironesplit[-2] == "fq":
+    elif paironesplit[-1] == "fastq" or paironesplit[-1] == "fq":
         name = ".".join(paironesplit[0:-1])
     call("mkdir %s" % name , shell=True)
     os.chdir(name)
@@ -51,10 +51,10 @@ for npair in range(0,npairs):
     call(manifest, shell=True)
     call(miramito, shell=True)
     list_dir = os.listdir(".")
-    list_dir = list_dir.sort()
+    list_dir.sort()
     iterations = []
     for dir in list_dir:
         if dir.startswith("iteration"):
             iterations.append(dir)
-    call("ln -s %s" % (iterations[-1]+miramitoout, "../"+name+"con.fa"), shell=True)
     os.chdir("../")
+    call("ln -sf ./%s/%s %s" % (name,iterations[-1]+miramitoout, name+"_consensus.fa"), shell=True)
