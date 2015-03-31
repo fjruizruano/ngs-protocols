@@ -3,6 +3,7 @@
 import sys
 import os
 from subprocess import call
+from Bio import SeqIO
 
 print "Usage: mitobim_run.py NumberOfReads ListOfFiles Reference"
 
@@ -57,4 +58,11 @@ for npair in range(0,npairs):
         if dir.startswith("iteration"):
             iterations.append(dir)
     os.chdir("../")
-    call("ln -sf ./%s/%s %s" % (name,iterations[-1]+miramitoout, name+"_consensus.fa"), shell=True)
+    consensus = "%s/%s" % (name,iterations[-1]+miramitoout)
+    secus = SeqIO.parse(open(consensus), "fasta")
+    out = open(name+"_consensus.fa", "w")
+    for secu in secus:
+        s = str(secu.seq)
+        s = s.replace("x","n")
+        out.write(">%s\n%s\n" % (str(secu.id), s))
+    out.close()
