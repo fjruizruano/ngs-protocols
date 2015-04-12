@@ -27,7 +27,7 @@ except:
 
 files = open(data).readlines()
 l_files = []
-for f in range(0,(len(files)/2)-1):
+for f in range(0,(len(files)/2)):
     l_files.append([files[f*2][:-1],files[(f*2)+1][:-1]])
 
 try:
