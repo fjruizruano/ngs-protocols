@@ -48,7 +48,6 @@ for pair in l_files:
     call("bwa sampe -s -r \042@RG\tID:1\tLB:1\tSM:1\042 %s read1.sai read2.sai %s %s | samtools view -bS - > %s_fastq.bam" % (ref, pair[0], pair[1], name), shell=True)
     call("rm read1.sai read2.sai", shell=True)
     call("samtools sort %s_fastq.bam %s_sort" % (name, name), shell=True)
-    call("samtools index align_sort.bam", shell=True)
     call("rm %s_fastq.bam" % (name), shell=True)
     call("samtools flagstat %s_sort.bam > %s_sort.flagstat" % (name, name), shell=True)
     if reduce == "reduce":
