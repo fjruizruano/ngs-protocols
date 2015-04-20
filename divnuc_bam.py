@@ -43,7 +43,7 @@ for line in simple[1:]:
     id = data[0]
     pos = int(data[1])
     numbers = [int(x) for x in data[2:]]
-    real_pos = 1+(pos%((len_dict[id])/2)) # change for reading in the id
+    real_pos = 1+((pos-1)%((len_dict[id])/2)) # change for reading in the id
     if id in ab_dict:
         if real_pos in ab_dict[id]:
             numbers = [x+y for x,y in zip(ab_dict[id][real_pos],numbers)]
