@@ -33,9 +33,12 @@ call(awk_command,shell=True)
 len_dict = {}
 ref_seq = SeqIO.parse(open(ref),"fasta")
 for s in ref_seq:
-    nrep = s.id
-    nrep = nrep.split("_")
-    nrep = int(nrep[-1])
+    try:
+        nrep = s.id
+        nrep = nrep.split("_")
+        nrep = int(nrep[-1])
+    except:
+        nrep = 1
     len_dict[s.id] = [len(s.seq), nrep]
 
 #Create dictionary with abundace per seq and position
