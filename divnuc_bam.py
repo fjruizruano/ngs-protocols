@@ -17,7 +17,7 @@ try:
 except:
     bam = raw_input("Introduce BAM File: ")
 
-#call("pysamstats -f %s sat_lmig_reclusterd.fasta --type variation %s > %s.var" % (ref,bam,bam), shell=True)
+call("pysamstats -f %s --type variation %s > %s.var" % (ref,bam,bam), shell=True)
 
 #Selected columns in the pysamstats output
 #id,pos,cov,del,ins,A,C,T,G,N
@@ -33,7 +33,10 @@ call(awk_command,shell=True)
 len_dict = {}
 ref_seq = SeqIO.parse(open(ref),"fasta")
 for s in ref_seq:
-    len_dict[s.id] = len(s.seq)
+    nrep = s.id
+    nrep = nrep.split("_")
+    nrep = int(nrep[-1])
+    len_dict[s.id] = [len(s.seq), nrep]
 
 #Create dictionary with abundace per seq and position
 ab_dict = {}
@@ -43,7 +46,7 @@ for line in simple[1:]:
     id = data[0]
     pos = int(data[1])
     numbers = [int(x) for x in data[2:]]
-    real_pos = 1+((pos-1)%((len_dict[id])/2)) # change for reading in the id
+    real_pos = 1+((pos-1)%(len_dict[id][0]/len_dict[id][1])) # change for reading in the id
     if id in ab_dict:
         if real_pos in ab_dict[id]:
             numbers = [x+y for x,y in zip(ab_dict[id][real_pos],numbers)]
@@ -55,7 +58,7 @@ ab_dict_sorted = sorted(ab_dict.items(), key=operator.itemgetter(0))
 
 #print ab_dict_sorted
 
-w = open("test","w")
+w = open("%s.fixed" % (bam),"w")
 
 for l in ab_dict_sorted:
     for ll in l[1]:
@@ -65,3 +68,5 @@ for l in ab_dict_sorted:
         w.write("\t".join(j)+"\n")
 
 w.close()
+
+call("./divnuc.py %s.fixed" % (bam), shell=True)

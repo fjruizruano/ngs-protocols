@@ -16,26 +16,28 @@ def divnuc(seq):
             total += 1
             if seq[i] != seq[j]:
                 dif += 1
-    diversity = round(1.0*dif/total, 100)
+    try:
+        diversity = round(1.0*dif/total, 100)
+    except:
+        diversity = 0
     return diversity
 
-nucs = ["A", "C", "T", "G"]
+nucs = ["D","I","A", "C", "T", "G"]
 
-results = []
+w = open(table+".divnuc", "w")
 
 counter = 0
 for line in data:
     info = line.split()
     seq = ""
     for nuc in range(0,len(nucs)):
-        seq = seq +(nucs[nuc] * int(info[nuc]))
+        seq = seq +(nucs[nuc] * int(info[nuc+3]))
     res = divnuc(seq)
     counter += 1
     print str(counter) + " - " + str(res)
-    results.append(res)
+    info.append(res)
+    info = [str(x) for x in info]
+    w.write("\t".join(info)+"\n")
 
-results = [str(x) for x in results]
-w = open(table+".nucdiv", "w")
-w.write("\n".join(results))
 w.close()
 
