@@ -46,7 +46,7 @@ for n in range(0,len(files)/2):
 
     # run blat to find reads
 #    call("blat %s %s %s" % (reference,file1[:-3]+".fa",file1[:-3]+".psl"),shell=True)
-    call("blat_recursive.py %s %s %s" % (threads, "tmp.list", reference), shell=True)
+    call("blat_recursive_hard.py %s %s %s" % (threads, "tmp.list", reference), shell=True)
 
     # remove fasta and temp list
     call("rm %s" % file1[:-3]+".fa", shell=True)
