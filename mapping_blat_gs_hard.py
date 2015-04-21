@@ -127,7 +127,7 @@ for n in range(0,len(files)/2):
         call("rm ssaha2_list.txt", shell=True)
         if map_question == "ssaha2div":
             file1_s = file1.split(".")
-            call("divnuc_bam.py %s %s" % (reference, file1_s+".mapped.bam"), shell=True)
+            call("divnuc_bam.py %s %s" % (reference, file1_s[0]+".mapped.bam"), shell=True)
 
     #Nothing more happens
     if map_question == "nomap":
