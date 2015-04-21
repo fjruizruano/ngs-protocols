@@ -3,7 +3,7 @@
 import sys
 from subprocess import call
 
-print "Usage: ssaha2.py ListOfFiles Reference"
+print "Usage: ssaha2_run.py ListOfFiles Reference"
 
 try:
     files = sys.argv[1]
@@ -57,9 +57,9 @@ for n in range(0,len(files)/2):
     print "Running SSAHA2"
     call("ssaha2 -solexa  -pair 20,400 -score 40 -identity 80 -output sam -outfile %s -best 1 -save %s %s %s" % (file1+".sam",refname,file1,file2), shell=True)
     if ext1[-1] == "gz":
-        call("rm %s" % (file1))
+        call("rm %s" % (file1), shell=True)
     if ext2[-1] == "gz":
-        call("rm %s" % (file2))
+        call("rm %s" % (file2), shell=True)
     print "Generating BAM file"
     call("samtools view -bt %s.fai %s > %s" % (ref,file1+".sam",file1+".bam"), shell=True)
     call("rm %s" % (file1+".sam"), shell=True)
