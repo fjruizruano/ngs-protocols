@@ -123,7 +123,7 @@ for n in range(0,len(files)/2):
     # SSAHA2
     if map_question == "ssaha2" or map_question == "ssaha2div":
         call("ls %s %s > ssaha2_list.txt" % (file1[:-3]+".sel.fq", file2[:-3]+".sel.fq"), shell=True)
-        call("ssaha2_run.py ssaha2_list.txt %s" % (list,reference), shell=True)
+        call("ssaha2_run.py ssaha2_list.txt %s" % (reference), shell=True)
         call("rm ssaha2_list.txt", shell=True)
         if map_question == "ssaha2div":
             file1_s = file1.split(".")
