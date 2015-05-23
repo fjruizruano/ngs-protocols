@@ -26,29 +26,44 @@ for col in range(0,len(ref)):
         if i == len_ref/2:
             point = col
 
+#split alignment in two
 left = align[0:,:point]
 right = align[0:,point:]
 
+#get reference sequence in both alignment
 ref_left = str(left[0].seq)
 ref_right = str(right[0].seq)
 
+#for the remaining sequences...
 for n in range(1,len(left)):
+    #load sequence form left alignment
     sequen = str(left[n].seq)
+    #get number or hyphens in 5-prime end
     hyphens = 0
     for nuc in sequen:
         if nuc == "-":
             hyphens += 1
         else:
             break
-    ref_left_ch = len(ref_left[:hyphens].replace("-",""))
-    ref_right_ch = 0
+    #get number of nucleotides in left reference
+    ref_left_nuc = len(ref_left[:hyphens].replace("-",""))
+
+    ref_right_nuc = 0
     cut = 0
     for nuc in range(0,len(ref_right)):
-        if nuc != "-":
-            ref_right_ch += 1
-        if ref_right_ch == ref_left_ch:
-            cut = nuc
-    final_seq = str(right[n][:cut].seq)+str(sequen[hyphens:])
+        if ref_right[nuc] != "-":
+            ref_right_nuc += 1
+            if ref_right_nuc == ref_left_nuc:
+                cut = nuc
+    #write processed sequence
+    final_seq = str(right[n][:cut+1].seq)+str(sequen[hyphens:])
     out.write(">%s\n%s\n" % (str(left[n].id),final_seq))
+
+print ref_left[:hyphens]
+print ref_left_nuc
+print hyphens
+print cut
+print str(left[n].seq)
+print str(right[n].seq)
 
 out.close()
