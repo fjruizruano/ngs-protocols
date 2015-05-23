@@ -10,16 +10,18 @@ try:
 except:
     raw_input = ("Introduce Alignment in FASTA format: ")
 
+#open output file
 out = open(file+".cut.fas","w")
 
+#load alignment
 align = AlignIO.read(open(file),"fasta")
 
+#get reference sequence
 ref = str(align[0].seq)
 len_ref = len(ref.replace("-",""))
 
-i = -1
-
 #get middle point
+i = -1
 for col in range(0,len(ref)):
     if ref[col] != "-":
         i += 1
@@ -47,7 +49,7 @@ for n in range(1,len(left)):
             break
     #get number of nucleotides in left reference
     ref_left_nuc = len(ref_left[:hyphens].replace("-",""))
-
+    #get cut point for right alignment
     ref_right_nuc = 0
     cut = 0
     for nuc in range(0,len(ref_right)):
@@ -59,11 +61,6 @@ for n in range(1,len(left)):
     final_seq = str(right[n][:cut+1].seq)+str(sequen[hyphens:])
     out.write(">%s\n%s\n" % (str(left[n].id),final_seq))
 
-print ref_left[:hyphens]
-print ref_left_nuc
-print hyphens
-print cut
-print str(left[n].seq)
-print str(right[n].seq)
-
 out.close()
+
+print "WE ARE DONE!"
