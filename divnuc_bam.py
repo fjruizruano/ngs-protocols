@@ -116,22 +116,29 @@ w.close()
 w = open(table+".divnuc.av","w")
 
 di = {}
+di_ab = {}
 
 for line in file:
     info = line.split()
     name = info[0]
-    dn = info[-1]
+    ab = int(info[2])
+    dn = float(info[-1])
     if name in di:
-        di[name].append(float(dn))
+        di[name].append(dn)
+        di_ab[name].append(ab)
     else:
-        di[name] = [float(dn)]
+        di[name] = [dn]
+        di_ab[name] = [ab]
 
 for el in id_list:
     try:
         l = di[el]
         av = reduce(lambda x, y: x + y, l)/len(l)
-        w.write("%s\t%s\n" % (el, str(av)))
+        ll = di_ab[el]
+        av_ab = reduce(lambda x, y: x + y, ll)/len(ll)
+        w.write("%s\t%s\t%s\n" % (el, str(av_ab), str(av)))
+
     except:
-        w.write("%s\t%s\n" % (el, "-"))
+        w.write("%s\t%s\t%s\n" % (el, "-", "-"))
 
 w.close()
