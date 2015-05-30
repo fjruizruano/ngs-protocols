@@ -29,8 +29,9 @@ awk_cols_str = ",\042\\t\042,".join(awk_cols)
 awk_command = """awk '{print %s}' %s.var > %s.var.simple""" % (awk_cols_str,bam,bam)
 call(awk_command,shell=True)
 
-#Create dictionary with reference lengths
+#Create dictionary with reference lengths and list with ids
 len_dict = {}
+id_list = []
 ref_seq = SeqIO.parse(open(ref),"fasta")
 for s in ref_seq:
     try:
@@ -40,6 +41,7 @@ for s in ref_seq:
     except:
         nrep = 1
     len_dict[s.id] = [len(s.seq), nrep]
+    id_list.append(str(s.id))
 
 #Create dictionary with abundace per seq and position
 ab_dict = {}
@@ -108,5 +110,28 @@ for line in data:
     info.append(res)
     info = [str(x) for x in info]
     w.write("\t".join(info)+"\n")
+
+w.close()
+
+w = open(table+".divnuc.av","w")
+
+di = {}
+
+for line in file:
+    info = line.split()
+    name = info[0]
+    dn = info[-1]
+    if name in di:
+        di[name].append(float(dn))
+    else:
+        di[name] = [float(dn)]
+
+for el in id_list:
+    try:
+        l = di[el]
+        av = reduce(lambda x, y: x + y, l)/len(l)
+        w.write("%s\t%s\n" % (el, str(av)))
+    except:
+        w.write("%s\t%s\n" % (el, "-"))
 
 w.close()
