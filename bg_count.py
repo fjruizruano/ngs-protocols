@@ -25,7 +25,7 @@ for file in files:
     li_bg.append(file+".bg")
     name = file.split(".")
     li_names.append(name[0])
-    call("nice -3 genomeCoverageBed -bg -ibam %s > %s.bg" % (file,file), shell=True)
+    call("genomeCoverageBed -bg -ibam %s > %s.bg" % (file,file), shell=True)
 
 call("unionBedGraphs -header -i %s -names %s -g %s -empty > samples1and2.txt" % (" ".join(li_bg), " ".join(li_names), ref+".fai"), shell=True)
 
