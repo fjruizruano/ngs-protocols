@@ -79,7 +79,7 @@ for n in range(0,len(files)/2):
     w.close()
 
     # remove uniq files
-    call("rm uniq_1.txt uniq_2.txt, uniq_all.txt, uniq_trimmed.txt, uniq_uniq.txt", shell=True)
+    call("rm uniq_1.txt uniq_2.txt uniq_all.txt uniq_trimmed.txt uniq_uniq.txt", shell=True)
 
     # get reads
     call("seqtk subseq %s %s > %s" % (file1,file1[:-3]+".all.psl.list",file1[:-3]+".sel.fq"), shell=True)
