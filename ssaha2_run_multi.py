@@ -60,6 +60,7 @@ for n in range(0,len(files)/2):
         call("seqtk seq %s > %s" % (file2, file2_n), shell=True)
         file2 = file2_n
 
+    print "Splitting FASTQ files"
     call("FastQ.split.pl %s tmp_queries_1 %s" % (file1, thr), shell=True)
     call("FastQ.split.pl %s tmp_queries_2 %s" % (file2, thr), shell=True)
 
