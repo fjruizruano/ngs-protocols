@@ -82,7 +82,7 @@ for n in range(0,len(files)/2):
     processes = [Popen(cmd, shell=True) for cmd in commands]
     for p in processes:
         p.wait()
-    call("rm %s" % refname+".head " + refname+".body" + refname+".size" + refname+".name" + refname+".base", shell=True)
+    call("rm %s" % refname+".head "+refname+".body "+refname+".size "+refname+".name "+refname+".base", shell=True)
     if ext1[-1] == "gz":
         call("rm %s" % (file1), shell=True)
     if ext2[-1] == "gz":
