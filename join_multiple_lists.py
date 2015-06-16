@@ -6,8 +6,11 @@ files = sys.argv[1:]
 
 di = {}
 elements = []
+names = []
 
 for file in files:
+    name = file.split(".")
+    names.append(name[0])
     di[file] = {}
     data = open(file).readlines()
     for line in data:
@@ -26,6 +29,9 @@ for el in elements:
             di_all[el].append("0")
 
 w = open("toico.txt","w")
+header = ["sequence"] + names
+header = "\t".join(header)
+w.write(header+"\n")
 
 for el in di_all:
     w.write("%s\t%s\n" % (el, "\t".join(di_all[el])))
