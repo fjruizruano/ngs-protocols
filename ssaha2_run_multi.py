@@ -82,7 +82,6 @@ for n in range(0,len(files)/2):
     processes = [Popen(cmd, shell=True) for cmd in commands]
     for p in processes:
         p.wait()
-    call("rm %s" % refname+".head "+refname+".body "+refname+".size "+refname+".name "+refname+".base", shell=True)
     if ext1[-1] == "gz":
         call("rm %s" % (file1), shell=True)
     if ext2[-1] == "gz":
@@ -92,11 +91,14 @@ for n in range(0,len(files)/2):
     call("rm tmp_queries*.sam", shell=True)
 
     print "Generating BAM file"
-    call("samtools view -bt %s.fai %s > %s" % (ref,"all.sam",file1+".bam"), shell=True)
+    call("samtools view -F 4 -bt %s.fai %s > %s" % (ref,"all.sam",ext1[0]+".bam"), shell=True)
     call("rm all.sam", shell=True)
-    call("samtools sort %s %s" % (file1+".bam", file1+".sort"), shell=True)
-    call("rm %s" % (file1+".bam"), shell=True)
+    call("samtools sort %s %s" % (ext1[0]+".bam", ext1[0]+"_mapped"), shell=True)
+    call("rm %s" % (ext1[0]+".bam"), shell=True)
+    call("samtools index %s" % (ext1[0]+"_mapped.bam"), shell=True)
 
-    print "Reducing BAM file"
-    call("reduce_bam.py %s" % (file1+".sort.bam"), shell=True)
-    call("rm %s" % (file1+".sort.bam"), shell=True)
+#    print "Reducing BAM file"
+#    call("reduce_bam.py %s" % (file1+".sort.bam"), shell=True)
+#    call("rm %s" % (file1+".sort.bam"), shell=True)
+
+call("rm %s" % refname+".head "+refname+".body "+refname+".size "+refname+".name "+refname+".base", shell=True)
