@@ -2,6 +2,7 @@
 
 import sys
 from subprocess import call, Popen
+from commands import getstatusoutput
 from os import listdir
 from os.path import isfile, join
 
@@ -61,8 +62,18 @@ for n in range(0,len(files)/2):
         file2 = file2_n
 
     print "Splitting FASTQ files"
-    call("FastQ.split.pl %s tmp_queries_1 %s" % (file1, thr), shell=True)
-    call("FastQ.split.pl %s tmp_queries_2 %s" % (file2, thr), shell=True)
+    getpre = open(file1)
+    getpre = getpre.readline()
+    getpre = getpre.split(":")
+    n_reads = getstatusoutput("grep -c \042%s\042 %s" % (getpre[0], file1))
+    n_reads = int(n_reads[1])
+    n_rounds = (n_reads/20000000)+1
+#    n_rounds = (n_reads/500000)+1
+    n_splits = n_rounds*int(thr)
+    print n_splits
+
+    call("FastQ.split.pl %s tmp_queries_1 %s" % (file1, str(n_splits)), shell=True)
+    call("FastQ.split.pl %s tmp_queries_2 %s" % (file2, str(n_splits)), shell=True)
 
     onlyfiles = [f for f in listdir(".") if isfile(join(".",f))]
     splits = []
@@ -72,16 +83,21 @@ for n in range(0,len(files)/2):
     splits.sort()
 
     commands = []
+    for round in range(0,n_rounds):
+        commands.append([])
+    
     for n in range(0,len(splits)):
         fq_one = splits[n]
         fq_two = fq_one.replace("tmp_queries_1", "tmp_queries_2")
-        com = "ssaha2 -solexa  -pair 20,400 -score 40 -identity 80 -output sam -outfile %s -best 1 -save %s %s %s" % (fq_one+".sam",refname,fq_one,fq_two)
-        commands.append(com)
+        com = "ssaha2 -solexa -pair 20,400 -score 40 -identity 80 -output sam -outfile %s -best 1 -save %s %s %s" % (fq_one+".sam",refname,fq_one,fq_two)
+        rr = n/12
+        commands[rr].append(com)
 
     print "Running SSAHA2"
-    processes = [Popen(cmd, shell=True) for cmd in commands]
-    for p in processes:
-        p.wait()
+    for command in commands:
+        processes = [Popen(cmd, shell=True) for cmd in command]
+        for p in processes:
+            p.wait()
     if ext1[-1] == "gz":
         call("rm %s" % (file1), shell=True)
     if ext2[-1] == "gz":
