@@ -59,7 +59,7 @@ call("%s Trinotate.sqlite init --gene_trans_map %s.gene_trans_map --transcript_f
 
 if "x" in analyses:
     for d in db:
-        print "Running BLASTX with " + db_dict[d]
+        print "Running BLASTX with %s\n" % db_dict[d]
         outfile = "%s.%s.blastx.outfmt6" % (transcripts,d)
         call("blastx -query %s -db %s -num_threads %s -max_target_seqs 1 -outfmt 6 > %s" % (transcripts,db_dict[d],threads,outfile) , shell=True)
         if d == "s":
@@ -69,13 +69,13 @@ if "x" in analyses:
 
 if "p" in analyses:
     for d in db:
-        print "Running BLASTP with " + db_dict[d]
+        print "Running BLASTP with %s\n" % db_dict[d]
         outfile = "%s.%s.blastp.outfmt6" % (transcripts,d)
         call("blastp -query %s -db %s -num_threads %s -max_target_seqs 1 -outfmt 6 > %s" % (pep,db_dict[d],threads,outfile), shell=True)
         if d == "s":
-            call("%s Trinotate.sqlite LOAD_swissprot_blastx %s" % (tex,outfile), shell=True)
+            call("%s Trinotate.sqlite LOAD_swissprot_blastp %s" % (tex,outfile), shell=True)
         elif d == "u":
-            call("%s Trinotate.sqlite LOAD_trembl_blastx %s" % (tex,outfile), shell=True)
+            call("%s Trinotate.sqlite LOAD_trembl_blastp %s" % (tex,outfile), shell=True)
 
 if "h" in analyses:
     print "Running HMMER with " + h
