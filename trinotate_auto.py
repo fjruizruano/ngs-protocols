@@ -37,6 +37,7 @@ except:
 
 tex = "/usr/local/lib/Trinotate-2.0.2/Trinotate"
 tdb = "/mnt/disk2/trinotate/trinotate_db/Trinotate.sqlite.gz"
+tgt = "/usr/local/lib/trinityrnaseq-2.0.6/util/support_scripts/get_Trinity_gene_to_trans_map.pl"
 
 s = "/mnt/disk2/trinotate/swissprot/uniprot_sprot.trinotate_v2.0.pep"
 u = "/mnt/disk2/trinotate/uniref90/uniprot_uniref90.trinotate_v2.0.pep"
@@ -46,14 +47,15 @@ db_dict = {"s": s, "u":u, "h":h}
 try:
     ttt = open("Trinotate.sqlite")
 except:
+    print "\nPreparing Trinotate DB"
     call("gunzip -c %s > Trinotate.sqlite" % (tdb), shell=True)
-
-if "p" in analyses or "h" in analyses:
-    pep = transcripts + ".transdecoder_dir/longest_orfs.pep"
-    try:
-        ttt = open(pep)
-    except:
-        call("TransDecoder.LongOrfs -t %s -m %s" % (transcripts,cdslen), shell=True)
+    call("%s %s > %s.gene_trans_map" % (tgt, transcripts, transcripts), shell=True)
+pep = transcripts + ".transdecoder_dir/longest_orfs.pep"
+try:
+    ttt = open(pep)
+except:
+    call("TransDecoder.LongOrfs -t %s -m %s" % (transcripts,cdslen), shell=True)
+call("%s Trinotate.sqlite init --gene_trans_map %s.gene_trans_map --transcript_fasta %s --transdecoder_pep %s" % (tex, transcripts, transcripts, pep), shell=True)
 
 if "x" in analyses:
     for d in db:
@@ -80,5 +82,5 @@ if "h" in analyses:
     call("hmmscan --cpu %s --domtblout %s.pfam.out %s %s > pfam.log" % (threads,transcripts,h,pep), shell=True)
     call("%s Trinotate.sqlite LOAD_pfam %s.pfam.out" % (tex, transcripts), shell=True)
 
-call("%s Trinotate.sqlite report > %s_annot.xls" % (tex,transcripts), shell=True)
+call("%s Trinotate.sqlite report > %s.annot.xls" % (tex,transcripts), shell=True)
 
