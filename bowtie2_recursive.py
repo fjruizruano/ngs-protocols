@@ -37,14 +37,15 @@ except:
 data = open(files).readlines()
 
 for n in range(0,len(data)/2):
-    file1 = data[n/2][:-1]
-    file2 = data[(n/2)+1][:-1]
+    file1 = data[n*2][:-1]
+    file2 = data[(n*2)+1][:-1]
     file_name = file1.split(".")
     if file_name[-1] == "gz":
         file_name = ".".join(file_name[:-2])
     elif file_name[-1] == "fq" or file_name[-1] == "fastq":
         file_name = ".".join(file_name[:-1])
-    call("bowtie2 -p 12 --very-sensitive -x %s -1 %s -2 %s | nice -3 samtools view -bS - > %s.bam" % (ref_name,file1,file2,file_name), shell=True )
+    print "Running Bowtie2 with %s and %s against %s" % (file1,file2,ref_name)
+    call("bowtie2 -p 12 --very-sensitive -x %s -1 %s -2 %s | samtools view -bS - > %s.bam" % (ref_name,file1,file2,file_name), shell=True )
     call("samtools sort %s.bam %s_sort" % (file_name,file_name), shell=True)
     call("rm %s.bam" % (file_name), shell=True)
     call("samtools index %s_sort.bam" % (file_name), shell=True)
