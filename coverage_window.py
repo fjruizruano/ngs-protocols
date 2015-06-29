@@ -51,18 +51,18 @@ for line in data[1:]:
     name = line[0]
     start = int(line[1])
     end = int(line[2])
-    count = [int(i) for i in line[3:]]
+    count = [float(i) for i in line[3:]]
     for n in range(0,end-start):
         number = start+n
         count_old = results[name][number/window]
         count_new = [x+y for x, y in zip(count_old, count)]
         results[name][number/window] = count_new
 
-w = open(bg+".counts", "w")
+w = open(bg+".counts"+str(window), "w")
 w.write("Contig\tWindow\t%s\n" % "\t".join(samples))
 
 for contig in results:
     for win in results[contig]:
         info = results[contig][win]
-        info = [str(i) for i in info]
+        info = [str(int(i)) for i in info]
         w.write("%s\t%s\t%s\n" % (contig,str(win),"\t".join(info)))
