@@ -57,4 +57,11 @@ ngs-protocols
 * sat_subfam2fam.py: Edit ALIGN file from RepatMasker to calc Kimura divergence by family instead of subfamily.
 * search_issr_1nt.py: Count the number of occurrences for each nucleotide before a SRR region to desing ISRR primers.
 * search_issr_2nt.py: Count the number of occurrences for each dinucleotide before a SRR region to desing ISRR primers.
-* snp_calling_dn_ds: Calculate the dn/dS ratio 
+* snp_calling_dn_ds: Perform a SNP calling to calculate the dn/dS from a BAM file.
+* split_illumina.py: Split FASTQ files from Illumina sequencing in several files.
+* ssaha2_run.py: Run SSAHA2 mapping in several libraries.
+* ssaha2_run_multi.py: Run SSAHA2 mapping for several big libraries and parallized in different threads.
+* stampy_protocol.py: Run Stampy mapping.
+* subsampler.py: Sumsample sequences from FASTA and FASTQ files.
+* trinity_extract_longest.py: Extract the longest contig for each gene in a Trinity assembly.
+* trinotate_auto.py: Run Trinotate.
