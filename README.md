@@ -42,3 +42,19 @@ ngs-protocols
 * mitobim_run.py: Run MITObim with several protocols.
 * mreps_extract.py: Generate a FASTA file with tandem sequences using a MREPS output.
 * reduce_bam.py: Filter out unmapped paired reads from a BAM file.
+* repeat_masker_run.py: Run RepeatMasker alignment for small FASTA files.
+* repeat_masker_run_big.py: Run RepeatMasker alignment for several big FASTA files.
+* rexp_get_cluster.py: Get FASTA file concatenating all the contigs assembled with RepeatExplorer.
+* rexp_prepare.py: Generate a FASTA file ready for RepeatExplorer from two FASTQ files.
+* rexp_prepare_deconseq: Generate a FASTa file ready for RepeatExplorer from two FASTQ files filtered with DeconSeq.
+* rm_clas_seq.py: Classify reads aligning or not using a RepeatMasker's output.
+* rm_clas_seq_names: Classify reads coinciding with a annotation and aligning or not using a RepeatMasker's output.
+* rm_getseq.py: Extract sequences of the matching regions in a RepeatMasker's output.
+* rm_join_out.py: Concantenate OUT files from several RepeatMasker's run.
+* rm_join_tbl.py: Join TBL files from several RepeatMaseker's run.
+* run_abyss.py: Run ABySS assembler with a range of kmers.
+* sat_cutter.py: Cut satellites in a FASTA alignment to align homologous regions.
+* sat_subfam2fam.py: Edit ALIGN file from RepatMasker to calc Kimura divergence by family instead of subfamily.
+* search_issr_1nt.py: Count the number of occurrences for each nucleotide before a SRR region to desing ISRR primers.
+* search_issr_2nt.py: Count the number of occurrences for each dinucleotide before a SRR region to desing ISRR primers.
+* snp_calling_dn_ds: Calculate the dn/dS ratio 
