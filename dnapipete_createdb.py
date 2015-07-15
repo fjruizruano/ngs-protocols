@@ -3,7 +3,7 @@
 import sys
 from Bio import SeqIO
 
-print "Usage: dnapipete_createdb.py Trinity.fasta one_RM_hit_per_Trinity_contigs"
+print "Usage: dnapipete_createdb.py Trinity.fasta one_RM_hit_per_Trinity_contigs [unknown]"
 
 try:
     trinity = sys.argv[1]
@@ -14,6 +14,11 @@ try:
     annot = sys.argv[2]
 except:
     annot = raw_input("Introduce path to the one_RM_hit_per_Trinity_contigs file: ")
+
+try:
+    unknownq = sys.argv[3]
+except:
+    unknownq = ""
 
 secus = SeqIO.parse(open(trinity),"fasta")
 annot_read = open(annot).readlines()
@@ -29,7 +34,7 @@ for sec in secus:
     name = ""
     if sec.id in annotations:
         name = "%s#%s" % (sec.id, annotations[sec.id])
-    else:
+    elif unknownq != "":
         name = "%s#Unknown" % (sec.id)
 
     w.write(">%s\n%s\n" % (name, str(sec.seq)))
