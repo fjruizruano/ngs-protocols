@@ -48,6 +48,6 @@ print "Extracting reads from original files"
 call("seqtk subseq %s %s.list > %s_paired_1.fastq" % (one,name,name), shell=True)
 call("seqtk subseq %s %s.list > %s_paired_2.fastq" % (two,name,name), shell=True)
 
-call("call %s.list" % (name), shell=True)
+call("rm %s.list" % (name), shell=True)
 
 print "We're done!"
