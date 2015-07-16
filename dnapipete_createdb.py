@@ -34,9 +34,9 @@ for sec in secus:
     name = ""
     if sec.id in annotations:
         name = "%s#%s" % (sec.id, annotations[sec.id])
+        w.write(">%s\n%s\n" % (name, str(sec.seq)))
     elif unknownq != "":
         name = "%s#Unknown" % (sec.id)
-
-    w.write(">%s\n%s\n" % (name, str(sec.seq)))
+        w.write(">%s\n%s\n" % (name, str(sec.seq)))
 
 w.close()
