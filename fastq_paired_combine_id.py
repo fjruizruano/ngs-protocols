@@ -11,7 +11,7 @@ except:
     one = raw_input("Introduce FASTQ file 1: ")
 
 try:
-    two = sys.argv[1]
+    two = sys.argv[2]
 except:
     two = raw_input("Introduce FASTQ file 2: ")
 
