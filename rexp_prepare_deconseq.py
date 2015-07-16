@@ -32,68 +32,33 @@ except:
 files = [f for f in os.listdir(".") if os.path.isfile(f)]
 
 #files names
-rr1 = r1.find(".")
-suffix = r1[rr1:]
-rr1 = r1[:rr1]
-rrr1 = r1.find("_")
-rrr1 = r1[:rrr1]
-rr2 = r2.find(".")
-rr2 = r2[:rr2]
-
-print rrr1
-
-#get fastq prefix
-getpre = open(r1).readlines()
-getpre = getpre[0]
-getpre = getpre[0:4]
-
-#with open(r1) as myfile:
-#    head = [next(myfile) for x in xrange(2)]
-#len_reads = str(len(head[1])-1)
-
-#Trimming with Trimmomatic
-#trimmomatic = "trimmomatic PE -phred33 %s %s %s %s %s %s ILLUMINACLIP:/usr/local/lib/Trimmomatic-0.32/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:30 MINLEN:%s" % (r1, r2, rr1+"_paired.fastq", rr1+"_unpaired.fastq", rr2+"_paired.fastq", rr2+"_unpaired.fastq", "101")
+name = r1.split(".")
+name = ".".join(name[:-1])
+name = name[:-2]
+print "Analyzing %s\n" % name
 
 #Getting paired reads
-fastq_combine_pe = "fastq-combine-pe.py \042%s\042 \042 \042 %s %s"  % (getpre,r1,r2)
+fastq_combine_pe = "fastq_paired_combine_id.py %s %s" % (r1, r2)
 
 #random selection of reads
-fastq_pe_random_1 = "seqtk sample -s 100 %s %s > %s" % (rr1+"_paired.fastq",sel_reads,rr1+"_paired.fastq.subset")
-fastq_pe_random_2 = "seqtk sample -s 100 %s %s > %s" % (rr2+"_paired.fastq",sel_reads,rr2+"_paired.fastq.subset")
-
-#fastq_pe_random = "fastq-pe-random.py %s %s %s" % (rr1+"_paired"+suffix, rr2+"_paired"+suffix, sel_reads)
+fastq_pe_random_1 = "seqtk sample -s 100 %s_paired_1.fastq %s > %s_paired_1.fastq.subset" % (name, sel_reads, name)
+fastq_pe_random_2 = "seqtk sample -s 100 %s_paired_2.fastq %s > %s_paired_2.fastq.subset" % (name, sel_reads, name)
 
 #shuffle reads
-shuffle = "shuffleSequences_fastq.pl %s %s %s" % (rr1+"_paired.fastq.subset", rr2+"_paired.fastq.subset", rrr1+"_all_"+prefix+str(sel_reads)+".fastq")
+shuffle = "shuffleSequences_fastq.pl %s %s %s" % (name+"_paired_1.fastq.subset", name+"_paired_2.fastq.subset", name+"_all_"+prefix+str(sel_reads)+".fastq")
 
 #convert fastq to fasta
-fastq_to_fasta =  "seqtk seq -a %s > %s" % (rrr1+"_all_"+prefix+str(sel_reads)+".fastq",rrr1+"_all_"+prefix+str(sel_reads)+".fasta")
+fastq_to_fasta =  "seqtk seq -a %s > %s" % (name+"_all_"+prefix+str(sel_reads)+".fastq", name+"_all_"+prefix+str(sel_reads)+".fasta")
 
-#Try to run Trimmomatic
-
-#if rr1+"_paired.fastq" not in files or rr2+"_paired.fastq" not in files:
-#    try:
-#        print "Running Trimmomatic\n"
-#        print trimmomatic
-#        call(trimmomatic, shell = True)
-#    except:
-#        print "Trimmomatic could not run. Try again.\n"
-#else:
-#    print "Trimmomatic was already run. Skipping.\n"
-
-if rr1+"_paired.fastq" not in files or rr2+"_paired.fastq" not in files:
+if name+"_paired_2.fastq" not in files or name+"_paired_1.fastq" not in files:
     try:
         print "Running Fastq-combine-pe"
         print fastq_combine_pe
         call(fastq_combine_pe,shell=True)
-        tag = "_trimmed_clipped_stillpaired.fastq"
-        call("mv %s %s" % (rr1+tag,rr1+"_paired.fastq"),shell=True)
-        call("mv %s %s" % (rr2+tag,rr2+"_paired.fastq"),shell=True)
-        call("rm _trimmed_clipped_singles.fastq",shell=True)
     except:
         print "Fastq-combine-pe could not run. Try again.\n"
 else:
-    print "Fastq-combine-pe or Trimmomatic were already run. Skipping.\n"
+    print "Fastq-combine-pe was already run. Skipping.\n"
 
 #Try to run fastq pe random
 try:
@@ -114,29 +79,27 @@ except:
     print "Shuffling could not run. Try again.\n"
 
 #open output
-fqtemp = open("%s_all_%s%s_temp.fastq" % (rrr1,prefix,str(sel_reads)) ,"w")
+fqtemp = open("%s_all_%s%s_temp.fastq" % (name,prefix,str(sel_reads)) ,"w")
 
 #read modified fasta file
-print "Editing "+ rrr1+"_all_"+prefix+str(sel_reads)+".fastq\n"
-fastq = open(rrr1+"_all_"+prefix+str(sel_reads)+".fastq").readlines()
+print "Editing "+ name+"_all_"+prefix+str(sel_reads)+".fastq\n"
+fastq = open(name+"_all_"+prefix+str(sel_reads)+".fastq").readlines()
 
 #add prefix
 for x in range(0,len(fastq)):
     if x%8 == 0:
         line = fastq[x]
-#        line = line.split(" ")
-        line = ">%s%s%s" % (prefix,line[:-2],"/1\n")
+        line = ">%s%s%s" % (prefix,line[:-2],"1\n")
     elif x%8 == 4:
         line = fastq[x]
-#        line = line.split(" ")
-        line = ">%s%s%s" % (prefix,line[:-2],"/2\n")
+        line = ">%s%s%s" % (prefix,line[:-2],"2\n")
     else:
         line = fastq[x]
     fqtemp.write(line)
 
 fqtemp.close()
 
-call("mv %s %s" % (rrr1+"_all_"+prefix+str(sel_reads)+"_temp.fastq",rrr1+"_all_"+prefix+str(sel_reads)+".fastq"), shell=True)
+call("mv %s %s" % (name+"_all_"+prefix+str(sel_reads)+"_temp.fastq", name+"_all_"+prefix+str(sel_reads)+".fastq"), shell=True)
 
 #Try to convert to fasta format
 try:
