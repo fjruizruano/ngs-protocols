@@ -29,8 +29,8 @@ for file in files:
 one_data = open(files[0]+".t").readlines()
 two_data = open(files[1]+".t").readlines()
 
-print "Getting commun reads"
-commun = set(one_data) & set(two_data)
+print "Getting common reads"
+common = set(one_data) & set(two_data)
 
 call("rm %s.t %s.t" % (files[0], files[1]), shell=True)
 
@@ -40,7 +40,7 @@ name = ".".join(name[:-1])
 name = name[:-2]
 
 out = open(name+".list", "w")
-for el in commun:
+for el in common:
     out.write("%s/1\n%s/2\n" % (el[:-1], el[:-1]))
 out.close()
 

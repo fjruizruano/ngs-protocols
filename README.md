@@ -29,6 +29,7 @@ ngs-protocols
 * fastq-combine-pe.py: Extract reads paired reads by ID from two FASTQ files.
 * fastq-pe-random.py: Random selection of paired reads from two FASTQ files.
 * fastq_edit_ids.py: Edit the ID from FASTQ files to end with the format "@ID/1".
+* fastq_paired_combine_id: Extract paired reads looking at its ids.
 * find_exclusive_kmers.py: Extract exclusive kmers of a library in comparison with other using Jellyfis.
 * get_no_blat.py: Extract sequences from a FASTA file absent in a PSL output of BLAT.
 * id_rmasker.py: Edit IDs from a FASTA file with a format compatible with RepeatMasker.
@@ -47,6 +48,7 @@ ngs-protocols
 * rexp_get_cluster.py: Get FASTA file concatenating all the contigs assembled with RepeatExplorer.
 * rexp_prepare.py: Generate a FASTA file ready for RepeatExplorer from two FASTQ files.
 * rexp_prepare_deconseq: Generate a FASTa file ready for RepeatExplorer from two FASTQ files filtered with DeconSeq.
+* rexp_select_contigs: Select most coveraged contigs in a RepeatExplorer's output.
 * rm_clas_seq.py: Classify reads aligning or not using a RepeatMasker's output.
 * rm_clas_seq_names: Classify reads coinciding with a annotation and aligning or not using a RepeatMasker's output.
 * rm_getseq.py: Extract sequences of the matching regions in a RepeatMasker's output.
