@@ -38,7 +38,7 @@ miramito = """mira manifest.conf && MITObim_1.8.pl --missmatch %s --clean -start
 
 quickmito = """MITObim_1.8.pl -start 1 -end 1000 -sample testpool -ref Salpinus_mt_genome -readpool reads.fastq --missmatch %s --quick reference.fa --clean > log""" % mism
 
-seedmito = """MITObim_1.8.pl -sample testpool -ref Salpinus_mt_genome -readpool reads.fastq --quick reference.fa --missmatch %s -end 1000 --clean > log""" & mism
+seedmito = """MITObim_1.8.pl -sample testpool -ref Salpinus_mt_genome -readpool reads.fastq --quick reference.fa --missmatch %s -end 1000 --clean > log""" % mism
 
 miramitoout = """/testpool-Salpinus_mt_genome_assembly/testpool-Salpinus_mt_genome_d_results/testpool-Salpinus_mt_genome_out_testpool.unpadded.fasta"""
 
