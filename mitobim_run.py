@@ -5,7 +5,7 @@ import os
 from subprocess import call
 from Bio import SeqIO
 
-print "Usage: mitobim_run.py NumberOfReads ListOfFiles Reference [miramito/quickmito/seedmito]"
+print "Usage: mitobim_run.py NumberOfReads ListOfFiles Reference [miramito/quickmito/seedmito] missmatch"
 
 try:
     nreads = sys.argv[1]
@@ -27,13 +27,18 @@ try:
 except:
     prot = raw_input("Introduce protocol name (miramito/quickmito/seedmito): ")
 
+try:
+    mism = sys.argv[5]
+except:
+    mism = "15"
+
 manifest = """echo "\n#manifest file for basic mapping assembly with illumina data using MIRA 4\n\nproject = initial-mapping-testpool-to-Salpinus-mt\n\njob=genome,mapping,accurate\n\nparameters = -NW:mrnl=0 -AS:nop=1 SOLEXA_SETTINGS -CO:msr=no\n\nreadgroup\nis_reference\ndata = reference.fa\nstrain = Salpinus-mt-genome\n\nreadgroup = reads\ndata = reads.fastq\ntechnology = solexa\nstrain = testpool\n" > manifest.conf"""
 
-miramito = """mira manifest.conf && MITObim_1.8.pl --clean -start 1 -end 1000 -sample testpool -ref Salpinus_mt_genome -readpool reads.fastq -maf initial-mapping-testpool-to-Salpinus-mt_assembly/initial-mapping-testpool-to-Salpinus-mt_d_results/initial-mapping-testpool-to-Salpinus-mt_out.maf > log"""
+miramito = """mira manifest.conf && MITObim_1.8.pl --missmatch %s --clean -start 1 -end 1000 -sample testpool -ref Salpinus_mt_genome -readpool reads.fastq -maf initial-mapping-testpool-to-Salpinus-mt_assembly/initial-mapping-testpool-to-Salpinus-mt_d_results/initial-mapping-testpool-to-Salpinus-mt_out.maf > log""" % mism
 
-quickmito = """MITObim_1.8.pl -start 1 -end 1000 -sample testpool -ref Salpinus_mt_genome -readpool reads.fastq --quick reference.fa --clean > log"""
+quickmito = """MITObim_1.8.pl -start 1 -end 1000 -sample testpool -ref Salpinus_mt_genome -readpool reads.fastq --missmatch %s --quick reference.fa --clean > log""" % mism
 
-seedmito = """MITObim_1.8.pl -sample testpool -ref Salpinus_mt_genome -readpool reads.fastq --quick reference.fa -end 1000 --clean > log"""
+seedmito = """MITObim_1.8.pl -sample testpool -ref Salpinus_mt_genome -readpool reads.fastq --quick reference.fa --missmatch %s -end 1000 --clean > log""" & mism
 
 miramitoout = """/testpool-Salpinus_mt_genome_assembly/testpool-Salpinus_mt_genome_d_results/testpool-Salpinus_mt_genome_out_testpool.unpadded.fasta"""
 
