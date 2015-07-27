@@ -40,13 +40,18 @@ for line in data:
     id = id[0]
     sp = id.find(" ")
 
+    identifier = id.split(":")
+    identifier = identifier[0]
+
     if sp != -1:
         print line+" with uncorrect format, editing ids."
         if extension == "fq" or extension == "fastq":
             call("fastool --append /%s %s > %s" % (side, line, name), shell=True)
         elif extension == "gz":
             call("zcat %s | fastool --append /%s > %s" % (line,side,name), shell=True)
+        call("""sed -i 's/>%s/%s/g' %s""" % (identifier[1:],identifier,name), shell=True)
         li.write(name+"\n")
+        
     elif id[-2:] == "/%s" % side:
         call("ln -sf %s %s" % (line, name), shell=True)
         print line+" with the correct format, nothing happens."
