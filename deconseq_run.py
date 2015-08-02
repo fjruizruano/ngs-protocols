@@ -36,7 +36,7 @@ if dsdir not in elements:
     call("mkdir %s/db" % dsdir, shell=True)
 
 os.chdir(dsdir+"/db")
-call("ln -s ../../%s" % ref, shell=True)
+call("ln -sf ../../%s" % ref, shell=True)
 call("../bwa64 index -p %s -a is %s" % (refname,ref), shell=True)
 os.chdir("../")
 conf = open("DeconSeqConfig.pm").readlines()
@@ -48,6 +48,7 @@ conf_out.write("".join(conf))
 conf_out.close()
 call("mv tmp_conf.txt DeconSeqConfig.pm", shell=True)
 
+os.chdir("../")
 for n in range(0,len(files)/2):
     file1 = files[n*2][:-1]
     file2 = files[(n*2)+1][:-1]
@@ -66,11 +67,13 @@ for n in range(0,len(files)/2):
         call("seqtk seq %s > %s" % (file2, file2_n), shell=True)
         file2 = file2_n
 
+    os.chdir(dsdir)
+    
     filename = file1.split(".")
     filename = filename[0]
 
-    call("ln -s ../%s ." % file1 , shell=True)
-    call("ln -s ../%s ." % file2 , shell=True)
+    call("ln -sf ../%s ." % file1 , shell=True)
+    call("ln -sf ../%s ." % file2 , shell=True)
 
     call("FastQ.split.pl %s tmp_queries_1 %s" % (file1, thr), shell=True)
     call("FastQ.split.pl %s tmp_queries_2 %s" % (file2, thr), shell=True)
@@ -101,6 +104,7 @@ for n in range(0,len(files)/2):
             p.wait()
     
     
+
     os.chdir("./%s" % filename)
     for n in range(1,3):
         concat = ["cat"]
