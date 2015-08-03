@@ -47,8 +47,8 @@ conf.insert(20, line1+line2)
 conf_out.write("".join(conf))
 conf_out.close()
 call("mv tmp_conf.txt DeconSeqConfig.pm", shell=True)
-
 os.chdir("../")
+
 for n in range(0,len(files)/2):
     file1 = files[n*2][:-1]
     file2 = files[(n*2)+1][:-1]
@@ -67,13 +67,13 @@ for n in range(0,len(files)/2):
         call("seqtk seq %s > %s" % (file2, file2_n), shell=True)
         file2 = file2_n
 
-    os.chdir(dsdir)
-    
     filename = file1.split(".")
     filename = filename[0]
-
-    call("ln -sf ../%s ." % file1 , shell=True)
-    call("ln -sf ../%s ." % file2 , shell=True)
+    call("mkdir %s/%s" % (dsdir,filename), shell=True)
+    os.chdir("%s/%s" % (dsdir,filename))
+    
+    call("ln -sf ../../%s ." % file1 , shell=True)
+    call("ln -sf ../../%s ." % file2 , shell=True)
 
     call("FastQ.split.pl %s tmp_queries_1 %s" % (file1, thr), shell=True)
     call("FastQ.split.pl %s tmp_queries_2 %s" % (file2, thr), shell=True)
@@ -91,34 +91,39 @@ for n in range(0,len(files)/2):
 
     for n in range(0,len(splits)):
         fq = splits[n]
-        com = "perl deconseq.pl -f ./%s -out_dir %s/%s -dbs %s" % (fq, filename, fq, refname)
+        com = "perl deconseq.pl -f ./%s -out_dir %s.dir -dbs %s" % (fq, fq, refname)
         rr = n/int(thr)
         commands[rr].append(com)
 
-    print commands
-
     print "Running DeconSeq"
+    call("ln -s ../db", shell=True)
+    call("ln -s ../deconseq.pl", shell=True)
+    call("ln -s ../bwa64", shell=True)
+    call("ln -s ../DeconSeqConfig.pm", shell=True)
     for command in commands:
         processes = [Popen(cmd, shell=True) for cmd in command]
         for p in processes:
             p.wait()
-    
-    
 
-    os.chdir("./%s" % filename)
     for n in range(1,3):
         concat = ["cat"]
         for fq in splits:
             if fq.startswith("tmp_queries_%s" % (str(n))):
-                concat.append("%s/*clean*" % (fq))
-        call("%s > %s_%s.fastq" % (" ".join(concat), filename[:-2], str(n)), shell=True)
-        print concat
-    os.chdir("../")
+                concat.append("%s.dir/*clean*" % (fq))
+        call("%s > %s_clean_%s.fastq" % (" ".join(concat), filename[:-2], str(n)), shell=True)
+
+    call("rm db deconseq.pl bwa64 DeconSeqConfig.pm", shell=True)
+    call("rm tmp_queries*.fastq", shell=True)
+    call("rm -r tmp_queries*.fastq.dir", shell=True)
+    call("rm %s" % (file1), shell=True)
+    call("rm %s" % (file2), shell=True)
+    os.chdir("../../")
+
+    call("mv %s/%s ." % (dsdir,filename), shell=True)
 
     if ext1[-1] == "gz":
         call("rm %s" % (file1), shell=True)
     if ext2[-1] == "gz":
         call("rm %s" % (file2), shell=True)
 
-    call("rm tmp_queries*.fastq", shell=True)
-    call("rm -r %s/tmp_queries*.fastq" % (filename), shell=True)
+call("rm -r %s" % dsdir, shell=True)
