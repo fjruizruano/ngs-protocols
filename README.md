@@ -49,6 +49,7 @@ ngs-protocols
 * rexp_get_cluster.py: Get FASTA file concatenating all the contigs assembled with RepeatExplorer.
 * rexp_prepare.py: Generate a FASTA file ready for RepeatExplorer from two FASTQ files.
 * rexp_prepare_deconseq: Generate a FASTa file ready for RepeatExplorer from two FASTQ files filtered with DeconSeq.
+* rexp_prepare_normaltag: Generate a FASTa file ready for RepeatExplorer from two FASTQ with normal tag (ids ended in /1 or /2).
 * rexp_select_contigs: Select most coveraged contigs in a RepeatExplorer's output.
 * rm_clas_seq.py: Classify reads aligning or not using a RepeatMasker's output.
 * rm_clas_seq_names: Classify reads coinciding with a annotation and aligning or not using a RepeatMasker's output.
