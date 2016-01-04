@@ -33,7 +33,7 @@ ngs-protocols
 * fastq_edit_ids_sra.py: Edit the ID from FASTQ files to end with the format "@ID/1" from SRA files.
 * fastq_paired_combine_id: Extract paired reads looking at its ids.
 * find_exclusive_kmers.py: Extract exclusive kmers of a library in comparison with other using Jellyfish.
-* get_cluster.py: Getting all contigs in "clusters" folder of RepeatExplorer's output.
+* gatk_protocol.py: Run GATK in a list of FASTQ files with the same reference.
 * get_no_blat.py: Extract sequences from a FASTA file absent in a PSL output of BLAT.
 * id_rmasker.py: Edit IDs from a FASTA file with a format compatible with RepeatMasker.
 * id_rmasker_rexp.py: Edit IDs from a FASTA file of RepeatExplorer contigs compatible with RepeatMasker.
