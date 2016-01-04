@@ -60,18 +60,17 @@ for pair in l_files:
     name = name[0][:-2]
 
     # map with BWA
-#    read_group = "\047@RG\134tID:group1\134tSM:sample1\134tPL:illumina\134tLB:lib1\134tPU:unit1\047"
-#    call("bwa mem -M -R %s -t %s %s %s %s > %s" % (read_group, threads, ref, pair[0], pair[1], name+".sam"), shell=True)
+    read_group = "\047@RG\134tID:group1\134tSM:sample1\134tPL:illumina\134tLB:lib1\134tPU:unit1\047"
+    call("bwa mem -M -R %s -t %s %s %s %s > %s" % (read_group, threads, ref, pair[0], pair[1], name+".sam"), shell=True)
 
     # sort BAM
-#    print "picard SortSam INPUT=%s.sam OUTPUT=%s_sort.bam SORT_ORDER=coordinate" % (name,name)
-#    call("picard SortSam INPUT=%s.sam OUTPUT=%s_sort.bam SORT_ORDER=coordinate" % (name,name), shell=True)
+    call("picard SortSam INPUT=%s.sam OUTPUT=%s_sort.bam SORT_ORDER=coordinate" % (name,name), shell=True)
 
     # mark duplicates
-#    call("picard MarkDuplicates INPUT=%s_sort.bam OUTPUT=%s_sort_md.bam METRICS_FILE=%s_metrics.txt" % (name,name,name), shell=True)
+    call("picard MarkDuplicates INPUT=%s_sort.bam OUTPUT=%s_sort_md.bam METRICS_FILE=%s_metrics.txt" % (name,name,name), shell=True)
 
     # index BAM
-#    call("picard BuildBamIndex INPUT=%s_sort_md.bam" % (name), shell=True)
+    call("picard BuildBamIndex INPUT=%s_sort_md.bam" % (name), shell=True)
 
     # realignment
     call("gatk -T RealignerTargetCreator -R %s -I %s_sort_md.bam -o %s_targets.list " % (ref,name,name), shell=True)
