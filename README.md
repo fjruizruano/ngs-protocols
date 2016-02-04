@@ -5,6 +5,7 @@ ngs-protocols
 
 * FastA.split.pl: Split FASTA files in several subfiles.
 * FastQ.split.pl: Split FASTQ files in several subfiles.
+* bam_coverage_join.py: Generate a table of coverage along the contigs in several BAM files.
 * bg_count.py: Generate a table with nucleotide counts from BAM files.
 * blat_recursive.py: Parallelize a BLAT run in several threads.
 * blat_recursive_hard.py: Parallelize a BLAT run in several threads with hard options.
