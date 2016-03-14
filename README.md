@@ -25,6 +25,7 @@ ngs-protocols
 * extract_no_seq.py: Extract sequecences from a FASTA file absent in a list.
 * extract_reads_blat.py: Extract matching reads in a PSL output from BLAT.
 * extract_reads_rm.py: Extract matching reads in a OUT output from RepeatMasker.
+* extract_regions_bam.py: Extract reads from a BAM only in the indicated regions.
 * extract_seq.py: Extract sequences from a FASTA file present in a list conserving the order.
 * fasta_filter_by_length.py: Filter out sequences from a FASTA file with a size lower than a thereshold.
 * fasta_sequence_len.py: Generate a table with the length of each sequence in a FASTA file.
