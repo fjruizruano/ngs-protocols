@@ -27,6 +27,6 @@ for bam in bams:
 
 call("join_multiple_lists.py %s " % " ".join(to_join), shell=True)
 
-call("(head -n 1 toico.txt && tail -n +2 toico.txt | sort) > toico2.txt ", shell=True)
+call("""sed 's/popeye/\t/g' toico.txt > toico2.txt""", shell=True)
 
-call("""sed 's/popeye/\t/g' toico2.txt > toico3.txt""", shell=True)
+call("(head -n 1 toico2.txt && tail -n +2 toico2.txt | sort -k 1,1 -k 2n) > toico3.txt ", shell=True)
