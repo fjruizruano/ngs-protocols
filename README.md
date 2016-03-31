@@ -6,6 +6,7 @@ ngs-protocols
 * FastA.split.pl: Split FASTA files in several subfiles.
 * FastQ.split.pl: Split FASTQ files in several subfiles.
 * bam_coverage_join.py: Generate a table of coverage along the contigs in several BAM files.
+* bam_var_join.py: Generate a variation table using several BAM files.
 * bg_count.py: Generate a table with nucleotide counts from BAM files.
 * blat_recursive.py: Parallelize a BLAT run in several threads.
 * blat_recursive_hard.py: Parallelize a BLAT run in several threads with hard options.
@@ -40,6 +41,7 @@ ngs-protocols
 * id_rmasker.py: Edit IDs from a FASTA file with a format compatible with RepeatMasker.
 * id_rmasker_rexp.py: Edit IDs from a FASTA file of RepeatExplorer contigs compatible with RepeatMasker.
 * join_multiple_lists.py: Join the results of two or more lists.
+* join_multiple_lists_var.py: Join the results of two or more lists for bam_var_join.py.
 * join_rm_list.py: Join two files with RepatMasker nucleotide counts.
 * kimura_window.py: Calculate kimura divergence per window using the RepeatMasker's script.
 * kmer_to_fasta.py: Generate a FASTA file from a list of kmers.
