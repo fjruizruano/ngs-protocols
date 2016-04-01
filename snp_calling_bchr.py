@@ -59,7 +59,7 @@ for el in dictio:
     counts = dictio[el]["gdna_zerob"]
     total = sum(counts)
     for i in range(0,len(counts)):
-        if counts[i] == total:
+        if counts[i] == total and total > 1:
             ref_dict[el] = i
 
 alt_dict = {}
@@ -67,18 +67,14 @@ alt_dict = {}
 for el in ref_dict:
     ref = ref_dict[el]
     counts = dictio[el]["gdna_plusb"]
-    print counts
+    num_ref = counts[ref]
+    if num_ref == 0:
+        num_ref = 1
     counts_exc = counts[:ref] + [0] + counts[ref+1:]
     maxim = max(counts_exc)
-    print counts_exc
     for i in range(0,len(counts)):
-        if counts_exc[i] == maxim and maxim > 3:
+        if maxim >1 and counts_exc[i] == maxim and 1.0*maxim/num_ref > 0.1:
             alt_dict[el] = i
-#            print counts_exc[i]
-print ref
-print counts
-print counts_exc
-print maxim
 
 for el in alt_dict:
     sel = dictio[el]
