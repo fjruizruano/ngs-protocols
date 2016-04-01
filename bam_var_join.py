@@ -25,7 +25,7 @@ for bam in bams:
     call("""tail -n +2 %s.var | awk {'print $1"&="$2"\t"$10"&="$12"&="$14"&="$16"&="$18"&="$20'}  > %s.var2""" % (bam,bam), shell=True)
     to_join.append(bam+".var2")
 
-call("./join_multiple_lists_var.py %s " % " ".join(to_join), shell=True)
+call("join_multiple_lists_var.py %s " % " ".join(to_join), shell=True)
 
 call("""sed 's/&=/\t/g' toico.txt > toico2.txt""", shell=True)
 
