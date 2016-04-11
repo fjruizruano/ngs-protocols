@@ -94,3 +94,14 @@ w.close()
 
 call("(head -n 2 snps_selected.txt && tail -n +3 snps_selected.txt | sort -k 1,1 -k 2n) > snps_selected2.txt ", shell=True)
 
+w = open("ref_alt.txt","w")
+
+for el in alt_dict:
+    r = ref_dict[el]
+    a = alt_dict[el]
+    seq_name = el.split(".")
+    seq_name = "\t".join(seq_name)
+    w.write("%s\t%s\t%s\n" % (seq_name,str(r),str(a)))
+w.close()
+
+call("sort -k 1,1 -k 2n ref_alt.txt > ref_alt2.txt", shell=True)

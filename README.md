@@ -12,6 +12,7 @@ ngs-protocols
 * blat_recursive_hard.py: Parallelize a BLAT run in several threads with hard options.
 * bowtie2_recursive.py: Map using Bowtie2 with several libraries consecutively.
 * bwa_protocol.py Map using BWA in a single library.
+* count_acgtn.py: Count number of A, C, G, T and N in a multifasta file.
 * count_bases_fastq.py: Count number of nucleotides in one o several FASTQ(.GZ) files.
 * count_kmer.py: Count occurrences from a list of kmers using Jellyfish.
 * count_reads_bam.py: Generate a table with mapped reads counts in several BAM files.
