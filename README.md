@@ -22,7 +22,7 @@ ngs-protocols
 * deconseq_run.py: Run DeconSeq automatically and with several threads.
 * divnuc_bam.py: Calculate nucleotide diversity per site from BAM files.
 * divnuc_plot.py: Calculate nucleotide diversity per window from the output of divnuc_bam.py.
-* divsum_counts.py: Count the number of nucleotides per elements in a RepeatMasker's divsum file.
+* divsum_count.py: Count the number of nucleotides per elements in a RepeatMasker's divsum file.
 * dnapipete_createdb.py: Generate a database compatible with RepeatMasker from the dnaPipeTe
 * extract_member_reads_rexp.py: Extract reads in a specific cluster of RepeatExplorer.
 * extract_no_seq.py: Extract sequecences from a FASTA file absent in a list.
