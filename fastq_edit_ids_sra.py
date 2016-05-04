@@ -49,7 +49,8 @@ for line in data:
             call("fastool --append /%s %s > %s" % (side, line, name), shell=True)
         elif extension == "gz":
             call("zcat %s | fastool --append /%s > %s" % (line,side,name), shell=True)
-        call("""sed -i 's/>%s/%s/g' %s""" % (identifier[1:],identifier,name), shell=True)
+        call("""sed 's/>%s/%s/g' %s > %s.tmp""" % (identifier[1:],identifier,name,name), shell=True)
+        call("mv %s.tmp %s" % (name,name), shell=True)
         li.write(name+"\n")
         
     elif id[-2:] == "/%s" % side:
