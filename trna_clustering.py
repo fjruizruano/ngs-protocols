@@ -48,13 +48,17 @@ for line in ts_data[3:]:
     info = line.split()
     id = info[0]
     num = info[1]
-    begin = int(info[2])-1
+    begin = int(info[2])
     end = int(info[3])
-    if begin < end:
-        ext_seq = dictio[id][begin:end]
+    if begin-1 < end:
+        diff = end-begin
+        if diff <= 116:
+            ext_seq = dictio[id][begin-1:end]
     else:
-        ext_seq = dictio[id][end:begin]
-        ext_seq.reverse_complement()
+        diff = begin - end
+        if diff <= 116:
+            ext_seq = dictio[id][end-1:begin]
+            ext_seq.reverse_complement()
     out.write(">%s_%s\n%s\n" % (id, num, ext_seq))
 
 out.close()
