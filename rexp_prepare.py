@@ -3,7 +3,7 @@
 import sys, os
 from subprocess import call
 
-print "\nUsage: rexp_prepare.py NumberOfPairedReads File_1.fastq File_2.fastq [PREFIX]\n"
+print "\nUsage: rexp_prepare.py NumberOfPairedReads File_1.fastq File_2.fastq MinQual MinLen [PREFIX]\n"
 
 ##read parameters
 #number of reads
@@ -22,9 +22,17 @@ except:
     r1 = raw_input("FASTQ file 1: ")
     r2 = raw_input("FASTQ file 2: ")
 
+mming
+try:
+    mq = sys.argv[4]
+    ml = sys.argv[5]
+except:
+    ml = 101
+    mq = 30
+
 #prefix
 try:
-    prefix = sys.argv[4]
+    prefix = sys.argv[6]
 except:
     prefix = ""
 
@@ -47,7 +55,7 @@ print rrr1
 #len_reads = str(len(head[1])-1)
 
 #Trimming with Trimmomatic
-trimmomatic = "trimmomatic PE -phred33 %s %s %s %s %s %s ILLUMINACLIP:/usr/local/lib/Trimmomatic-0.32/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:30 MINLEN:%s" % (r1, r2, rr1+"_paired.fastq", rr1+"_unpaired.fastq", rr2+"_paired.fastq", rr2+"_unpaired.fastq", "101")
+trimmomatic = "trimmomatic PE -phred33 %s %s %s %s %s %s ILLUMINACLIP:/usr/local/lib/Trimmomatic-0.32/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:%s MINLEN:%s" % (r1, r2, rr1+"_paired.fastq", rr1+"_unpaired.fastq", rr2+"_paired.fastq", rr2+"_unpaired.fastq", mq, ml)
 
 #random selection of reads
 
