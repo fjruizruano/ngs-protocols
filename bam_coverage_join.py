@@ -3,7 +3,7 @@
 import sys
 from subprocess import call
 
-print "bam_coverage_join.py FastaReference ListOfBams"
+print "bam_coverage_join.py FastaReference ListOfBams [Maximum Depth (Default: 8000)]"
 
 try:
     ref = sys.argv[1]
@@ -15,13 +15,18 @@ try:
 except:
     li = raw_input("Introduce list of BAM files: ")
 
+try:
+    depth = sys.argv[3]
+except:
+    depth = 8000
+
 bams = open(li).readlines()
 
 to_join = []
 
 for bam in bams:
     bam = bam[:-1]    
-    call("pysamstats -f %s --type variation %s > %s.var" % (ref,bam,bam), shell=True)
+    call("pysamstats --max-depth=%s -f %s --type variation %s > %s.var" % (depth, ref,bam,bam), shell=True)
     call("""awk {'print $1"popeye"$2"\t"$4'} %s.var > %s.var2""" % (bam,bam), shell=True)
     to_join.append(bam+".var2")
 
