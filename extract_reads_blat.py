@@ -16,7 +16,7 @@ for line in data[5:]:
 
 reads_set = set(reads)
 
-w = open("salida.txt", "w")
+w = open(file+".list", "w")
 
 for r in reads_set:
     w.write("%s\n%s\n" % (r+"1", r+"2"))

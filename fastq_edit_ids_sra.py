@@ -40,7 +40,7 @@ for line in data:
     id = id[0]
     sp = id.find(" ")
 
-    identifier = id.split(":")
+    identifier = id.split(".")
     identifier = identifier[0]
 
     if sp != -1:
@@ -49,8 +49,8 @@ for line in data:
             call("fastool --append /%s %s > %s" % (side, line, name), shell=True)
         elif extension == "gz":
             call("zcat %s | fastool --append /%s > %s" % (line,side,name), shell=True)
-        call("""sed -i 's/>%s/%s/g' %s > name.tmp""" % (identifier[1:],identifier,name,name), shell=True)
-        call("mv %.tmp %s" % (name,name), shell=True)
+        call("""sed 's/>%s/%s/g' %s > %s.tmp""" % (identifier[1:],identifier,name,name), shell=True)
+        call("mv %s.tmp %s" % (name,name), shell=True)
         li.write(name+"\n")
         
     elif id[-2:] == "/%s" % side:

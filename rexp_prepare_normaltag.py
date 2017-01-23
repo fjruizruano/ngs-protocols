@@ -3,7 +3,7 @@
 import sys, os
 from subprocess import call
 
-print "\nUsage: rexp_prepare.py NumberOfPairedReads File_1.fastq File_2.fastq MinQual MinLen [PREFIX]\n"
+print "\nUsage: rexp_prepare.py NumberOfPairedReads File_1.fastq File_2.fastq MinQual MinLen  [PREFIX]\n"
 
 ##read parameters
 #number of reads
@@ -22,7 +22,7 @@ except:
     r1 = raw_input("FASTQ file 1: ")
     r2 = raw_input("FASTQ file 2: ")
 
-mming
+#Trimming
 try:
     mq = sys.argv[4]
     ml = sys.argv[5]
@@ -112,11 +112,11 @@ for x in range(0,len(fastq)):
     if x%8 == 0:
         line = fastq[x]
         line = line.split(" ")
-        line = ">%s%s%s" % (prefix,line[0][1:],"/1\n")
+        line = ">%s%s" % (prefix,line[0][1:])
     elif x%8 == 4:
         line = fastq[x]
         line = line.split(" ")
-        line = ">%s%s%s" % (prefix,line[0][1:],"/2\n")
+        line = ">%s%s" % (prefix,line[0][1:])
     else:
         line = fastq[x]
     fqtemp.write(line)
