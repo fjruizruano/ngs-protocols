@@ -50,20 +50,20 @@ print rr1
 #len_reads = str(len(head[1])-1)
 
 #Trimming with Trimmomatic
-trimmomatic = "trimmomatic SE -phred33 %s %s ILLUMINACLIP:/usr/local/lib/Trimmomatic-0.32/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:%s MINLEN:%s" % (r1, rr1+"_paired.fastq", mq, ml)
+trimmomatic = "trimmomatic SE -phred33 %s %s ILLUMINACLIP:/usr/local/lib/Trimmomatic-0.32/adapters/TruSeq3-SE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:%s MINLEN:%s" % (r1, rr1+"_trimmed.fastq", mq, ml)
 
 print trimmomatic
 
 #random selection of reads
 
-fastq_random_1 = "seqtk sample -s 100 %s %s > %s" % (rr1+"_paired.fastq",sel_reads,rr1+"_paired.fastq.subset")
+fastq_random_1 = "seqtk sample -s 100 %s %s > %s" % (rr1+"_trimmed.fastq",sel_reads,rr1+"_trimmed.fastq.subset")
 
 #convert fastq to fasta
-fastq_to_fasta =  "seqtk seq -a %s > %s" % (rr1+"_paired.fastq.subset",rr1+"_all_"+prefix+str(sel_reads)+".fasta")
+fastq_to_fasta =  "seqtk seq -a %s > %s" % (rr1+"_trimmed.fastq.subset",rr1+"_all_"+prefix+str(sel_reads)+".fasta")
 
 #Try to run Trimmomatic
 
-if rr1+"_paired.fastq" not in files:
+if rr1+"_trimmed.fastq" not in files:
     try:
         print "Running Trimmomatic\n"
         print trimmomatic
