@@ -76,6 +76,7 @@ ngs-protocols
 * split_illumina.py: Split FASTQ files from Illumina sequencing in several files.
 * ssaha2_run.py: Run SSAHA2 mapping in several libraries.
 * ssaha2_run_multi.py: Run SSAHA2 mapping for several big libraries and parallized in different threads.
+* ssaha2_run_multi_se.py: Run SSAHA2 mapping for several big libraries and parallized in different threads using paired-end reads.
 * stampy_protocol.py: Run Stampy mapping.
 * subsampler.py: Sumsample sequences from FASTA and FASTQ files.
 * trinity_extract_longest.py: Extract the longest contig for each gene in a Trinity assembly.
