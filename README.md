@@ -16,6 +16,7 @@ ngs-protocols
 * count_bases_fastq.py: Count number of nucleotides in one o several FASTQ(.GZ) files.
 * count_kmer.py: Count occurrences from a list of kmers using Jellyfish.
 * count_reads_bam.py: Generate a table with mapped reads counts in several BAM files.
+* coverage_graphics.py: Generate graphics using the ouput from bam_coverage_join.py and a samples file.
 * coverage_seq_bed.py: Count number of mapped nucleotides per reference sequence in BED files.
 * coverage_window.py: Count number of mapped nucleotides in a sliding window of defined size.
 * cut_seq_unequal.py: Trim sequences from a FASTA file in subsequence of the defined size.
