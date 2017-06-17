@@ -59,4 +59,6 @@ call("cat %s > %s.fam" % (" ".join(splits_fam), dat), shell=True)
 
 print splits
 
+call("rm %s %s" % (" ".join(splits), " ".join(splits_fam)), shell=True)
+
 call("calcDivergenceFromAlign.pl -s %s.fam.divsum %s.fam" % (dat,dat), shell=True)
