@@ -109,7 +109,7 @@ for n in range(0,len(files)/2):
     print "Generating BAM file"
     call("samtools view -F 4 -bt %s.fai %s > %s" % (ref,"all.sam",ext1[0]+".bam"), shell=True)
     call("rm all.sam", shell=True)
-    call("samtools sort %s %s" % (ext1[0]+".bam", ext1[0]+"_mapped"), shell=True)
+    call("samtools sort -T aln.sorted %s -o %s" % (ext1[0]+".bam", ext1[0]+"_mapped.bam"), shell=True)
     call("rm %s" % (ext1[0]+".bam"), shell=True)
     call("samtools index %s" % (ext1[0]+"_mapped.bam"), shell=True)
 

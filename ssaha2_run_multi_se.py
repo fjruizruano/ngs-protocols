@@ -98,7 +98,7 @@ for n in range(0,len(files)):
     print "samtools view -F 4 -bt %s.fai %s > %s" % (ref,"all.sam",ext1[0]+".bam")
     call("samtools view -F 4 -bt %s.fai %s > %s" % (ref,"all.sam",ext1[0]+".bam"), shell=True)
     call("rm all.sam", shell=True)
-    call("samtools sort %s -o %s" % (ext1[0]+".bam", ext1[0]+"_mapped.bam"), shell=True)
+    call("samtools sort align.sorted %s -o %s" % (ext1[0]+".bam", ext1[0]+"_mapped.bam"), shell=True)
     call("rm %s" % (ext1[0]+".bam"), shell=True)
     call("samtools index %s" % (ext1[0]+"_mapped.bam"), shell=True)
 
