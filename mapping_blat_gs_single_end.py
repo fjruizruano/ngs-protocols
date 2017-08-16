@@ -41,7 +41,7 @@ for n in range(0,len(files)):
     call("seqtk seq -a %s > %s" % (file1,file1[:-3]+".fa"),shell=True)
 
     # run blat to find reads
-    call("blat_recursive_hard.py %s %s %s" % (threads, "tmp.list", reference), shell=True)
+    call("blat_recursive.py %s %s %s" % (threads, "tmp.list", reference), shell=True)
 
     # remove fasta and temp list
     call("rm %s" % file1[:-3]+".fa", shell=True)
