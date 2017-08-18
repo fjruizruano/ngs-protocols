@@ -90,7 +90,7 @@ for line in coverages_norm[2:]:
 #print li_genes
 
 r_script = open("r_script.R","w")
-r_script.write("library(grid)\nlibrary(ggplot2)\n")
+r_script.write("library(grid)\nlibrary(gridExtra)\nlibrary(ggplot2)\n")
 palette = ["red", "blue", "green3", "black", "cyan", "magenta", "yellow", "gray"]
 i = 0
 for gene in li_genes:
@@ -175,7 +175,7 @@ for gene in li_genes:
     condit = []
     for condition in li_conditions:
         condit.append("ggplotGrob(%s)" % condition)
-    code = """pdf("tmp_%s.pdf", onefile = TRUE)\ngrid.newpage()\ngrid.draw(rbind(%s, size="last"))\ndev.off()""" % (str_i, ",".join(condit))
+    code = """pdf("tmp_%s.pdf", onefile = TRUE)\ngrid.newpage()\ngrid.draw(rbind(%s, size="max"))\ndev.off()""" % (str_i, ",".join(condit))
     r_script.write(code)
 
 r_script.close()
