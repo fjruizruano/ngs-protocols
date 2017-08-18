@@ -65,7 +65,7 @@ for line in coverages[2:]:
     s_norm.write("\t".join(normalized)+"\n")
 s_norm.close()
 
-print di_samples
+#print di_samples
 
 coverages_norm = open(coverage_file+".norm").readlines()
 
@@ -86,11 +86,11 @@ for line in coverages_norm[2:]:
     else:
         genes[info[0]].append(main_info)
 
-print genes
-print li_genes
+#print genes
+#print li_genes
 
 r_script = open("r_script.R","w")
-r_script.write("library(gridExtra)\nlibrary(grid)\nlibrary(ggplot2)\n")
+r_script.write("library(grid)\nlibrary(ggplot2)\n")
 palette = ["red", "blue", "green3", "black", "cyan", "magenta", "yellow", "gray"]
 i = 0
 for gene in li_genes:
@@ -143,7 +143,16 @@ for gene in li_genes:
 
     r_script.write("""\nfas2 <- read.table("tmp_%s.txt", header=TRUE)\n""" % (str_i))
 
+    k = 0
+
     for condition in li_conditions: #gDNA or RNA
+
+        k += 1
+        if k == 1:
+            title_code = """+labs(title=\042%s\134n\042)""" % gene
+        else:
+            title_code = ""
+
         j = -1
         pat = []
         sta = []
@@ -157,16 +166,16 @@ for gene in li_genes:
             code = code + """+geom_ribbon(aes(ymin=fas2$%s_stdevd,ymax=fas2$%s_stdevu), alpha=0.2,fill="%s")""" % (s,s,palette[j])
 
         if condition.startswith("gdna"): # zb or pb
-            code = code + """+scale_colour_manual(name="names",labels=c(%s),values=c(%s))+xlab("Position")+ylab("Number of copies")+theme_bw()\n""" % (",".join(sta[::-1]),",".join(pat[::-1]))
+            code = code + """+scale_colour_manual(name="names",labels=c(%s),values=c(%s))+xlab("Position")+ylab("Number of copies")+theme_bw()%s\n""" % (",".join(sta[::-1]),",".join(pat[::-1]),title_code)
             r_script.write(code)
 
         elif condition.startswith("rna"):
-            code = code + """+scale_colour_manual(name="names",labels=c(%s),values=c(%s))+xlab("Position")+ylab("Expression Level")+theme_bw()\n""" % (",".join(sta[::-1]),",".join(pat[::-1]))
+            code = code + """+scale_colour_manual(name="names",labels=c(%s),values=c(%s))+xlab("Position")+ylab("Expression Level")+theme_bw()%s\n""" % (",".join(sta[::-1]),",".join(pat[::-1]),title_code)
             r_script.write(code)
     condit = []
     for condition in li_conditions:
-        condit.append(condition)
-    code = """pdf("tmp_%s.pdf", onefile = TRUE)\ngrid.arrange(%s,ncol=1,top="%s")\ndev.off()""" % (str_i, ",".join(condit), gene)
+        condit.append("ggplotGrob(%s)" % condition)
+    code = """pdf("tmp_%s.pdf", onefile = TRUE)\ngrid.newpage()\ngrid.draw(rbind(%s, size="last"))\ndev.off()""" % (str_i, ",".join(condit))
     r_script.write(code)
 
 r_script.close()
