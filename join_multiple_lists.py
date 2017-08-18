@@ -13,7 +13,7 @@ for file in files:
     names.append(name[0])
     di[file] = {}
     data = open(file).readlines()
-    for line in data:
+    for line in data[1:]:
         info = line.split()
         di[file][info[0]] = info[1]
         elements.append(info[0])
@@ -29,7 +29,7 @@ for el in elements:
             di_all[el].append("0")
 
 w = open("toico.txt","w")
-header = ["sequence"] + names
+header = ["sequencepopeyeposition"] + names
 header = "\t".join(header)
 w.write(header+"\n")
 
