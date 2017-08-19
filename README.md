@@ -74,6 +74,7 @@ ngs-protocols
 * snp_calling_bchr.py: SNP calling for B chromosomes.
 * snp_calling_dn_ds: Perform a SNP calling to calculate the dn/dS from a BAM file.
 * split_illumina.py: Split FASTQ files from Illumina sequencing in several files.
+* sra_download.py: Download SRA files using a list of SRA's accesion numbers.
 * ssaha2_run.py: Run SSAHA2 mapping in several libraries.
 * ssaha2_run_multi.py: Run SSAHA2 mapping for several big libraries and parallized in different threads.
 * ssaha2_run_multi_se.py: Run SSAHA2 mapping for several big libraries and parallized in different threads using paired-end reads.
