@@ -80,3 +80,16 @@ for n in range(0,len(files)):
     # remove FASTQ files
 #    call("rm %s" % file1+".fq",shell=True)
 #    call("rm %s" % file2+".fq",shell=True)
+
+    # SSAHA2
+    if map_question == "ssaha2" or map_question == "ssaha2div":
+        call("ls %s > ssaha2_list.txt" % (file1[:-3]+".sel.fq"), shell=True)
+        call("ssaha2_run_multi_se.py ssaha2_list.txt %s %s" % (reference,threads), shell=True)
+        call("rm ssaha2_list.txt", shell=True)
+#        if map_question == "ssaha2div":
+#            file1_s = file1.split(".")
+#            call("divnuc_bam.py %s %s" % (reference, file1_s[0]+"_mapped.bam"), shell=True)
+
+    #Nothing more happens
+    if map_question == "nomap":
+        pass
