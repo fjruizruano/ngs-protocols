@@ -38,8 +38,9 @@ for n in range(0,len(files)/2):
     size = size[1]
     size = size.split()
     size = int(size[0])
+#    size = 5549486972
 
-    split_size = 40000000
+    split_size = 8000000
     split_n = size/split_size
     split_check = size%split_size
     if split_check != 0:
@@ -49,9 +50,9 @@ for n in range(0,len(files)/2):
     call("echo -n > %s" % (file2[:-3]+".subset.sel.fq"), shell=True)
 
     for m in range(0, split_n+split_check):
-        print "sed -n \042%s, %sp\042 %s > %s" % (str(m*split_size+1), str(m*split_size+split_size), file1, file1[:-3]+".subset.fq")
-        call("sed -n \042%s, %sp\042 %s > %s" % (str(m*split_size+1), str(m*split_size+split_size), file1, file1[:-3]+".subset.fq"), shell=True)
-        call("sed -n \042%s, %sp\042 %s > %s" % (str(m*split_size+1), str(m*split_size+split_size), file2, file2[:-3]+".subset.fq"), shell=True)
+        print "sed \047%s,$!d;%sq\047 %s > %s" % (str(m*split_size+1), str(m*split_size+split_size), file1, file1[:-3]+".subset.fq")
+        call("sed \047%s,$!d;%sq\047 %s > %s" % (str(m*split_size+1), str(m*split_size+split_size), file1, file1[:-3]+".subset.fq"), shell=True)
+        call("sed \047%s,$!d;%sq\047 %s > %s" % (str(m*split_size+1), str(m*split_size+split_size), file2, file2[:-3]+".subset.fq"), shell=True)
 
         # convert fq.gz to fasta
         call("seqtk seq -a %s > %s" % (file1[:-3]+".subset.fq",file1[:-3]+".subset.fa"),shell=True)
@@ -93,12 +94,14 @@ for n in range(0,len(files)/2):
         w.close()
 
         # remove uniq files
-#        call("rm uniq_1.txt uniq_2.txt uniq_all.txt uniq_trimmed.txt uniq_uniq.txt", shell=True)
+        call("rm uniq_1.txt uniq_2.txt uniq_all.txt uniq_trimmed.txt uniq_uniq.txt", shell=True)
 
         # get reads
-        call("seqtk subseq %s %s >> %s" % (file1,file1[:-3]+".subset.all.psl.list",file1[:-3]+".subset.sel.fq"), shell=True)
-        call("seqtk subseq %s %s >> %s" % (file2,file1[:-3]+".subset.all.psl.list",file2[:-3]+".subset.sel.fq"), shell=True)
-
+        call("seqtk subseq %s %s >> %s" % (file1[:-3]+".subset.fq",file1[:-3]+".subset.all.psl.list",file1[:-3]+".subset.sel.fq"), shell=True)
+        call("seqtk subseq %s %s >> %s" % (file2[:-3]+".subset.fq",file1[:-3]+".subset.all.psl.list",file2[:-3]+".subset.sel.fq"), shell=True)
+#        print "grep -F -w -A3 -f %s %s | grep -v \047^--$\047 >> %s" % (file1[:-3]+".subset.all.psl.list",file1,file1[:-3]+".subset.sel.fq")
+#        call("grep -F -w -A3 -f %s %s | grep -v \047^--$\047 >> %s" % (file1[:-3]+".subset.all.psl.list",file1,file1[:-3]+".subset.sel.fq"), shell=True)
+#        call("grep -F -w -A3 -f %s %s | grep -v \047^--$\047 >> %s" % (file1[:-3]+".subset.all.psl.list",file2,file2[:-3]+".subset.sel.fq"), shell=True)
         # remove FASTQ files
     #    call("rm %s" % file1+".fq",shell=True)
     #    call("rm %s" % file2+".fq",shell=True)
@@ -152,9 +155,9 @@ for n in range(0,len(files)/2):
 #            file1_s = file1.split(".")
 #            call("divnuc_bam.py %s %s" % (reference, file1_s[0]+"_mapped.bam"), shell=True)
 
-#    #Nothing more happens
-#    if map_question == "nomap":
-#        pass
+    #Nothing more happens
+    if map_question == "nomap":
+        pass
 
 # remove fasta and temp list
 #call("rm %s" % file1[:-3]+".subset.fa", shell=True)
