@@ -48,8 +48,10 @@ ngs-protocols
 * join_rm_list.py: Join two files with RepatMasker nucleotide counts.
 * kimura_window.py: Calculate kimura divergence per window using the RepeatMasker's script.
 * kmer_to_fasta.py: Generate a FASTA file from a list of kmers.
-* mapping_blat_gs.py: Extract matching reads with BLAT and optionally launch Newbler, RepeatMasker or SSAHA2
-* mapping_blat_gs_hard.py: Extract matchin reads with hard options of BLAT and optionally launch Newbler, RepeatMasker or SSAHA2.
+* mapping_blat_gs.py: Extract matching reads with BLAT and optionally launch Newbler, RepeatMasker or SSAHA2.
+* mapping_blat_gs_hard.py: Extract matching reads with hard options of BLAT and optionally launch Newbler, RepeatMasker or SSAHA2.
+* mapping_blat_gs_saver.py: Version of mapping_blat_gs.py for big libraries.
+* mapping_blat_gs_single_end.py: Version of mapping_blat_gs.py for single-end libraries.
 * mitobim_run.py: Run MITObim with several protocols.
 * mreps_extract.py: Generate a FASTA file with tandem sequences using a MREPS output.
 * reduce_bam.py: Filter out unmapped paired reads from a BAM file.
@@ -77,7 +79,7 @@ ngs-protocols
 * sra_download.py: Download SRA files using a list of SRA's accesion numbers.
 * ssaha2_run.py: Run SSAHA2 mapping in several libraries.
 * ssaha2_run_multi.py: Run SSAHA2 mapping for several big libraries and parallized in different threads.
-* ssaha2_run_multi_se.py: Run SSAHA2 mapping for several big libraries and parallized in different threads using paired-end reads.
+* ssaha2_run_multi_se.py: Run SSAHA2 mapping for several big libraries and parallized in different threads using single-end libraries.
 * stampy_protocol.py: Run Stampy mapping.
 * subsampler.py: Sumsample sequences from FASTA and FASTQ files.
 * trinity_extract_longest.py: Extract the longest contig for each gene in a Trinity assembly.
