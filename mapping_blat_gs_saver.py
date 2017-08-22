@@ -31,24 +31,11 @@ except:
 
 files = open(lista).readlines()
 
-#lines_per_file = 4000000
-lines_per_file = 3999996
+lines_per_file = 20000000
 
 for n in range(0,len(files)/2):
     file1 = files[n*2][:-1]
     file2 = files[(n*2)+1][:-1]
-
-#    size = getstatusoutput("wc -l %s" % file1)
-#    size = size[1]
-#    size = size.split()
-#    size = int(size[0])
-#    size = 5549486972
-
-#    split_size = 8000000
-#    split_n = size/split_size
-#    split_check = size%split_size
-#    if split_check != 0:
-#        split_check = 1
 
     call("echo -n > %s" % (file1[:-3]+".subset.sel.fq"), shell=True)
     call("echo -n > %s" % (file2[:-3]+".subset.sel.fq"), shell=True)
@@ -66,7 +53,8 @@ for n in range(0,len(files)/2):
             if smallfile1:
                 smallfile1.close()
                 smallfile2.close()
-#                call("wc -l %s" % (small_filename1), shell=True)
+
+                # STARTING SELECTION
 
                 # convert fq.gz to fasta
                 call("seqtk seq -a %s > %s" % (file1[:-3]+".subset.fq",file1[:-3]+".subset.fa"),shell=True)
@@ -116,7 +104,7 @@ for n in range(0,len(files)/2):
         #        call("grep -F -w -A3 -f %s %s | grep -v \047^--$\047 >> %s" % (file1[:-3]+".subset.all.psl.list",file1,file1[:-3]+".subset.sel.fq"), shell=True)
         #        call("grep -F -w -A3 -f %s %s | grep -v \047^--$\047 >> %s" % (file1[:-3]+".subset.all.psl.list",file2,file2[:-3]+".subset.sel.fq"), shell=True)
 
-            print "newfile"
+            print "\nAnalyzing lines %s to %s\n" % (str(lineno1), str(lineno1+lines_per_file))
             small_filename1 = file1[:-3]+".subset.fq"
             small_filename2 = file2[:-3]+".subset.fq"
             smallfile1 = open(small_filename1, "w")
@@ -126,7 +114,8 @@ for n in range(0,len(files)/2):
     if smallfile1:
         smallfile1.close()
         smallfile2.close()
-#        call("wc -l %s" % (small_filename1), shell=True)
+
+        # STARTING SELECTION
 
         # convert fq.gz to fasta
         call("seqtk seq -a %s > %s" % (file1[:-3]+".subset.fq",file1[:-3]+".subset.fa"),shell=True)
@@ -182,7 +171,7 @@ for n in range(0,len(files)/2):
     call("rm %s" % (file2[:-3]+".subset.fq"), shell=True)
     call("rm %s" % (file1[:-3]+".subset.fa"), shell=True)
     call("rm %s" % (file2[:-3]+".subset.fa"), shell=True)
-
+    call("rm tmp.list", shell=True)
 
 
 #    #RepeatMasker and Abundance/Divergence analysis
@@ -238,7 +227,3 @@ for n in range(0,len(files)/2):
     if map_question == "nomap":
         pass
 
-# remove fasta and temp list
-#call("rm %s" % file1[:-3]+".subset.fa", shell=True)
-#call("rm %s" % file2[:-3]+".subset.fa", shell=True)
-call("rm tmp.list", shell=True)
