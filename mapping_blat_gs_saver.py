@@ -6,6 +6,7 @@ from commands import getstatusoutput
 from os import listdir
 from os.path import isfile, join
 import itertools
+import gzip
 
 print "\nUsage: mapping_blat_gs.py ListOfSequences Reference NumberOfThreads [map/div/mapdiv/ssaha2/ssaha2div/nomap]\n"
 
@@ -42,8 +43,13 @@ for n in range(0,len(files)/2):
 
     smallfile1 = None
     smallfile2 = None
-    bigfile1 = open(file1)
-    bigfile2 = open(file2)
+
+    if file1.endswith("fastq") or file1.endswith("fq"):
+        bigfile1 = open(file1)
+        bigfile2 = open(file2)
+    elif file1.endswith("fastq.gz") or file1.endswith("fq.gz"):
+        bigfile1 = gzip.open(file1)
+        bigfile2 = gzip.open(file2)
 
     for l1, l2 in itertools.izip(enumerate(bigfile1), enumerate(bigfile2)):
         lineno1 = l1[0]
