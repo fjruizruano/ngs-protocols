@@ -5,6 +5,7 @@ from subprocess import call
 from commands import getstatusoutput
 from os import listdir
 from os.path import isfile, join
+import itertools
 
 print "\nUsage: mapping_blat_gs.py ListOfSequences Reference NumberOfThreads [map/div/mapdiv/ssaha2/ssaha2div/nomap]\n"
 
@@ -30,29 +31,102 @@ except:
 
 files = open(lista).readlines()
 
+#lines_per_file = 4000000
+lines_per_file = 3999996
+
 for n in range(0,len(files)/2):
     file1 = files[n*2][:-1]
     file2 = files[(n*2)+1][:-1]
 
-    size = getstatusoutput("wc -l %s" % file1)
-    size = size[1]
-    size = size.split()
-    size = int(size[0])
+#    size = getstatusoutput("wc -l %s" % file1)
+#    size = size[1]
+#    size = size.split()
+#    size = int(size[0])
 #    size = 5549486972
 
-    split_size = 8000000
-    split_n = size/split_size
-    split_check = size%split_size
-    if split_check != 0:
-        split_check = 1
+#    split_size = 8000000
+#    split_n = size/split_size
+#    split_check = size%split_size
+#    if split_check != 0:
+#        split_check = 1
 
     call("echo -n > %s" % (file1[:-3]+".subset.sel.fq"), shell=True)
     call("echo -n > %s" % (file2[:-3]+".subset.sel.fq"), shell=True)
 
-    for m in range(0, split_n+split_check):
-        print "sed \047%s,$!d;%sq\047 %s > %s" % (str(m*split_size+1), str(m*split_size+split_size), file1, file1[:-3]+".subset.fq")
-        call("sed \047%s,$!d;%sq\047 %s > %s" % (str(m*split_size+1), str(m*split_size+split_size), file1, file1[:-3]+".subset.fq"), shell=True)
-        call("sed \047%s,$!d;%sq\047 %s > %s" % (str(m*split_size+1), str(m*split_size+split_size), file2, file2[:-3]+".subset.fq"), shell=True)
+    smallfile1 = None
+    smallfile2 = None
+    bigfile1 = open(file1)
+    bigfile2 = open(file2)
+
+    for l1, l2 in itertools.izip(enumerate(bigfile1), enumerate(bigfile2)):
+        lineno1 = l1[0]
+        line1 = l1[1]
+        line2 = l2[1]
+        if lineno1 % lines_per_file == 0:
+            if smallfile1:
+                smallfile1.close()
+                smallfile2.close()
+#                call("wc -l %s" % (small_filename1), shell=True)
+
+                # convert fq.gz to fasta
+                call("seqtk seq -a %s > %s" % (file1[:-3]+".subset.fq",file1[:-3]+".subset.fa"),shell=True)
+                call("seqtk seq -a %s > %s" % (file2[:-3]+".subset.fq",file2[:-3]+".subset.fa"),shell=True)
+
+                w = open("tmp.list","w")
+                w.write(file1[:-3]+".subset.fa\n")
+                w.write(file2[:-3]+".subset.fa\n")
+                w.close()
+
+                # run blat to find reads
+                call("blat_recursive.py %s %s %s" % (threads, "tmp.list", reference), shell=True)
+
+                #get unique reads
+                call("awk {\047print $10\047} %s | uniq > uniq_1.txt" % (file1[:-3]+".subset.fa.blat"), shell=True)
+                call("awk {\047print $10\047} %s | uniq > uniq_2.txt" % (file2[:-3]+".subset.fa.blat"), shell=True)
+                call("cat uniq_1.txt uniq_2.txt > uniq_all.txt", shell=True)
+
+                # remove psl
+                call("rm %s" % file1[:-3]+".subset.fa.blat", shell=True)
+                call("rm %s" % file2[:-3]+".subset.fa.blat", shell=True)
+
+                # get read list
+                reads_file = open("uniq_all.txt").readlines()
+                trimmed_reads = open("uniq_trimmed.txt" ,"w")
+                for read in reads_file:
+                    try:
+                        read = read[:-3]
+                        trimmed_reads.write(read+"\n")
+                    except:
+                        pass
+                trimmed_reads.close()
+
+                call("sort %s | uniq > uniq_uniq.txt " %  "uniq_trimmed.txt", shell=True)
+                w = open(file1[:-3]+".subset.all.psl.list","w")
+                uu = open("uniq_uniq.txt").readlines()
+                for l in uu:
+                    w.write("%s\n%s\n" % (l[:-1]+"/1",l[:-1]+"/2"))
+                w.close()
+
+                # remove uniq files
+                call("rm uniq_1.txt uniq_2.txt uniq_all.txt uniq_trimmed.txt uniq_uniq.txt", shell=True)
+
+                # get reads
+                call("seqtk subseq %s %s >> %s" % (file1[:-3]+".subset.fq",file1[:-3]+".subset.all.psl.list",file1[:-3]+".subset.sel.fq"), shell=True)
+                call("seqtk subseq %s %s >> %s" % (file2[:-3]+".subset.fq",file1[:-3]+".subset.all.psl.list",file2[:-3]+".subset.sel.fq"), shell=True)
+        #        call("grep -F -w -A3 -f %s %s | grep -v \047^--$\047 >> %s" % (file1[:-3]+".subset.all.psl.list",file1,file1[:-3]+".subset.sel.fq"), shell=True)
+        #        call("grep -F -w -A3 -f %s %s | grep -v \047^--$\047 >> %s" % (file1[:-3]+".subset.all.psl.list",file2,file2[:-3]+".subset.sel.fq"), shell=True)
+
+            print "newfile"
+            small_filename1 = file1[:-3]+".subset.fq"
+            small_filename2 = file2[:-3]+".subset.fq"
+            smallfile1 = open(small_filename1, "w")
+            smallfile2 = open(small_filename2, "w")
+        smallfile1.write(line1)
+        smallfile2.write(line2)
+    if smallfile1:
+        smallfile1.close()
+        smallfile2.close()
+#        call("wc -l %s" % (small_filename1), shell=True)
 
         # convert fq.gz to fasta
         call("seqtk seq -a %s > %s" % (file1[:-3]+".subset.fq",file1[:-3]+".subset.fa"),shell=True)
@@ -99,13 +173,18 @@ for n in range(0,len(files)/2):
         # get reads
         call("seqtk subseq %s %s >> %s" % (file1[:-3]+".subset.fq",file1[:-3]+".subset.all.psl.list",file1[:-3]+".subset.sel.fq"), shell=True)
         call("seqtk subseq %s %s >> %s" % (file2[:-3]+".subset.fq",file1[:-3]+".subset.all.psl.list",file2[:-3]+".subset.sel.fq"), shell=True)
-#        print "grep -F -w -A3 -f %s %s | grep -v \047^--$\047 >> %s" % (file1[:-3]+".subset.all.psl.list",file1,file1[:-3]+".subset.sel.fq")
 #        call("grep -F -w -A3 -f %s %s | grep -v \047^--$\047 >> %s" % (file1[:-3]+".subset.all.psl.list",file1,file1[:-3]+".subset.sel.fq"), shell=True)
 #        call("grep -F -w -A3 -f %s %s | grep -v \047^--$\047 >> %s" % (file1[:-3]+".subset.all.psl.list",file2,file2[:-3]+".subset.sel.fq"), shell=True)
-        # remove FASTQ files
-    #    call("rm %s" % file1+".fq",shell=True)
-    #    call("rm %s" % file2+".fq",shell=True)
-    
+
+    #remove list file
+    call("rm %s" % (file1[:-3]+".subset.all.psl.list"), shell=True)
+    call("rm %s" % (file1[:-3]+".subset.fq"), shell=True)
+    call("rm %s" % (file2[:-3]+".subset.fq"), shell=True)
+    call("rm %s" % (file1[:-3]+".subset.fa"), shell=True)
+    call("rm %s" % (file2[:-3]+".subset.fa"), shell=True)
+
+
+
 #    #RepeatMasker and Abundance/Divergence analysis
 #    if map_question == "div" or map_question == "mapdiv":
 #        call("seqtk seq -a %s > %s" % (file1[:-3]+".sel.fq", file1[:-3]+".sel.fa"), shell=True)
