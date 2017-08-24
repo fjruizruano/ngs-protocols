@@ -39,10 +39,10 @@ for n in range(0,len(samples)):
 
     # creating conditions dictionary
     if cond[0] not in di_conditions:
-        di_conditions[cond[0]] = set([info[1]])
+        di_conditions[cond[0]] = [info[1]]
         li_conditions.append(cond[0])
-    else:
-        di_conditions[cond[0]].add(info[1])
+    elif info[1] not in di_conditions[cond[0]]:
+        di_conditions[cond[0]].append(info[1])
 
     # creating samples dictionary
     if info[1] not in di_samples:
@@ -146,6 +146,7 @@ for gene in li_genes:
     k = 0
 
     for condition in li_conditions: #gDNA or RNA
+        print condition
 
         k += 1
         if k == 1:
@@ -157,20 +158,24 @@ for gene in li_genes:
         pat = []
         sta = []
         states = di_conditions[condition]
+        states_inv = states[::-1]
+        print states
         code = """%s <- ggplot(fas2,aes(fas2$position))""" % (condition)
-        for s in states:
-            j += 1
-            pat.append("\042%s\042" % palette[j])
-            sta.append("\042%s\042" % s)
-            code = code + """+geom_line(aes(y=fas2$%s_mean,colour="%s"))""" % (s, palette[j])
-            code = code + """+geom_ribbon(aes(ymin=fas2$%s_stdevd,ymax=fas2$%s_stdevu), alpha=0.2,fill="%s")""" % (s,s,palette[j])
+        color = len(states)
+        for s in states_inv:
+            print s
+            sta.insert(0,"\042%s\042=\042%s\042" % (str(color),palette[color-1]))
+            pat.insert(0,"\042%s\042=\042%s\042" % (str(color),s))
+            code = code + """+geom_line(aes(y=fas2$%s_mean,colour="%s"))""" % (s, str(color))
+            code = code + """+geom_ribbon(aes(ymin=fas2$%s_stdevd,ymax=fas2$%s_stdevu), alpha=0.2,fill="%s")""" % (s,s,palette[color-1])
+            color -= 1
 
         if condition.startswith("gdna"): # zb or pb
-            code = code + """+scale_colour_manual(name="names",labels=c(%s),values=c(%s))+xlab("Position")+ylab("Number of copies")+theme_bw()%s\n""" % (",".join(sta[::-1]),",".join(pat[::-1]),title_code)
+            code = code + """+scale_colour_manual(name="condition",values=c(%s),labels=c(%s))+xlab("Position")+ylab("Number of copies")+theme_bw()%s\n""" % (",".join(sta),",".join(pat),title_code)
             r_script.write(code)
 
         elif condition.startswith("rna"):
-            code = code + """+scale_colour_manual(name="names",labels=c(%s),values=c(%s))+xlab("Position")+ylab("Expression Level")+theme_bw()%s\n""" % (",".join(sta[::-1]),",".join(pat[::-1]),title_code)
+            code = code + """+scale_colour_manual(name="condition",values=c(%s),labels=c(%s))+xlab("Position")+ylab("Expression Level")+theme_bw()%s\n""" % (",".join(sta),",".join(pat),title_code)
             r_script.write(code)
     condit = []
     for condition in li_conditions:
