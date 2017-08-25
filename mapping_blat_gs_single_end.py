@@ -77,6 +77,9 @@ for n in range(0,len(files)):
     # get reads
     call("seqtk subseq %s %s > %s" % (file1,file1[:-3]+".all.psl.list",file1[:-3]+".sel.fq"), shell=True)
 
+    #remove list
+    call("rm %s" % (file1[:-3]+".all.psl.list"), shell=True)
+
     # remove FASTQ files
 #    call("rm %s" % file1+".fq",shell=True)
 #    call("rm %s" % file2+".fq",shell=True)
