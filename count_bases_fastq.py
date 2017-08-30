@@ -9,7 +9,7 @@ print "Usage: count_bases_fastq.py file_1.fq [file_2.fq file_1.fastq.gz file_2.f
 narg = len(sys.argv)
 files = sys.argv[1:narg]
 
-output = open("count_bases.txt","w")
+output = open("count_bases.txt","a")
 output.write("file\tnumber of bases\n")
 print "file\tnumber of bases"
 
