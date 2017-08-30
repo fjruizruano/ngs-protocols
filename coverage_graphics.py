@@ -146,7 +146,7 @@ for gene in li_genes:
     k = 0
 
     for condition in li_conditions: #gDNA or RNA
-        print condition
+        #print condition
 
         k += 1
         if k == 1:
@@ -159,11 +159,11 @@ for gene in li_genes:
         sta = []
         states = di_conditions[condition]
         states_inv = states[::-1]
-        print states
+        #print states
         code = """%s <- ggplot(fas2,aes(fas2$position))""" % (condition)
         color = len(states)
         for s in states_inv:
-            print s
+            #print s
             sta.insert(0,"\042%s\042=\042%s\042" % (str(color),palette[color-1]))
             pat.insert(0,"\042%s\042=\042%s\042" % (str(color),s))
             code = code + """+geom_line(aes(y=fas2$%s_mean,colour="%s"))""" % (s, str(color))
