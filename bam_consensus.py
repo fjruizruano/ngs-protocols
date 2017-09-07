@@ -14,6 +14,8 @@ vardata = open(varfile).readlines()
 
 keys = {0:"N",1:"N",2:"A",3:"C",4:"T",5:"G"}
 
+seq_dict = {}
+
 out = open("output.txt", "w")
 
 for line in vardata[2:]:
@@ -24,10 +26,15 @@ for line in vardata[2:]:
         nums_dict[n] = nums[n]
     sorted_nums = sorted(nums_dict.items(), key=operator.itemgetter(1))
     nucleotide = sorted_nums[5][0]
-    out.write(keys[nucleotide])
+    base = keys[nucleotide]
+    if data[0] in seq_dict:
+        seq_dict[data[0]].append(base)
+    else:
+        seq_dict[data[0]] = [base]
 
-print sorted_nums
-print nucleotide
-print keys[nucleotide]
+for el in seq_dict:
+    out.write(">%s\n" % (el))
+    out.write("".join(seq_dict[el]))
+    out.write("\n")
 
 out.close()
