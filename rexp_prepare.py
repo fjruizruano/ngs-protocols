@@ -22,7 +22,7 @@ except:
     r1 = raw_input("FASTQ file 1: ")
     r2 = raw_input("FASTQ file 2: ")
 
-mming
+#Trimming
 try:
     mq = sys.argv[4]
     ml = sys.argv[5]
