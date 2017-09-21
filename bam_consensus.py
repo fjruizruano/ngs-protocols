@@ -39,8 +39,9 @@ for m in range(0,len(samples)):
         seq_dict[data[0]].append(base)
     else:
         seq_dict[data[0]] = [base]
+  out.write(">%s\n" % (samples[m]))
   for el in seq_dict:
-    out.write(">%s_%s\n" % (samples[m],el))
+#    out.write(">%s_%s\n" % (samples[m],el))
     out.write("".join(seq_dict[el]))
     out.write("\n")
 
