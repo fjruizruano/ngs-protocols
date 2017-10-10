@@ -12,6 +12,9 @@ except:
 li = open(list).readlines()
 
 for file in li:
+
+    print "Unshuffling " + file
+
     file = file[:-1]
 
     data = open(file).readlines()
