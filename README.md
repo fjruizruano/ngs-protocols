@@ -5,6 +5,7 @@ ngs-protocols
 
 * FastA.split.pl: Split FASTA files in several subfiles.
 * FastQ.split.pl: Split FASTQ files in several subfiles.
+* bam_consensus.py: Get majority consensus sequences for BAM files.
 * bam_coverage_join.py: Generate a table of coverage along the contigs in several BAM files.
 * bam_var_join.py: Generate a variation table using several BAM files.
 * bg_count.py: Generate a table with nucleotide counts from BAM files.
@@ -84,3 +85,4 @@ ngs-protocols
 * subsampler.py: Sumsample sequences from FASTA and FASTQ files.
 * trinity_extract_longest.py: Extract the longest contig for each gene in a Trinity assembly.
 * trinotate_auto.py: Run Trinotate.
+* unshuffle.py: Unshuffle a list of FASTQ files in _1.fastq and _2.fastq.
