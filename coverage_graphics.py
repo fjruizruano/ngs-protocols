@@ -52,6 +52,8 @@ for n in range(0,len(samples)):
     lib_sizes.append(int(info[2]))
     genome_sizes.append(int(info[3]))
 
+#print len(samples)
+#print di_samples
 #print di_conditions
 #print li_conditions
 
@@ -89,11 +91,46 @@ for line in coverages_norm[2:]:
 #print genes
 #print li_genes
 
+li_genes_corrected = []
+
+out_nf = open("not_found.txt","w")
+
+for gene in li_genes:
+    if gene in genes:
+        li_genes_corrected.append(gene)
+    else:
+        out_nf.write("%s\n" % (gene))
+
+out_nf.close()
+
+out_av = open(coverage_file+".av","w")
+
+for gene in li_genes_corrected:
+    data = genes[gene]
+    li_cov = []
+    for n in range(1,len(samples)+1):
+        li_cov.append([])
+    for el in data:
+        values = el[1:]
+        for n in range(0,len(samples)):
+            number = values[n]
+            li_cov[n].append(float(number))
+
+    li_averages = []
+
+    for el in li_cov:
+        average = sum(el)/float(len(el))
+        li_averages.append(average)
+    li_averages = [str(i) for i in li_averages]
+    out_av.write("%s\t%s\n" % (gene,"\t".join(li_averages)))
+
+out_av.close()
+
 r_script = open("r_script.R","w")
 r_script.write("library(grid)\nlibrary(gridExtra)\nlibrary(ggplot2)\n")
 palette = ["red", "blue", "green3", "black", "cyan", "magenta", "yellow", "gray"]
 i = 0
-for gene in li_genes:
+for gene in li_genes_corrected:
     i += 1
     str_i = str(i)
     while len(str_i) < 4:
