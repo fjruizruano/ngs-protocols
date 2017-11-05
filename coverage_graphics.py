@@ -105,6 +105,16 @@ out_nf.close()
 
 out_av = open(coverage_file+".av","w")
 
+
+#Writing header
+h = ["Sequence"]
+for line in samples:
+    l = line.split()
+    h.append(l[0])
+out_av.write("\t".join(h)+"\n")
+
+print di_samples
+
 for gene in li_genes_corrected:
     data = genes[gene]
     li_cov = []
