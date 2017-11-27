@@ -18,8 +18,6 @@ secu = SeqIO.parse(open(secu), "fasta")
 
 lista = [line.strip() for line in open(lis)]
 
-print lista
-
 # create lists
 
 names = []
@@ -47,12 +45,12 @@ for bb in lista:
 	b = bb[0]
         regions = bb[1]
         regions = regions.split("-")
-        begin = int(regions[0])-1
+        begin = int(regions[0])
         end = int(regions[1])
     	try:
-		output.write(">" + b + "\n")
-		output.write(str(dictio[b][begin:end])+"\n")
-		print "Getting sequence %s" % b
+		output.write(">%s_%s_%s\n" % (b,str(begin),str(end)))
+		output.write(str(dictio[b][begin-1:end])+"\n")
+		print "Getting sequence %s %s-%s" % (b,str(begin),str(end))
 		i += 1
 	except:
 		print "Not found " + b
