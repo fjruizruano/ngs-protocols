@@ -13,7 +13,7 @@ except:
 try:
     r_file = sys.argv[2]
 except:
-    r_file = raw_input("Introduce regions file 9name\tsequence\tbegin:end): ")
+    r_file = raw_input("Introduce regions file (sequence name\tsequence id\tbegin-end): ")
 
 regions = open(r_file).readlines()
 
