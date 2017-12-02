@@ -202,8 +202,8 @@ for n in range(0,len(files)/4):
         processes = [Popen(cmd, shell=True) for cmd in command]
         for p in processes:
             p.wait()
-    if ext[-1] == "gz":
-        call("rm %s" % (file), shell=True)
+    if ext4[-1] == "gz":
+        call("rm %s" % (file4), shell=True)
     call("rm tmp_queries*.fastq", shell=True)
     call("cat *sam >> all.sam", shell=True)
     call("rm tmp_queries*.sam", shell=True)
@@ -214,7 +214,6 @@ for n in range(0,len(files)/4):
     call("samtools sort %s %s" % (ext1[0]+".bam", ext1[0]+"_mapped"), shell=True)
     call("rm %s" % (ext1[0]+".bam"), shell=True)
     call("samtools index %s" % (ext1[0]+"_mapped.bam"), shell=True)
-
 
 #    print "Reducing BAM file"
 #    call("reduce_bam.py %s" % (file1+".sort.bam"), shell=True)
