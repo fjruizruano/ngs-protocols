@@ -48,6 +48,13 @@ for n in range(0,len(files)/4):
     file2 = files[(n*4)+2][:-1]
     file3 = files[(n*4)+1][:-1]
     file4 = files[(n*4)+3][:-1]
+
+    print "Paired_file_1: " + file1
+    print "Paired_file_2: " + file2
+    print "Unpaired_file_1: " + file3
+    print "Unpaired_file_2: " + file4
+
+    # FILES 1 and 2
     ext1 = file1.split(".")
     if ext1[-1] == "gz":
         file1_n = ext1[0:-1]
@@ -104,9 +111,10 @@ for n in range(0,len(files)/4):
         call("rm %s" % (file1), shell=True)
     if ext2[-1] == "gz":
         call("rm %s" % (file2), shell=True)
-    call("rm tmp_queries*.fastq", shell=True)
-    call("cat *sam > all.sam", shell=True)
-    call("rm tmp_queries*.sam", shell=True)
+    call("rm tmp_queries_1*.fastq", shell=True)
+    call("rm tmp_queries_2*.fastq", shell=True)
+    call("cat tmp_queries_1*.sam > all.sam", shell=True)
+    call("rm tmp_queries_1*.sam", shell=True)
 
     # FILE 3    
     ext3 = file3.split(".")
@@ -128,12 +136,12 @@ for n in range(0,len(files)/4):
     n_splits = n_rounds*int(thr)
     print n_splits
 
-    call("FastQ.split.pl %s tmp_queries_1 %s" % (file3, str(n_splits)), shell=True)
+    call("FastQ.split.pl %s tmp_queries_3 %s" % (file3, str(n_splits)), shell=True)
 
     onlyfiles = [f for f in listdir(".") if isfile(join(".",f))]
     splits = []
     for f in onlyfiles:
-        if f.startswith("tmp_queries_1") and f.endswith(".fastq"):
+        if f.startswith("tmp_queries_3") and f.endswith(".fastq"):
             splits.append(f)
     splits.sort()
 
@@ -154,9 +162,9 @@ for n in range(0,len(files)/4):
             p.wait()
     if ext3[-1] == "gz":
         call("rm %s" % (file3), shell=True)
-    call("rm tmp_queries*.fastq", shell=True)
-    call("cat *sam >> all.sam", shell=True)
-    call("rm tmp_queries*.sam", shell=True)
+    call("rm tmp_queries_3*.fastq", shell=True)
+    call("cat tmp_queries_3*.sam >> all.sam", shell=True)
+    call("rm tmp_queries_3*.sam", shell=True)
 
     # FILE 4
     ext4 = file4.split(".")
@@ -178,12 +186,12 @@ for n in range(0,len(files)/4):
     n_splits = n_rounds*int(thr)
     print n_splits
 
-    call("FastQ.split.pl %s tmp_queries_1 %s" % (file4, str(n_splits)), shell=True)
+    call("FastQ.split.pl %s tmp_queries_4 %s" % (file4, str(n_splits)), shell=True)
 
     onlyfiles = [f for f in listdir(".") if isfile(join(".",f))]
     splits = []
     for f in onlyfiles:
-        if f.startswith("tmp_queries_1") and f.endswith(".fastq"):
+        if f.startswith("tmp_queries_4") and f.endswith(".fastq"):
             splits.append(f)
     splits.sort()
 
@@ -204,14 +212,15 @@ for n in range(0,len(files)/4):
             p.wait()
     if ext4[-1] == "gz":
         call("rm %s" % (file4), shell=True)
-    call("rm tmp_queries*.fastq", shell=True)
-    call("cat *sam >> all.sam", shell=True)
-    call("rm tmp_queries*.sam", shell=True)
+    call("rm tmp_queries_4*.fastq", shell=True)
+    call("cat tmp_queries_4*.sam >> all.sam", shell=True)
+    call("rm tmp_queries_4*.sam", shell=True)
 
     print "Generating BAM file"
     call("samtools view -F 4 -bt %s.fai %s > %s" % (ref,"all.sam",ext1[0]+".bam"), shell=True)
     call("rm all.sam", shell=True)
-    call("samtools sort %s %s" % (ext1[0]+".bam", ext1[0]+"_mapped"), shell=True)
+    call("samtools sort -T aln.sorted %s -o %s" % (ext1[0]+".bam", ext1[0]+"_mapped.bam"), shell=True)
+#    call("samtools sort %s %s" % (ext1[0]+".bam", ext1[0]+"_mapped"), shell=True)
     call("rm %s" % (ext1[0]+".bam"), shell=True)
     call("samtools index %s" % (ext1[0]+"_mapped.bam"), shell=True)
 
