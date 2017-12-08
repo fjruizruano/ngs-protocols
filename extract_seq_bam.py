@@ -28,7 +28,8 @@ for bam in bams:
     name = ".".join(name[:-1])
     print "Extracting sequences from %s " % (bam)
     call("cat %s | xargs samtools view -b %s > %s.sel.bam" % (seqs,bam,name), shell=True)
-    call("samtools sort %s.sel.bam %s.sel.sort" % (name,name), shell=True)
+#    call("samtools sort %s.sel.bam %s.sel.sort" % (name,name), shell=True)
+    call("samtools sort -T aln.sorted %s.sel.bam -o %s.sel.sort.bam" % (name,name), shell=True)
     call("rm %s.sel.bam" % (name), shell=True)
     call("samtools index %s.sel.sort.bam" % (name), shell=True)
     print "DONE\n"
