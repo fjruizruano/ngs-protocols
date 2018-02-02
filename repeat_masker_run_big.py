@@ -29,7 +29,8 @@ files = open(lista).readlines()
 for file in files:
     file = file[:-1]
 
-    n_nucs = getstatusoutput("""grep -v ">" %s | wc | awk '{print $3-$1}'""" % (file))
+    n_nucs = getstatusoutput("""grep -v ">" %s | wc | awk '{print sprintf("%s.0f", $3-$1)}'""" % (file, "%"))
+    print n_nucs
     n_nucs = int(n_nucs[1])
     n_division = n_nucs/10**8
     if n_division > 0:
