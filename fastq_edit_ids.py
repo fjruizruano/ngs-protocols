@@ -4,20 +4,26 @@ import sys
 from subprocess import call
 from commands import getstatusoutput
 
-print "Usage: fastq_edit_ids.py ListOfFastqFiles"
-print "Format of the files: cosa_1.fastq(.gz) cosa_2.fastq.gz\n"
+print "Usage: fastq_edit_ids.py ListOfFastqFiles [GZ]"
+print "\nFormat of the list: cosa_1.fastq(.gz) cosa_2.fastq.gz"
+print "GZ: Optionally con write GZ if you prefer a .gz file as output instead of a .fastq file\n"
 
 try:
     file = sys.argv[1]
 except:
     file = raw_input("Introduce FASTQ(.GZ) list name: ")
 
+try:
+    compress = sys.argv[2]
+except:
+    compress = "NONE"
+
 ext = file.split(".")
 extension = ext[-1]
 
 data = open(file).readlines()
 
-li = open("list_checked.txt","w")
+#li = open("list_checked.txt","w")
 
 for line in data:
     line = line[:-1]
@@ -45,19 +51,27 @@ for line in data:
 
     if sp != -1:
         print line+" with uncorrect format, editing ids."
+
+        awk_cmd1 = """awk '{ if (NR%4==1) { print $1"/"""
+        awk_cmd2 = """" } else { print } }' """
+
         if extension == "fq" or extension == "fastq":
-            call("fastool --append /%s %s > %s" % (side, line, name), shell=True)
+            if compress != "GZ":
+                call(awk_cmd1+side+awk_cmd2+ "%s > %s" % (line, name), shell=True)
+            elif compress == "GZ":
+                call(awk_cmd1+side+awk_cmd2+line+" | gzip > "+name+".gz", shell=True)
         elif extension == "gz":
-            call("zcat %s | fastool --append /%s > %s" % (line,side,name), shell=True)
-        call("""sed -i 's/>%s/%s/g' %s > name.tmp""" % (identifier[1:],identifier,name,name), shell=True)
-        call("mv %.tmp %s" % (name,name), shell=True)
-        li.write(name+"\n")
+            if compress != "GZ":
+                call("zcat " +line+ " | " +awk_cmd1+side+awk_cmd2 +"> "+ name, shell=True )
+            elif compress == "GZ":
+                call("zcat " +line+ " | " +awk_cmd1+side+awk_cmd2 +"| gzip > "+name+".gz", shell=True )
+#        li.write(name+"\n")
         
     elif id[-2:] == "/%s" % side:
         call("ln -sf %s %s" % (line, name), shell=True)
         print line+" with the correct format, nothing happens."
-        li.write(name+"\n")
+#        li.write(name+"\n")
     else:
         print line+": Something wrong happens, check file."
 
-li.close()
+#li.close()

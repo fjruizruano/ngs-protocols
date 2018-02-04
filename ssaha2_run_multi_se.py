@@ -43,9 +43,8 @@ except:
 
 files = open(files).readlines()
 
-for n in range(0,len(files)/2):
-    file1 = files[n*2][:-1]
-    file2 = files[(n*2)+1][:-1]
+for n in range(0,len(files)):
+    file1 = files[n][:-1]
     ext1 = file1.split(".")
     if ext1[-1] == "gz":
         file1_n = ext1[0:-1]
@@ -53,13 +52,6 @@ for n in range(0,len(files)/2):
         print "Uncompressing file %s" % file1
         call("seqtk seq %s > %s" % (file1, file1_n), shell=True)
         file1 = file1_n
-    ext2 = file2.split(".")
-    if ext2[-1] == "gz":
-        file2_n = ext2[0:-1]
-        file2_n = ".".join(file2_n)
-        print "Uncompressing file %s" % file2
-        call("seqtk seq %s > %s" % (file2, file2_n), shell=True)
-        file2 = file2_n
 
     print "Splitting FASTQ files"
     getpre = open(file1)
@@ -73,7 +65,6 @@ for n in range(0,len(files)/2):
     print n_splits
 
     call("FastQ.split.pl %s tmp_queries_1 %s" % (file1, str(n_splits)), shell=True)
-    call("FastQ.split.pl %s tmp_queries_2 %s" % (file2, str(n_splits)), shell=True)
 
     onlyfiles = [f for f in listdir(".") if isfile(join(".",f))]
     splits = []
@@ -88,8 +79,7 @@ for n in range(0,len(files)/2):
     
     for n in range(0,len(splits)):
         fq_one = splits[n]
-        fq_two = fq_one.replace("tmp_queries_1", "tmp_queries_2")
-        com = "ssaha2 -solexa -pair 20,400 -score 40 -identity 80 -output sam -outfile %s -best 1 -save %s %s %s" % (fq_one+".sam",refname,fq_one,fq_two)
+        com = "ssaha2 -solexa -score 40 -identity 80 -output sam -outfile %s -best 1 -save %s %s" % (fq_one+".sam",refname,fq_one)
         rr = n/12
         commands[rr].append(com)
 
@@ -100,16 +90,15 @@ for n in range(0,len(files)/2):
             p.wait()
     if ext1[-1] == "gz":
         call("rm %s" % (file1), shell=True)
-    if ext2[-1] == "gz":
-        call("rm %s" % (file2), shell=True)
     call("rm tmp_queries*.fastq", shell=True)
     call("cat *sam > all.sam", shell=True)
     call("rm tmp_queries*.sam", shell=True)
 
     print "Generating BAM file"
+    print "samtools view -F 4 -bt %s.fai %s > %s" % (ref,"all.sam",ext1[0]+".bam")
     call("samtools view -F 4 -bt %s.fai %s > %s" % (ref,"all.sam",ext1[0]+".bam"), shell=True)
     call("rm all.sam", shell=True)
-    call("samtools sort -T aln.sorted %s -o %s" % (ext1[0]+".bam", ext1[0]+"_mapped.bam"), shell=True)
+    call("samtools sort align.sorted %s -o %s" % (ext1[0]+".bam", ext1[0]+"_mapped.bam"), shell=True)
     call("rm %s" % (ext1[0]+".bam"), shell=True)
     call("samtools index %s" % (ext1[0]+"_mapped.bam"), shell=True)
 

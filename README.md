@@ -5,6 +5,7 @@ ngs-protocols
 
 * FastA.split.pl: Split FASTA files in several subfiles.
 * FastQ.split.pl: Split FASTQ files in several subfiles.
+* bam_consensus.py: Get majority consensus sequences for BAM files.
 * bam_coverage_join.py: Generate a table of coverage along the contigs in several BAM files.
 * bam_var_join.py: Generate a variation table using several BAM files.
 * bg_count.py: Generate a table with nucleotide counts from BAM files.
@@ -16,6 +17,7 @@ ngs-protocols
 * count_bases_fastq.py: Count number of nucleotides in one o several FASTQ(.GZ) files.
 * count_kmer.py: Count occurrences from a list of kmers using Jellyfish.
 * count_reads_bam.py: Generate a table with mapped reads counts in several BAM files.
+* coverage_graphics.py: Generate graphics using the ouput from bam_coverage_join.py and a samples file.
 * coverage_seq_bed.py: Count number of mapped nucleotides per reference sequence in BED files.
 * coverage_window.py: Count number of mapped nucleotides in a sliding window of defined size.
 * cut_seq_unequal.py: Trim sequences from a FASTA file in subsequence of the defined size.
@@ -30,6 +32,7 @@ ngs-protocols
 * extract_reads_rm.py: Extract matching reads in a OUT output from RepeatMasker.
 * extract_regions_bam.py: Extract reads from a BAM only in the indicated regions.
 * extract_seq.py: Extract sequences from a FASTA file present in a list conserving the order.
+* extract_seq_regions.py: Extract specific regions of sequences from a FASTA file present in a list conserving the order.
 * fasta_filter_by_length.py: Filter out sequences from a FASTA file with a size lower than a thereshold.
 * fasta_sequence_len.py: Generate a table with the length of each sequence in a FASTA file.
 * fastq-combine-pe.py: Extract reads paired reads by ID from two FASTQ files.
@@ -47,8 +50,10 @@ ngs-protocols
 * join_rm_list.py: Join two files with RepatMasker nucleotide counts.
 * kimura_window.py: Calculate kimura divergence per window using the RepeatMasker's script.
 * kmer_to_fasta.py: Generate a FASTA file from a list of kmers.
-* mapping_blat_gs.py: Extract matching reads with BLAT and optionally launch Newbler, RepeatMasker or SSAHA2
-* mapping_blat_gs_hard.py: Extract matchin reads with hard options of BLAT and optionally launch Newbler, RepeatMasker or SSAHA2.
+* mapping_blat_gs.py: Extract matching reads with BLAT and optionally launch Newbler, RepeatMasker or SSAHA2.
+* mapping_blat_gs_hard.py: Extract matching reads with hard options of BLAT and optionally launch Newbler, RepeatMasker or SSAHA2.
+* mapping_blat_gs_saver.py: Version of mapping_blat_gs.py for big libraries.
+* mapping_blat_gs_single_end.py: Version of mapping_blat_gs.py for single-end libraries.
 * mitobim_run.py: Run MITObim with several protocols.
 * mreps_extract.py: Generate a FASTA file with tandem sequences using a MREPS output.
 * reduce_bam.py: Filter out unmapped paired reads from a BAM file.
@@ -74,9 +79,13 @@ ngs-protocols
 * snp_calling_bchr.py: SNP calling for B chromosomes.
 * snp_calling_dn_ds: Perform a SNP calling to calculate the dn/dS from a BAM file.
 * split_illumina.py: Split FASTQ files from Illumina sequencing in several files.
+* sra_download.py: Download SRA files using a list of SRA's accesion numbers.
 * ssaha2_run.py: Run SSAHA2 mapping in several libraries.
 * ssaha2_run_multi.py: Run SSAHA2 mapping for several big libraries and parallized in different threads.
+* ssaha2_run_multi_pe_se.py: Run SSAHA2 mapping for several big libraries and parallized in different threads with paired and unpaired reads.
+* ssaha2_run_multi_se.py: Run SSAHA2 mapping for several big libraries and parallized in different threads using single-end libraries.
 * stampy_protocol.py: Run Stampy mapping.
 * subsampler.py: Sumsample sequences from FASTA and FASTQ files.
 * trinity_extract_longest.py: Extract the longest contig for each gene in a Trinity assembly.
 * trinotate_auto.py: Run Trinotate.
+* unshuffle.py: Unshuffle a list of FASTQ files in _1.fastq and _2.fastq.

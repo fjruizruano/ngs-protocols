@@ -6,7 +6,7 @@ from commands import getstatusoutput
 from os import listdir
 from os.path import isfile, join
 
-print "\nUsage: repeat_masker_run_big.py ListOfSequences Reference NumberOfThreads\n"
+print "\nUsage: repeat_masker_run_big.py ListOfSequences NumberOfThreads\n"
 
 try:
     lista = sys.argv[1]
@@ -14,12 +14,7 @@ except:
     lista = raw_input("Introduce list of fastq.gz files: ")
 
 try:
-    reference = sys.argv[2]
-except:
-    reference = raw_input("Introduce FASTA file with the refence: ")
-
-try:
-    threads = sys.argv[3]
+    threads = sys.argv[2]
 except:
     threads = raw_input("Intruduce number of threads: ")
 
@@ -29,8 +24,7 @@ files = open(lista).readlines()
 for file in files:
     file = file[:-1]
 
-    n_nucs = getstatusoutput("""grep -v ">" %s | wc | awk '{print sprintf("%s.0f", $3-$1)}'""" % (file, "%"))
-    print n_nucs
+    n_nucs = getstatusoutput("""grep -v ">" %s | wc | awk '{print $3-$1}'""" % (file))
     n_nucs = int(n_nucs[1])
     n_division = n_nucs/10**8
     if n_division > 0:
@@ -42,9 +36,9 @@ for file in files:
                 splits.append(f)
         splits.sort()
         for n in range(0,len(splits)):
-            call("RepeatMasker -pa %s -a -nolow -no_is -lib %s %s" % (threads, reference, splits[n]), shell=True)
+            call("RepeatMasker -pa %s -a -int -no_is %s" % (threads, splits[n]), shell=True)
             call("cat %s >> %s" % (splits[n]+".align",file+".align"), shell=True)
     elif n_division == 0:
-        call("RepeatMasker -pa %s -a -nolow -no_is -lib %s %s" % (threads, reference, file), shell=True)
+        call("RepeatMasker -pa %s -a -int -no_is %s" % (threads, file), shell=True)
     call("calcDivergenceFromAlign.pl -s %s %s" % (file+".align.divsum", file+".align"), shell=True)
 

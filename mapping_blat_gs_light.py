@@ -28,6 +28,7 @@ try:
 except:
     pass
 
+
 files = open(lista).readlines()
 
 for n in range(0,len(files)/2):
@@ -44,6 +45,7 @@ for n in range(0,len(files)/2):
     call("seqtk seq -a %s > %s" % (file2,file2[:-3]+".fa"),shell=True)
 
     # run blat to find reads
+#    call("blat %s %s %s" % (reference,file1[:-3]+".fa",file1[:-3]+".psl"),shell=True)
     call("blat_recursive.py %s %s %s" % (threads, "tmp.list", reference), shell=True)
 
     # remove fasta and temp list
@@ -61,6 +63,7 @@ for n in range(0,len(files)/2):
     call("rm %s" % file2[:-3]+".fa.blat", shell=True)
 
     # get read list
+##    call("extract_reads_blat.py %s" % file1[:-3]+".all.psl", shell=True)
     reads_file = open("uniq_all.txt").readlines()
     trimmed_reads = open("uniq_trimmed.txt" ,"w")
     for read in reads_file:
@@ -72,21 +75,23 @@ for n in range(0,len(files)/2):
     trimmed_reads.close()
 
     call("sort %s | uniq > uniq_uniq.txt " %  "uniq_trimmed.txt", shell=True)
-    w = open(file1[:-3]+".all.psl.list","w")
+    w = open("uniq_pairs.txt","w")
     uu = open("uniq_uniq.txt").readlines()
     for l in uu:
         w.write("%s\n%s\n" % (l[:-1]+"/1",l[:-1]+"/2"))
     w.close()
 
-    # remove uniq files
-    call("rm uniq_1.txt uniq_2.txt uniq_all.txt uniq_trimmed.txt uniq_uniq.txt", shell=True)
-
+    call("ln -sf uniq_pairs.txt %s" % file1[:-3]+".all.psl.list", shell=True)
+    
     # get reads
     call("seqtk subseq %s %s > %s" % (file1,file1[:-3]+".all.psl.list",file1[:-3]+".sel.fq"), shell=True)
     call("seqtk subseq %s %s > %s" % (file2,file1[:-3]+".all.psl.list",file2[:-3]+".sel.fq"), shell=True)
 
+    # remove uniq files
+####    call("rm uniq_1.txt uniq_2.txt, uniq_all.txt, uniq_trimmed.txt, uniq_uniq.txt", shell=True
+
     #remove list
-    call("rm %s" % (file1[:-3]+".all.psl.list"), shell=True)
+    call("rm %s" % (file1[:-3]+".all.psl.list"), shell=True))
 
     # remove FASTQ files
 #    call("rm %s" % file1+".fq",shell=True)
@@ -135,7 +140,7 @@ for n in range(0,len(files)/2):
     # SSAHA2
     if map_question == "ssaha2" or map_question == "ssaha2div":
         call("ls %s %s > ssaha2_list.txt" % (file1[:-3]+".sel.fq", file2[:-3]+".sel.fq"), shell=True)
-        call("ssaha2_run_multi.py ssaha2_list.txt %s %s" % (reference,threads), shell=True)
+        call("ssaha2_run.py ssaha2_list.txt %s" % (reference), shell=True)
         call("rm ssaha2_list.txt", shell=True)
         if map_question == "ssaha2div":
             file1_s = file1.split(".")
