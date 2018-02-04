@@ -52,6 +52,7 @@ ngs-protocols
 * mitobim_run.py: Run MITObim with several protocols.
 * mreps_extract.py: Generate a FASTA file with tandem sequences using a MREPS output.
 * reduce_bam.py: Filter out unmapped paired reads from a BAM file.
+* remove_ns.py: Remove reads with Ns after a masking
 * repeat_masker_run.py: Run RepeatMasker alignment for small FASTA files.
 * repeat_masker_run_big.py: Run RepeatMasker alignment for several big FASTA files.
 * rexp_get_cluster.py: Get FASTA file concatenating all the contigs assembled with RepeatExplorer.
