@@ -66,6 +66,7 @@ ngs-protocols
 * rexp_select_contigs: Select most coveraged contigs in a RepeatExplorer's output.
 * rm_clas_seq.py: Classify reads aligning or not using a RepeatMasker's output.
 * rm_clas_seq_names: Classify reads coinciding with a annotation and aligning or not using a RepeatMasker's output.
+* rm_cluster_external.py: Select no homologous reads, group them per annotation of its read pair and clusterize them.
 * rm_getseq.py: Extract sequences of the matching regions in a RepeatMasker's output.
 * rm_join_out.py: Concantenate OUT files from several RepeatMasker's run.
 * rm_join_tbl.py: Join TBL files from several RepeatMaseker's run.
