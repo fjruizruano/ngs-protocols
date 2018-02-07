@@ -49,7 +49,7 @@ for n in range(0, len(noheader)):
         sub_info = el.split()
         up_down.append([sub_info[4],sub_info[9]])
     if pair_line not in up_down:
-        seq_list[this_line[1]].append(this_line[0])
+        seq_list[this_line[1]].append(pair_line[0])
 #        print this_line
 
 call("mkdir sel_reads", shell=True)
@@ -61,5 +61,5 @@ for el in seq_list:
     out.write("\n".join(li))
     out.close()
     call("seqtk subseq %s %s > %s" % ("../"+fastafile,el+".txt", el+".fasta"), shell=True)
-    call("cd-hit-est -T 12 -i %s -r 1 -M 0 -c 0.9 -o %s" % (el+".fasta", el+".nr90"), shell=True)
+    call("cd-hit-est -T 12 -i %s -r 1 -M 0 -c 0.8 -o %s" % (el+".fasta", el+".nr80"), shell=True)
 
