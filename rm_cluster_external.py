@@ -52,17 +52,25 @@ for n in range(0, len(noheader)):
         up_down.append([sub_info[4],sub_info[9]])
     if pair_line not in up_down:
         seq_list[this_line[1]].append(pair_line[0])
-#        print this_line
-
-
 
 call("mkdir sel_reads", shell=True)
 os.chdir("sel_reads")
 
-summary = open("summary.txt", "w")
-header = ("Sequence\tTotal_reads\tSingletons\tReads_in_contigs\tContigs\tMinCov\tMaxCov\tMinLen\tMaxLen\n")
-summary.write(header)
-summary.flush()
+library = "lmig_combo_plus_trna_rmod.fasta"
+lib = SeqIO.parse(open("../"+library), "fasta")
+annots = []
+for s in lib:
+    name = str(s.id)
+    annot = name.split("#")
+    annot = annot[1]
+    annot = annot.split("/")
+    annot = annot[0]
+    annots.append(annot)
+annots = set(annots)
+annots = list(annots)
+
+annot_sum = open("annot_summary.txt", "w")
+annot_sum.write("Sequence\t"+"\t".join(annots)+"\n")
 
 for el in seq_list:
 
@@ -70,101 +78,38 @@ for el in seq_list:
 
     out = open(el+".txt","w")
     li = seq_list[el]
+    li = set(li)
+    li = list(li)
     out.write("\n".join(li))
     out.close()
 
-    call("seqtk subseq %s %s > %s" % ("../"+fastafile, el+".txt", el+".fasta"), shell=True)
+    call("seqtk subseq %s %s.txt > %s.fasta" % ("../"+fastafile, el, el), shell=True)
 
-    call("cd-hit-est -T 12 -i %s -r 1 -M 0 -c 0.8 -o %s" % (el+".fasta", el+".nr80"), shell=True)
+    call("cd-hit-est -T 12 -i %s.fasta -r 1 -M 0 -c 0.8 -o %s.nr80" % (el, el), shell=True)
 
-    tr = 0
-    total_reads = open(el+".fasta").readlines()
-    for line in total_reads:
-        if line.startswith(">"):
-            tr += 1
+    print "RepeatMasker -par 12 -no_is -nolow -lib ../%s %s.fasta" % (library, el)
+    call("RepeatMasker -par 12 -no_is -nolow -lib ../%s %s.fasta" % (library, el), shell=True)
 
-    if tr < 100000:
-        call("runAssembly %s" % (el+".fasta"), shell=True)
-    else:
-#        continue
-        call("runAssembly -large -cpu 12 %s" % (el+".fasta"), shell=True)
+    annots_dict = {}
+    for a in annots:
+        annots_dict[a] = 0
 
-    elements = os.listdir(".")
-    newbler_dir = [a for a in elements if a.endswith("runAssembly")]
-    newbler_dir = newbler_dir[-1]
+    rmout = open(el+".fasta.out").readlines()
 
-    os.chdir(newbler_dir)
-    out = open("../"+el+".contigs", "w")
-
-    #contigs
-    i = 0
-    lens = []
-    nr = []
-    allcontigs = SeqIO.parse(open("454AllContigs.fna"), "fasta")
-    for s in allcontigs:
-        i+=1
-        desc = s.description.split()
-        nreads = desc[2]
-        nreads = nreads.split("=")
-        nreads = nreads[1]
-        out.write(">%s__%s\n%s\n" % (str(s.id), nreads, str(s.seq)))
-        lens.append(len(str(s.seq)))
-        nr.append(int(nreads))
-    out.close()
-
-    #singletons
-    singletons = []
-    read_status = open("454ReadStatus.txt").readlines()
-    for line in read_status[1:]:
+    for line in rmout[3:]:
         info = line.split()
-        read = info[0]
-        status = info[1]
-        if status == "Outlier" or status == "Singleton":
-            singletons.append(read)
-    os.chdir("../")
-    call("rm -r %s" % newbler_dir, shell=True)
+        annot = info[10]
+        annot = annot.split("/")
+        annot = annot[0]
+        annots_dict[annot] += 1
 
-    out = open(el+".singletons", "w")
-    out.write("\n".join(singletons))
-    out.close()
+    a = []
+    for ann in annots:
+        a.append(annots_dict[ann])
+    a = [str(aa) for aa in a]
+    annot_sum.write(el+"\t"+"\t".join(a)+"\n")
+    annot_sum.flush()
 
-    call("seqtk subseq %s.fasta %s.singletons >> %s.contigs" % (el, el, el), shell=True)
+    call("rm %s*.tbl %s*.cat %s*.cat.gz %s*.masked %s*.out %s*.log" % (el,el,el,el,el,el), shell=True)
 
-    stats = []
-    stats.append(el)
-    stats.append(str(tr))
-    stats.append(str(len(singletons)))
-
-    try:
-        stats.append(str(sum(nr)))
-    except:
-        stats.append("0")
-
-    stats.append(str(i)) # number of contigs
-
-    try:
-        stats.append(str(min(nr)))
-    except:
-        stats.append("0")
-
-    try:
-        stats.append(str(max(nr)))
-    except:
-        stats.append("0")
-
-    try:
-        stats.append(str(min(lens)))
-    except:
-        stats.append("0")
-
-    try:
-        stats.append(str(max(lens)))
-    except:
-        stats.append("0")
-
-    summary.write("\t".join(stats))
-    summary.write("\n")
-    summary.flush()
-
-summary.close()
-
+annot_sum.close()
