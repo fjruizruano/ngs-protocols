@@ -24,5 +24,6 @@ for file in files:
         print "Nothing happens. Please, check format and extension."
     print "%s\t%s" % (file, n_nucs[1])
     output.write("%s\t%s\n" % (file, n_nucs[1]))
+    output.flush()
 
 output.close()
