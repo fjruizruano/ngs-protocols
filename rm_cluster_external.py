@@ -70,7 +70,10 @@ annots = set(annots)
 annots = list(annots)
 
 annot_sum = open("annot_summary.txt", "w")
-annot_sum.write("Sequence\t"+"\t".join(annots)+"\n")
+annot_sum.write("Sequence\tTotal_reads\t"+"\t".join(annots)+"\n")
+
+cap3_out = open("cap3_stats.txt", "w")
+cap3_header = "\t".join(["Sequence","Total_reads","Singletons", "Reads_in_contigs","Number_Contigs","MinCov","MaxCov","MinLen","MaxLen"])
 
 for el in seq_list:
 
@@ -84,6 +87,9 @@ for el in seq_list:
     out.close()
 
     call("seqtk subseq %s %s.txt > %s.fasta" % ("../"+fastafile, el, el), shell=True)
+
+    sel_reads = list(SeqIO.parse(open(el+".fasta"), "fasta"))
+    num_reads = len(sel_reads)
 
     call("cd-hit-est -T 12 -i %s.fasta -r 1 -M 0 -c 0.8 -o %s.nr80" % (el, el), shell=True)
 
@@ -107,9 +113,37 @@ for el in seq_list:
     for ann in annots:
         a.append(annots_dict[ann])
     a = [str(aa) for aa in a]
-    annot_sum.write(el+"\t"+"\t".join(a)+"\n")
+    annot_sum.write(el+"\t"+str(num_reads)+"\t"+"\t".join(a)+"\n")
     annot_sum.flush()
 
     call("rm %s*.tbl %s*.cat %s*.cat.gz %s*.masked %s*.out %s*.log" % (el,el,el,el,el,el), shell=True)
 
+    random = ""
+
+    limit = 10000
+
+    if num_reads >= limit:
+        random = ".random"
+        call("seqtk sample %s.fasta %s > %s.fasta%s" % (el, str(limit),random))
+    call("cap3 %s.fasta%s" % (el,random) , shell=True)
+    ace = open(el+".fasta"+random+".cap.ace").readlines()
+    nums = []
+    lens = []
+    for line in ace:
+        if line.startswith("CO"):
+            info = line.split()
+            length = int(info[2])
+            number = int(info[3])
+            lens.append(length)
+            nums.append(number)
+
+    singlets = list(SeqIO.parse(open(el+".fasta"+random+".cap.singlets"),"fasta"))
+    n_singlets = len(singlets)
+    counts = [el,num_reads,n_singlets,sum(nums),len(nums),min(nums),max(nums),min(lens),max(lens)]
+    counts_str = [str(elem) for elem in counts]
+    cap3_out.write(cap3_header+"\n")
+    cap3_out.write("\t".join(counts_str)+"\n")
+    cap3_out.flush()
+    
+cap3_out.close()
 annot_sum.close()
