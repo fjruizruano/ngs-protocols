@@ -59,10 +59,10 @@ for n in range(0, len(noheader)):
 call("mkdir sel_reads", shell=True)
 os.chdir("sel_reads")
 
-sum = open("summary.txt", "w")
-header = ("Sequence\tTotal_reads\tSingleton\tContigs_reads\tContigs\tMinAb\tMaxAb\tMinLen\tMaxLen\n")
-sum.write(header)
-sum.flush()
+summary = open("summary.txt", "w")
+header = ("Sequence\tTotal_reads\tSingletons\tReads_in_contigs\tContigs\tMinCov\tMaxCov\tMinLen\tMaxLen\n")
+summary.write(header)
+summary.flush()
 
 for el in seq_list:
 
@@ -86,8 +86,8 @@ for el in seq_list:
     if tr < 100000:
         call("runAssembly %s" % (el+".fasta"), shell=True)
     else:
-        continue
-#        call("runAssembly -large -cpu 12 %s" % (el+".fasta"), shell=True)
+#        continue
+        call("runAssembly -large -cpu 12 %s" % (el+".fasta"), shell=True)
 
     elements = os.listdir(".")
     newbler_dir = [a for a in elements if a.endswith("runAssembly")]
@@ -134,7 +134,13 @@ for el in seq_list:
     stats.append(el)
     stats.append(str(tr))
     stats.append(str(len(singletons)))
-    stats.append(str(i))
+
+    try:
+        stats.append(str(sum(nr)))
+    except:
+        stats.append("0")
+
+    stats.append(str(i)) # number of contigs
 
     try:
         stats.append(str(min(nr)))
@@ -156,9 +162,9 @@ for el in seq_list:
     except:
         stats.append("0")
 
-    sum.write("\t".join(stats))
-    sum.write("\n")
-    sum.flush()
+    summary.write("\t".join(stats))
+    summary.write("\n")
+    summary.flush()
 
-sum.close()
+summary.close()
 
