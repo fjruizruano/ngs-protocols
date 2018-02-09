@@ -72,6 +72,10 @@ annots = list(annots)
 annot_sum = open("annot_summary.txt", "w")
 annot_sum.write("Sequence\tTotal_reads\t"+"\t".join(annots)+"\n")
 
+cdhit_out = open("cap3_stats.txt", "w")
+cdhit_header = "\t".join(["Sequence","Total_reads","Singletons","Reads_in_clusters","Number_Clusters","MinSize","MaxSize"])
+cdhit_out.write(cdhit_header+"\n")
+
 cap3_out = open("cap3_stats.txt", "w")
 cap3_header = "\t".join(["Sequence","Total_reads","Singletons", "Reads_in_contigs","Number_Contigs","MinCov","MaxCov","MinLen","MaxLen"])
 cap3_out.write(cap3_header+"\n")
@@ -94,7 +98,38 @@ for el in seq_list:
 
     call("cd-hit-est -T 12 -i %s.fasta -r 1 -M 0 -c 0.8 -o %s.nr80" % (el, el), shell=True)
 
-    print "RepeatMasker -par 12 -no_is -nolow -lib ../%s %s.fasta" % (library, el)
+    cdhit_list = []
+    cdhit_sizes = []
+    cdhit_clstr = open(el+".nr80.clstr").readlines()
+    
+    for n in range(0,len(cdhit_clstr)):
+        line = cdhit_clstr[n]
+        if line.startswith(">"):
+            cdhit_list.append(n)
+    cdhit_list.append(len(cdhit_clstr))
+
+    for n in range(0,len(cdhit_list)-1):
+        cdhit_sizes.append(cdhit_list[n+1]-cdhit_list[n]-1)
+
+    ch_singlets = []
+    ch_contigs = []
+
+    for j in cd_hit_sizes:
+        if j == 0:
+            ch_singlets.append(j)
+        else:
+            ch_contigs.append(j)
+
+    if len(ch_singlets) == 0:
+        ch_singlets = [0]
+    if len(ch_contigs) == 0:
+        ch_contigs = [0]
+   
+    cdhit_info = [el,num_reads,sum(ch_singlets),sum(ch_contigs),len(ch_contigs),min(ch_contigs),max(ch_contigs)]
+    cdhit_info = [str(k) for k in cdhit_info]
+    cdhit_out.write("\t".join(cdhit_info)+"\n")
+    cdhit.flush()
+
     call("RepeatMasker -par 12 -no_is -nolow -lib ../%s %s.fasta" % (library, el), shell=True)
 
     annots_dict = {}
@@ -106,9 +141,13 @@ for el in seq_list:
     for line in rmout[3:]:
         info = line.split()
         annot = info[10]
-        annot = annot.split("/")
-        annot = annot[0]
-        annots_dict[annot] += 1
+        try:
+            annot = annot.split("/")
+            annot = annot[0]
+            annots_dict[annot] += 1
+        except:
+            print "ERROOOOOOOOR"
+            print line
 
     a = []
     for ann in annots:
@@ -117,8 +156,7 @@ for el in seq_list:
     annot_sum.write(el+"\t"+str(num_reads)+"\t"+"\t".join(a)+"\n")
     annot_sum.flush()
 
-    call("rm %s*.tbl %s*.cat %s*.cat.gz %s*.masked %s*.out %s*.log" % (el,el,el,el,el,el), shell=True)
-
+    call("rm %s*.tbl %s*.cat %s*.cat.gz %s*.masked %s*.log" % (el,el,el,el,el), shell=True)
     random = ""
 
     limit = 10000
@@ -151,6 +189,7 @@ for el in seq_list:
     counts_str = [str(elem) for elem in counts]
     cap3_out.write("\t".join(counts_str)+"\n")
     cap3_out.flush()
-    
+
+cdhit_out.close()    
 cap3_out.close()
 annot_sum.close()
