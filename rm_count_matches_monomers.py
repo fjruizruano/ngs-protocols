@@ -29,7 +29,7 @@ for seq in seqs:
         counter_dim[annot] = [0,0]
         counter_nodim[annot] = [0,0]
 
-    if len(secu) > 100:
+    if len(secu) > 89:
         a = counter_dim[annot][0]
         b = counter_dim[annot][1]
         counter_dim[annot] = [a+1,b+len(secu)]
