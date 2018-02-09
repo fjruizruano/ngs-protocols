@@ -74,6 +74,7 @@ annot_sum.write("Sequence\tTotal_reads\t"+"\t".join(annots)+"\n")
 
 cap3_out = open("cap3_stats.txt", "w")
 cap3_header = "\t".join(["Sequence","Total_reads","Singletons", "Reads_in_contigs","Number_Contigs","MinCov","MaxCov","MinLen","MaxLen"])
+cap3_out.write(cap3_header+"\n")
 
 for el in seq_list:
 
@@ -137,11 +138,17 @@ for el in seq_list:
             lens.append(length)
             nums.append(number)
 
+    if len(nums) == 0:
+        nums = [0]
+        lens = [0]
+
     singlets = list(SeqIO.parse(open(el+".fasta"+random+".cap.singlets"),"fasta"))
-    n_singlets = len(singlets)
+    try:
+       n_singlets = len(singlets)
+    except:
+       singlets = [0]
     counts = [el,num_reads,n_singlets,sum(nums),len(nums),min(nums),max(nums),min(lens),max(lens)]
     counts_str = [str(elem) for elem in counts]
-    cap3_out.write(cap3_header+"\n")
     cap3_out.write("\t".join(counts_str)+"\n")
     cap3_out.flush()
     
