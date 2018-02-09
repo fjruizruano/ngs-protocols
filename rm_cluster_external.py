@@ -128,7 +128,7 @@ for el in seq_list:
     cdhit_info = [el,num_reads,sum(ch_singlets),sum(ch_contigs),len(ch_contigs),min(ch_contigs),max(ch_contigs)]
     cdhit_info = [str(k) for k in cdhit_info]
     cdhit_out.write("\t".join(cdhit_info)+"\n")
-    cdhit.flush()
+    cdhit_out.flush()
 
     call("RepeatMasker -par 12 -no_is -nolow -lib ../%s %s.fasta" % (library, el), shell=True)
 
