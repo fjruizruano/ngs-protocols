@@ -72,7 +72,7 @@ annots = list(annots)
 annot_sum = open("annot_summary.txt", "w")
 annot_sum.write("Sequence\tTotal_reads\t"+"\t".join(annots)+"\n")
 
-cdhit_out = open("cap3_stats.txt", "w")
+cdhit_out = open("cdhit_stats.txt", "w")
 cdhit_header = "\t".join(["Sequence","Total_reads","Singletons","Reads_in_clusters","Number_Clusters","MinSize","MaxSize"])
 cdhit_out.write(cdhit_header+"\n")
 
@@ -114,7 +114,7 @@ for el in seq_list:
     ch_singlets = []
     ch_contigs = []
 
-    for j in cd_hit_sizes:
+    for j in cdhit_sizes:
         if j == 0:
             ch_singlets.append(j)
         else:
