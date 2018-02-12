@@ -146,7 +146,10 @@ for el in seq_list:
         for a in annots:
             annots_dict[a] = 0
 
-        rmout = open(el+".fasta.out").readlines()
+        try:
+            rmout = open(el+".fasta.out").readlines()
+        except:
+            continue
 
         for line in rmout[3:]:
             info = line.split()
@@ -191,7 +194,7 @@ for el in seq_list:
         try:
             n_singlets = len(singlets)
         except:
-            singlets = [0]
+            singlets = []
         counts = [el,num_reads,n_singlets,sum(nums),len(nums),min(nums),max(nums),min(lens),max(lens)]
         counts_str = [str(elem) for elem in counts]
         cap3_out.write("\t".join(counts_str)+"\n")
