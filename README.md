@@ -86,7 +86,8 @@ ngs-protocols
 * ssaha2_run_multi_pe_se.py: Run SSAHA2 mapping for several big libraries and parallized in different threads with paired and unpaired reads.
 * ssaha2_run_multi_se.py: Run SSAHA2 mapping for several big libraries and parallized in different threads using single-end libraries.
 * stampy_protocol.py: Run Stampy mapping.
-* subsampler.py: Sumsample sequences from FASTA and FASTQ files.
+* subsampler.py: Subsample sequences from FASTA and FASTQ files.
+* taxonomy_retrieve.py: Retrieve taxonomy using a Species list.
 * trinity_extract_longest.py: Extract the longest contig for each gene in a Trinity assembly.
 * trinotate_auto.py: Run Trinotate.
 * unshuffle.py: Unshuffle a list of FASTQ files in _1.fastq and _2.fastq.
