@@ -4,7 +4,7 @@ import sys
 from numpy import mean,std
 from subprocess import call
 
-print "Usage: coverage_graphics.py CoverageFile SamplesFile FastaFile"
+print "Usage: coverage_graphics.py CoverageFile SamplesFile FastaFile PLOT/NOPLOT"
 
 try:
     coverage_file = sys.argv[1]
@@ -20,6 +20,11 @@ try:
     fasta_file = sys.argv[3]
 except:
     fasta_file = raw_input("Introduce FASTA file: ")
+
+try:
+    plot_question = sys.argv[4]
+except:
+    plot_question = raw_input("Do you want to generate plots [PLOT/NOPLOT]: ")
 
 coverages = open(coverage_file).readlines()
 
@@ -49,8 +54,8 @@ for n in range(0,len(samples)):
         di_samples[info[1]] = [n]
     else:
         di_samples[info[1]].append(n)
-    lib_sizes.append(int(info[2]))
-    genome_sizes.append(int(info[3]))
+    lib_sizes.append(float(info[2]))
+    genome_sizes.append(float(info[3]))
 
 #print len(samples)
 #print di_samples
@@ -136,102 +141,110 @@ for gene in li_genes_corrected:
 
 out_av.close()
 
-r_script = open("r_script.R","w")
-r_script.write("library(grid)\nlibrary(gridExtra)\nlibrary(ggplot2)\n")
-palette = ["red", "blue", "green3", "black", "cyan", "magenta", "yellow", "gray"]
-i = 0
-for gene in li_genes_corrected:
-    i += 1
-    str_i = str(i)
-    while len(str_i) < 4:
-        str_i = "0"+str_i
-    print gene
-    out = open("tmp_%s.txt" % str_i, "w")
-
-    #Writing header
-    header = ["position"]
-    for conditions in li_conditions:
-        #selecting samples
-        di_selection={}
-        for c in di_conditions[conditions]:
-            di_selection[c] = di_samples[c]
-
-        for s in di_selection:
-            header.extend((s+"_mean",s+"_stdev",s+"_stdevd",s+"_stdevu"))
-
-    out.write("\t".join(header)+"\n")
-
-    #Writing transformed data
-    data = genes[gene]
-    for d in data: # for each position
-        calcs = [d[0]] # position
-        #For gDNA or RNA
-        for conditions in li_conditions:
-            #selecting samples: gdna_zb or gdna_pb
-            di_selection={}
-            for c in di_conditions[conditions]: 
-                di_selection[c] = di_samples[c]
-            keys = []
-            for s in di_selection:
-                keys.append(di_samples[s])
-
-            for key in keys: #1,2 and 3,4
-                join = []
-                for number in key:
-                    join.append(float(d[number+1]))
-                media = mean(join)
-                stdev = 0
-                if len(join) > 1:
-                    stdev = std(join, ddof=1)
-                calcs.extend((media,stdev,media-stdev,media+stdev))
-        out.write("\t".join(str(f) for f in calcs))
-        out.write("\n")
-    out.close()
-
-    r_script.write("""\nfas2 <- read.table("tmp_%s.txt", header=TRUE)\n""" % (str_i))
-
-    k = 0
-
-    for condition in li_conditions: #gDNA or RNA
-        #print condition
-
-        k += 1
-        if k == 1:
-            title_code = """+labs(title=\042%s\134n\042)""" % gene
-        else:
-            title_code = ""
-
-        j = -1
-        pat = []
-        sta = []
-        states = di_conditions[condition]
-        states_inv = states[::-1]
-        #print states
-        code = """%s <- ggplot(fas2,aes(fas2$position))""" % (condition)
-        color = len(states)
-        for s in states_inv:
-            #print s
-            sta.insert(0,"\042%s\042=\042%s\042" % (str(color),palette[color-1]))
-            pat.insert(0,"\042%s\042=\042%s\042" % (str(color),s))
-            code = code + """+geom_line(aes(y=fas2$%s_mean,colour="%s"))""" % (s, str(color))
-            code = code + """+geom_ribbon(aes(ymin=fas2$%s_stdevd,ymax=fas2$%s_stdevu), alpha=0.2,fill="%s")""" % (s,s,palette[color-1])
-            color -= 1
-
-        if condition.startswith("gdna"): # zb or pb
-            code = code + """+scale_colour_manual(name="condition",values=c(%s),labels=c(%s))+xlab("Position")+ylab("Number of copies")+theme_bw()%s\n""" % (",".join(sta),",".join(pat),title_code)
-            r_script.write(code)
-
-        elif condition.startswith("rna"):
-            code = code + """+scale_colour_manual(name="condition",values=c(%s),labels=c(%s))+xlab("Position")+ylab("Expression Level")+theme_bw()%s\n""" % (",".join(sta),",".join(pat),title_code)
-            r_script.write(code)
-    condit = []
-    for condition in li_conditions:
-        condit.append("ggplotGrob(%s)" % condition)
-    code = """pdf("tmp_%s.pdf", onefile = TRUE)\ngrid.newpage()\ngrid.draw(rbind(%s, size="max"))\ndev.off()""" % (str_i, ",".join(condit))
-    r_script.write(code)
-
-r_script.close()
-
-call("Rscript r_script.R", shell=True)
-
-call("gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=merged.pdf tmp*pdf", shell=True)
+if plot_question == "PLOT":
+  r_script = open("r_script.R","w")
+  r_script.write("library(grid)\nlibrary(gridExtra)\nlibrary(ggplot2)\n")
+  palette = ["blue", "red", "green3", "black", "cyan", "magenta", "yellow", "gray"]
+  i = 0
+  for gene in li_genes_corrected:
+      i += 1
+      str_i = str(i)
+      while len(str_i) < 4:
+          str_i = "0"+str_i
+      print gene
+      out = open("tmp_%s.txt" % str_i, "w")
+  
+      #Writing header
+      header = ["position"]
+      for conditions in li_conditions:
+          #selecting samples
+          di_selection={}
+          for c in di_conditions[conditions]:
+              di_selection[c] = di_samples[c]
+  
+          for s in di_selection:
+              header.extend((s+"_mean",s+"_stdev",s+"_stdevd",s+"_stdevu"))
+  
+      out.write("\t".join(header)+"\n")
+  
+      #Writing transformed data
+      data = genes[gene]
+      for d in data: # for each position
+          calcs = [d[0]] # position
+          #For gDNA or RNA
+          for conditions in li_conditions:
+              #selecting samples: gdna_zb or gdna_pb
+              di_selection={}
+              for c in di_conditions[conditions]: 
+                  di_selection[c] = di_samples[c]
+              keys = []
+              for s in di_selection:
+                  keys.append(di_samples[s])
+  
+              for key in keys: #1,2 and 3,4
+                  join = []
+                  for number in key:
+                      join.append(float(d[number+1]))
+                  media = mean(join)
+                  stdev = 0
+                  if len(join) > 1:
+                      stdev = std(join, ddof=1)
+                  calcs.extend((media,stdev,media-stdev,media+stdev))
+          out.write("\t".join(str(f) for f in calcs))
+          out.write("\n")
+      out.close()
+  
+      r_script.write("""\nfas2 <- read.table("tmp_%s.txt", header=TRUE)\n""" % (str_i))
+  
+      k = 0
+  
+      for condition in li_conditions: #gDNA or RNA
+          #print condition
+  
+          k += 1
+          if k == 1:
+              title_code = """+labs(title=\042%s\134n\042)""" % gene
+          else:
+              title_code = ""
+  
+  
+          position_lab = ""
+          theme_lab = """axis.title.x=element_blank(),axis.text.x=element_blank()"""
+          if k == len(li_conditions):
+              position_lab = """+xlab("Position")"""
+              theme_lab = ""
+  
+          j = -1
+          pat = []
+          sta = []
+          states = di_conditions[condition]
+          states_inv = states[::-1]
+          #print states
+          code = """%s <- ggplot(fas2,aes(fas2$position))""" % (condition)
+          color = len(states)
+          for s in states_inv:
+              #print s
+              sta.insert(0,"\042%s\042=\042%s\042" % (str(color),palette[color-1]))
+              pat.insert(0,"\042%s\042=\042%s\042" % (str(color),s))
+              code = code + """+geom_line(aes(y=fas2$%s_mean,colour="%s"))""" % (s, str(color))
+              code = code + """+geom_ribbon(aes(ymin=fas2$%s_stdevd,ymax=fas2$%s_stdevu), alpha=0.2,fill="%s")""" % (s,s,palette[color-1])
+              color -= 1
+  
+          if condition.startswith("gdna"): # zb or pb
+              code = code + """+scale_colour_manual(name="condition",values=c(%s),labels=c(%s))%s+ylab("Number of copies")+theme_bw()+theme(%s)%s\n""" % (",".join(sta),",".join(pat),position_lab,theme_lab,title_code)
+              r_script.write(code)
+  
+          elif condition.startswith("rna"):
+              code = code + """+scale_colour_manual(name="condition",values=c(%s),labels=c(%s))%s+ylab("Expression Level")+theme_bw()+theme(%s)%s\n""" % (",".join(sta),",".join(pat),position_lab,theme_lab,title_code)
+              r_script.write(code)
+      condit = []
+      for condition in li_conditions:
+          condit.append("ggplotGrob(%s)" % condition)
+      code = """pdf("tmp_%s.pdf", onefile = TRUE)\ngrid.newpage()\ngrid.draw(rbind(%s, size="max"))\ndev.off()""" % (str_i, ",".join(condit))
+      r_script.write(code)
+  
+  r_script.close()
+  
+  call("Rscript r_script.R", shell=True)
+  
+  call("gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=merged.pdf tmp*pdf", shell=True)
