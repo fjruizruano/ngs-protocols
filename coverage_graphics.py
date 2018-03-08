@@ -4,7 +4,7 @@ import sys
 from numpy import mean,std
 from subprocess import call
 
-print "Usage: coverage_graphics.py CoverageFile SamplesFile FastaFile PLOT/NOPLOT"
+print "Usage: coverage_graphics.py CoverageFile SamplesFile FastaFile PDF/SVG/NOPLOT"
 
 try:
     coverage_file = sys.argv[1]
@@ -24,7 +24,7 @@ except:
 try:
     plot_question = sys.argv[4]
 except:
-    plot_question = raw_input("Do you want to generate plots [PLOT/NOPLOT]: ")
+    plot_question = raw_input("Do you want to generate plots [PDF/SVG/NOPLOT]: ")
 
 coverages = open(coverage_file).readlines()
 
@@ -141,7 +141,7 @@ for gene in li_genes_corrected:
 
 out_av.close()
 
-if plot_question == "PLOT":
+if plot_question == "PDF" or plot_question == "SVG":
   r_script = open("r_script.R","w")
   r_script.write("library(grid)\nlibrary(gridExtra)\nlibrary(ggplot2)\n")
   palette = ["blue", "red", "green3", "black", "cyan", "magenta", "yellow", "gray"]
@@ -240,8 +240,13 @@ if plot_question == "PLOT":
       condit = []
       for condition in li_conditions:
           condit.append("ggplotGrob(%s)" % condition)
-      code = """pdf("tmp_%s.pdf", onefile = TRUE)\ngrid.newpage()\ngrid.draw(rbind(%s, size="max"))\ndev.off()""" % (str_i, ",".join(condit))
+
+      code = """pdf("tmp_%s.pdf", onefile = TRUE)\ngrid.newpage()\ngrid.draw(rbind(%s, size="max"))\ndev.off()\n""" % (str_i, ",".join(condit))
       r_script.write(code)
+
+      if plot_question == "SVG":
+          code2 = """svg("tmp_%s.svg", onefile = TRUE)\ngrid.newpage()\ngrid.draw(rbind(%s, size="max"))\ndev.off()\n""" % (str_i, ",".join(condit))
+          r_script.write(code2)
   
   r_script.close()
   
