@@ -224,18 +224,20 @@ if plot_question == "PDF" or plot_question == "SVG":
           color = len(states)
           for s in states_inv:
               #print s
+              subcond = s.split("_")
+              subcond = subcond[1]
               sta.insert(0,"\042%s\042=\042%s\042" % (str(color),palette[color-1]))
-              pat.insert(0,"\042%s\042=\042%s\042" % (str(color),s))
+              pat.insert(0,"\042%s\042=\042%s\042" % (str(color),subcond))
               code = code + """+geom_line(aes(y=fas2$%s_mean,colour="%s"))""" % (s, str(color))
               code = code + """+geom_ribbon(aes(ymin=fas2$%s_stdevd,ymax=fas2$%s_stdevu), alpha=0.2,fill="%s")""" % (s,s,palette[color-1])
               color -= 1
   
-          if condition.startswith("gdna"): # zb or pb
-              code = code + """+scale_colour_manual(name="condition",values=c(%s),labels=c(%s))%s+ylab("Number of copies")+theme_bw()+theme(%s)%s\n""" % (",".join(sta),",".join(pat),position_lab,theme_lab,title_code)
+          if condition.startswith("gDNA"): # zb or pb
+              code = code + """+scale_colour_manual(name="%s",values=c(%s),labels=c(%s))%s+ylab("Number of copies")+theme_bw()+theme(%s)%s\n""" % (condition,",".join(sta),",".join(pat),position_lab,theme_lab,title_code)
               r_script.write(code)
   
-          elif condition.startswith("rna"):
-              code = code + """+scale_colour_manual(name="condition",values=c(%s),labels=c(%s))%s+ylab("Expression Level")+theme_bw()+theme(%s)%s\n""" % (",".join(sta),",".join(pat),position_lab,theme_lab,title_code)
+          elif condition.startswith("RNA"):
+              code = code + """+scale_colour_manual(name="%s",values=c(%s),labels=c(%s))%s+ylab("Reads per million")+theme_bw()+theme(%s)%s\n""" % (condition,",".join(sta),",".join(pat),position_lab,theme_lab,title_code)
               r_script.write(code)
       condit = []
       for condition in li_conditions:
