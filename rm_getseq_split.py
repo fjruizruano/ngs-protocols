@@ -90,10 +90,11 @@ fafile = open(rmfile+".fas")
 seqs = SeqIO.parse(fafile,"fasta")
 for s in seqs:
     iden = str(s.id)
-    short_iden = iden[begin_shortlen:end_shortlen]+"x"
     secu = str(s.seq)
     annot = iden.split("_")
     annot = annot[0]
+    short_iden = annot[1]+"x"
+    short_iden = short_iden[begin_shortlen:end_shortlen]
     name_files[annot].write(">%s\n%s\n" % (short_iden, secu))
 
 for name in names:
