@@ -5,7 +5,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from subprocess import call
 
-print "Usage: rm_getseq.py FastaFile RepeatMaskerOut [LenMinimum]"
+print "Usage: rm_getseq.py FastaFile RepeatMaskerOut BeginningShorteningLength EndShorteningLength [LenMinimum]"
 
 try:
     fafile = sys.argv[1]
@@ -18,7 +18,18 @@ except:
     rmfile = raw_input("Introduce RepeatMasker out file: ")
 
 try:
-    lenlimit = int(sys.argv[3])
+    begin_shortlen = int(sys.argv[3])
+except:
+    begin_shortlen = 0
+
+try:
+    end_shortlen = int(sys.argv[4])
+except:
+    end_shortlen = 0
+end_shortlen = (-1*end_shortlen)-1
+
+try:
+    lenlimit = int(sys.argv[5])
 except:
     lenlimit = 0
 
@@ -79,10 +90,11 @@ fafile = open(rmfile+".fas")
 seqs = SeqIO.parse(fafile,"fasta")
 for s in seqs:
     iden = str(s.id)
+    short_iden = iden[begin_shortlen:end_shortlen]+"x"
     secu = str(s.seq)
     annot = iden.split("_")
     annot = annot[0]
-    name_files[annot].write(">%s\n%s\n" % (iden, secu))
+    name_files[annot].write(">%s\n%s\n" % (short_iden, secu))
 
 for name in names:
     name = name[:-1]
