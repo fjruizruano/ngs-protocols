@@ -33,6 +33,13 @@ try:
 except:
     lenlimit = 0
 
+#a = "HWI-D00111:192:C39DEACXX:1:1101:2305:2139/1"
+#b = a[begin_shortlen:end_shortlen]
+#print begin_shortlen
+#print end_shortlen
+#print a
+#print b
+
 dict_seq = {}
 seqs = SeqIO.parse(fafile,"fasta")
 for s in seqs:
@@ -91,9 +98,9 @@ seqs = SeqIO.parse(fafile,"fasta")
 for s in seqs:
     iden = str(s.id)
     secu = str(s.seq)
-    annot = iden.split("_")
-    annot = annot[0]
-    short_iden = annot[1]+"x"
+    split_iden = iden.split("_")
+    annot = split_iden[0]
+    short_iden = split_iden[1]+"x"
     short_iden = short_iden[begin_shortlen:end_shortlen]
     name_files[annot].write(">%s\n%s\n" % (short_iden, secu))
 
