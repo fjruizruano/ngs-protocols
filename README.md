@@ -69,6 +69,8 @@ ngs-protocols
 * rm_clas_seq_names: Classify reads coinciding with a annotation and aligning or not using a RepeatMasker's output.
 * rm_cluster_external.py: Select no homologous reads, group them per annotation of its read pair and clusterize them.
 * rm_getseq.py: Extract sequences of the matching regions in a RepeatMasker's output.
+* rm_getseq_annot.py: Extract sequences of the matching regions in a RepeatMasker's output and annotate the sequences of the FASTA.
+* rm_getseq_split.py: Extract sequences of the matching regions in a RepeatMasker's output annotate and split the sequences in differente FASTAs.
 * rm_join_out.py: Concantenate OUT files from several RepeatMasker's run.
 * rm_join_tbl.py: Join TBL files from several RepeatMaseker's run.
 * rm_homology.py: Find homologies searching with RepeatMasker sequence by sequence.
