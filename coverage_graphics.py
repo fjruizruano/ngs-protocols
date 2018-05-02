@@ -63,8 +63,8 @@ for n in range(0,len(samples)):
 #print li_conditions
 
 s_norm = open(coverage_file+".norm","w")
-s_norm.write("".join(coverages[:2]))
-for line in coverages[2:]:
+s_norm.write("".join(coverages[:1]))
+for line in coverages[1:]:
     info = line.split()
     normalized = info[0:2]
     for n in range(0,len(samples)):
@@ -85,7 +85,7 @@ for line in fasta_read:
         line = line.split()
         li_genes.append(line[0][1:])
 
-for line in coverages_norm[2:]:
+for line in coverages_norm[1:]:
     info = line.split()
     main_info = info[1:]
     if info[0] not in genes:
