@@ -37,7 +37,7 @@ for bam in bams:
         call("""awk {'print $1"popeye"$2"\t"$4'} %s.var > %s.var2""" % (bam,bam), shell=True)
         print "Not found file %s.var2, generating..." % bam
     else:
-        print "Found file %s.var2, skipping."
+        print "Found file %s.var2, skipping." % bam
     to_join.append(bam+".var2")
 
 print "Joining lists..."
@@ -46,4 +46,4 @@ call("join_multiple_lists.py %s " % " ".join(to_join), shell=True)
 call("""sed 's/popeye/\t/g' toico.txt > toico2.txt""", shell=True)
 
 call("(head -n 1 toico2.txt && tail -n +2 toico2.txt | sort -k 1,1 -k 2n) > toico3.txt ", shell=True)
-Print "We're done!!!\n"
+print "We're done!!!\n"
