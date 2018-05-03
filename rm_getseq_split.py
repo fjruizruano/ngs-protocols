@@ -102,7 +102,7 @@ for s in seqs:
     annot = split_iden[0]
     short_iden = split_iden[1]+"x"
     short_iden = short_iden[begin_shortlen:end_shortlen]
-    name_files[annot].write(">%s\n%s\n" % (short_iden, secu))
+    name_files[annot].write(">%s_%s\n%s\n" % (annot,short_iden, secu))
 
 for name in names:
     name = name[:-1]
