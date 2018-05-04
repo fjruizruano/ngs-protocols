@@ -5,6 +5,7 @@ ngs-protocols
 
 * FastA.split.pl: Split FASTA files in several subfiles.
 * FastQ.split.pl: Split FASTQ files in several subfiles.
+* annot_to_rexp.py: Annotate RepeatExplorer's contigs following a list.
 * bam_consensus.py: Get majority consensus sequences for BAM files.
 * bam_coverage_join.py: Generate a table of coverage along the contigs in several BAM files.
 * bam_var_join.py: Generate a variation table using several BAM files.
