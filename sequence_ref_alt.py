@@ -26,7 +26,7 @@ ra_dict = {}
 for line in ra_data:
     info = line.split()
     name = info[0]
-    posi = int(info[1])
+    posi = int(info[1])-1
     ref = int(info[2])
     ref = eq[ref]
     alt = int(info[3])
