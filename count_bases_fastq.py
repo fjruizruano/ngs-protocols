@@ -10,20 +10,23 @@ narg = len(sys.argv)
 files = sys.argv[1:narg]
 
 output = open("count_bases.txt","a")
-output.write("file\tnumber of bases\n")
-print "file\tnumber of bases"
+output.write("File\tNumberOfBases\tNumberOfReads\n")
+print "File\tNumberOfBases\tNumberOfReads"
 
 for file in files:
     n_nucs = ""
+    n_reads = ""
     extensions = file.split(".")
     if extensions[-1] == "gz":
         n_nucs = getstatusoutput("""zcat %s | paste - - - - | cut -f2 | tr -d '\n' | wc -c""" % (file))
+        n_reads = getstatusoutput("""zcat %s | paste - - - - | wc -l""" % (file))
     elif extensions[-1] == "fq" or extensions[-1] == "fastq":
         n_nucs = getstatusoutput("""cat %s | paste - - - - | cut -f2 | tr -d '\n' | wc -c""" % (file))
+        n_reads = getstatusoutput("""cat %s | paste - - - - | wc -l""" % (file))
     else:
         print "Nothing happens. Please, check format and extension."
-    print "%s\t%s" % (file, n_nucs[1])
-    output.write("%s\t%s\n" % (file, n_nucs[1]))
+    print "%s\t%s\t%s" % (file, n_nucs[1], n_reads[1])
+    output.write("%s\t%s\t%s\n" % (file, n_nucs[1], n_reads[1]))
     output.flush()
 
 output.close()
