@@ -19,12 +19,25 @@ keys = {0:"N",1:"N",2:"A",3:"C",4:"T",5:"G"}
 
 out = open("output.txt", "w")
 
+genes_dict = {}
+
+for line in vardata[2:]:
+ data = line.split()
+ gene = data[0]
+
+ if gene in genes_dict:
+  genes_dict[gene].append(line)
+ else:
+  genes_dict[gene] = [line]
+
 for m in range(0,len(samples)):
-  seq_dict = {}
-  begin = 2+(m*6)
-  end = 2+(m*6)+6
-  for line in vardata[2:]:
-    data = line.split()
+ begin = 2+(m*6)
+ end = 2+(m*6)+6
+ for gene in genes_dict:
+   seq = []
+   g_lines = genes_dict[gene]
+   for g_line in g_lines:
+    data = g_line.split()
     nums = [int(x) for x in data[begin:end]]
     nums_dict = {}
     for n in range(0,6):
@@ -35,14 +48,12 @@ for m in range(0,len(samples)):
     if abundance == 0:
         nucleotide = 0 # nucleotide is an "N"
     base = keys[nucleotide]
-    if data[0] in seq_dict:
-        seq_dict[data[0]].append(base)
-    else:
-        seq_dict[data[0]] = [base]
-  out.write(">%s\n" % (samples[m]))
-  for el in seq_dict:
+    seq.append(base)
+
+   out.write(">%s_%s\n" % (gene,samples[m]))
+#  for el in seq_dict:
 #    out.write(">%s_%s\n" % (samples[m],el))
-    out.write("".join(seq_dict[el]))
-    out.write("\n")
+   out.write("".join(seq))
+   out.write("\n")
 
 out.close()
