@@ -3,12 +3,12 @@
 import sys
 from subprocess import call
 
-print "cd_hit_count_clusters.py CdhitClstrFile MinClusterSize IdentityThreshold"
+print "cd_hit_count_clusters.py FastaFileClustering MinClusterSize IdentityThreshold"
 
 try:
     file = sys.argv[1]
 except:
-    file = raw_input("Introduce CD-HIT's *.Clstr File: ")
+    file = raw_input("Introduce FASTA file for CD-HIT clustering: ")
 
 try:
     minsize = int(sys.argv[2])
@@ -22,14 +22,17 @@ except:
     minid = raw_input("Introduce Identity Threshold: ")
     minid = float(min)
 
-#cd-hit-est -i dvit_selection.fasta -o dvit_selection.fasta.nr99 -c 0.99 -d 0 -T 12 -M 16000 
+percent = str(minid)
+percent = percent.split(".")
+percent = percent[1]
 
+cd_com = "cd-hit-est -i %s -o %s.nr%s -c %s -d 0 -T 12 -M 16000" % (file, file, percent, str(minid))
+call(cd_com, shell=True)
 
-data = open(file).readlines()
+print "\n\nSelecting clusters...\n"
 
-#indexes = []
-#sequences = []
-#sizes = []
+clstr_file = "%s.nr%s.clstr" % (file, percent)
+data = open(clstr_file).readlines()
 
 cluster_dict = {}
 
@@ -46,11 +49,21 @@ for line in data:
 
 seqs_list = []
 
+cluster_counter = 0
+
 for el in cluster_dict:
     seqs = cluster_dict[el]
     if len(seqs) >= minsize:
         seqs_list.extend(seqs)
+        cluster_counter += 1
 
-w = open("read_selection.txt", "w")
+w = open(file+".nr"+percent+".sel", "w")
 w.write("\n".join(seqs_list))
 w.close()
+
+print "Selecting reads...\n"
+
+extract_com = "seqtk subseq %s %s.nr%s.sel > %s.nr%s.sel.fasta" % (file, file, percent, file, percent)
+call(extract_com, shell=True)
+
+print "We extracted %s reads from %s clusters!\n" % (str(len(seqs_list)), str(cluster_counter))
