@@ -57,13 +57,13 @@ for el in cluster_dict:
         seqs_list.extend(seqs)
         cluster_counter += 1
 
-w = open(file+".nr"+percent+".sel", "w")
+w = open(file+".nr"+percent+"."+str(minsize)+".sel", "w")
 w.write("\n".join(seqs_list))
 w.close()
 
 print "Selecting reads...\n"
 
-extract_com = "seqtk subseq %s %s.nr%s.sel > %s.nr%s.sel.fasta" % (file, file, percent, file, percent)
+extract_com = "seqtk subseq %s %s.nr%s.%s.sel > %s.nr%s.%s.sel.fasta" % (file, file, percent, str(minsize), file, percent, str(minsize))
 call(extract_com, shell=True)
 
 print "We extracted %s reads from %s clusters!\n" % (str(len(seqs_list)), str(cluster_counter))
