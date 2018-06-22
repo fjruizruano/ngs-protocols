@@ -27,6 +27,7 @@ ngs-protocols
 * divnuc_bam.py: Calculate nucleotide diversity per site from BAM files.
 * divnuc_plot.py: Calculate nucleotide diversity per window from the output of divnuc_bam.py.
 * divsum_count.py: Count the number of nucleotides per elements in a RepeatMasker's divsum file.
+* divsum_to_rl.py: Generates satDNA repeat lanscapes using satMiner's criteria.
 * dnapipete_createdb.py: Generate a database compatible with RepeatMasker from the dnaPipeTe
 * extract_member_reads_rexp.py: Extract reads in a specific cluster of RepeatExplorer.
 * extract_no_seq.py: Extract sequecences from a FASTA file absent in a list.
