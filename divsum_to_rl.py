@@ -33,7 +33,7 @@ data_dict = {}
 
 ##loading divsum file
 ref_divsum = lib_dict[ref_library][0]
-ref_divsum = ref_divsum.replace(".divsum", ".fam.divsum")
+ref_divsum = ref_divsum.replace(".divsum", ".align.fam.divsum")
 nucs = lib_dict[ref_library][1]
 nucs = int(nucs)
 data = open(ref_divsum).readlines()
@@ -164,7 +164,7 @@ if lib_dict > 1:
  for library in lib_dict:
   if library != ref_library:
    ref_divsum = lib_dict[library][0]
-   ref_divsum = ref_divsum.replace(".divsum", ".fam.divsum")
+   ref_divsum = ref_divsum.replace(".divsum", ".align.fam.divsum")
    nucs = lib_dict[library][1]
    nucs = int(nucs)
    data = open(ref_divsum).readlines()
