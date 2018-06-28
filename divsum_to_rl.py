@@ -29,37 +29,67 @@ for lib in samples[1:]:
 
 data_dict = {}
 
-#sort by abundance in  ref library
+#sort by abundance in ref library
 
 ##loading divsum file
 ref_divsum = lib_dict[ref_library][0]
+ref_divsum = ref_divsum.replace(".divsum", ".fam.divsum")
 nucs = lib_dict[ref_library][1]
 nucs = int(nucs)
 data = open(ref_divsum).readlines()
 
+s_matrix_div = data.index("-----\t------\t------\t-----------\t-------\n")
 s_matrix = data.index("Coverage for each repeat class and divergence (Kimura)\n")
+matrix_div = []
+divergence = {}
+elements_div = data[s_matrix_div+1:s_matrix-2]
+for line in elements_div:
+    info = line.split()
+    divergence[info[1]] = info[-1]
+
 matrix = []
 
 elements = data[s_matrix+1]
 elements = elements.split()
 for element in elements[1:]:
+    element = element.split("/")
+    element = element[-1]
     matrix.append([element,[]])
 n_el = len(matrix)
 
-for line in data[s_matrix+2:]:
+big_row = 0
+
+for line in data[s_matrix+2:s_matrix+45]:
     info = line.split()
     info = info[1:]
     for n in range(0,n_el):
         matrix[n][1].append(int(info[n]))
+    suma = [int(x) for x in info]
+    suma = sum(suma)
+    suma_rel = 1.0*suma/nucs
+    if suma_rel > big_row:
+        big_row = suma_rel
 
 family_abs = {}
 
 for n in range(0,n_el):
-    family_abs[matrix[n][0]] = sum(matrix[n][1])
+    sat_name = matrix[n][0]
+    family_abs[sat_name] = sum(matrix[n][1])
 
 sort_abs = sorted(family_abs.iteritems(), key=operator.itemgetter(1), reverse=True)
 
+#loading len information
+try:
+    table = open("table.txt").readlines()
+    table_dict = {}
+    for l in table:
+        info = l.split()
+        table_dict[info[0]] = info[1]
+except:
+    pass
+
 defnames = []
+eq_names = []
 
 sat_digits = len(str(len(sort_abs)))
 for n in range(0,len(sort_abs)):
@@ -67,16 +97,27 @@ for n in range(0,len(sort_abs)):
     number_name = str(n+1)
     while len(number_name) < sat_digits:
         number_name = "0"+number_name
-    defnames.append([info[0], sp_name+"Sat"+number_name])
+    monomer_len = table_dict[info[0]]
+    defnames.append([info[0], sp_name+"Sat"+number_name+"-"+monomer_len])
+    eq_names.append([info[0], sp_name+"Sat"+number_name])
+
+out = open("equivalences.txt", "w")
+for n in eq_names:
+    out.write("%s\t%s\n" % (n[0], n[1]))
+out.close()
 
 family_abs_def = []
 family_rel_def = []
 for n in range(0,len(defnames)):
     number = family_abs[defnames[n][0]]
-    rel_number =  round(1.0*number/nucs,100)
+    rel_number = round(1.0*number/nucs,100)
     family_abs_def.append([defnames[n][1],number])
-    family_rel_def.append([defnames[n][1],rel_number])
-    
+    family_rel_def.append([defnames[n][1],rel_number,divergence[defnames[n][0]]])
+
+out = open(ref_library+".abdiv","w")
+for el in family_rel_def:
+    out.write("%s\t%s\t%s\n" % (el[0], str(el[1]), el[2]))
+out.close()
 
 #convert matrix to dictionary
 
@@ -89,7 +130,7 @@ matrix_rel_list = []
 
 for n in range(0,len(defnames)):
     lista = matrix_abs_dict[defnames[n][0]]
-    lista_rel = [round(1.0*x/nucs,100) for x in lista]
+    lista_rel = [1.0*x/nucs for x in lista]
     matrix_rel_list.append([defnames[n][1],lista_rel])
 
 data_dict[ref_library] = matrix_rel_list
@@ -115,53 +156,48 @@ for a in range(0,len(row_names)):
 
 out.close()
 
-rscript = open(ref_library+"_rl.R","w")
-
-script = """library(ggplot2)
-library(plyr)
-library(reshape2)
-library(RColorBrewer)
-lmig <- read.table("%s_rl.txt",header=T)
-lm <- melt(lmig, id.vars=0:1)
-colourCount = %s
-ref <- colorRampPalette(brewer.pal(12, "Paired"))(colourCount)
-palette1 <- rev(ref)
-pdf("%s_rl.pdf")
-ggplot(data=lm, aes(x=lm$Div, y=lm$value, fill=lm$variable))+geom_bar(stat="identity", position = position_stack(reverse = TRUE)) + scale_fill_manual(name="satDNA Families", values = palette1)+labs(x="Kimura Substitution Level (%s)", y="Genome Proportion")+theme_bw()
-dev.off()
-""" % (ref_library, str(len(matrix_rel_list)), ref_library,"%")
-
-rscript.write(script)
-rscript.close()
-
-call("Rscript %s_rl.R" % ref_library, shell=True)
 
 #continue with the other libraries
 
 ##loading divsum file
-
 if lib_dict > 1:
  for library in lib_dict:
   if library != ref_library:
    ref_divsum = lib_dict[library][0]
+   ref_divsum = ref_divsum.replace(".divsum", ".fam.divsum")
    nucs = lib_dict[library][1]
    nucs = int(nucs)
    data = open(ref_divsum).readlines()
 
+   s_matrix_div = data.index("-----\t------\t------\t-----------\t-------\n")
    s_matrix = data.index("Coverage for each repeat class and divergence (Kimura)\n")
+   matrix_div = []
+   divergence = {}
+   elements_div = data[s_matrix_div+1:s_matrix-2]
+   for line in elements_div:
+    info = line.split()
+    divergence[info[1]] = info[-1]
+
    matrix = []
 
    elements = data[s_matrix+1]
    elements = elements.split()
    for element in elements[1:]:
+    element = element.split("/")
+    element = element[-1]
     matrix.append([element,[]])
    n_el = len(matrix)
 
-   for line in data[s_matrix+2:]:
+   for line in data[s_matrix+2:s_matrix+45]:
     info = line.split()
     info = info[1:]
     for n in range(0,n_el):
      matrix[n][1].append(int(info[n]))
+    suma = [int(x) for x in info]
+    suma = sum(suma)
+    suma_rel = 1.0*suma/nucs
+    if suma_rel > big_row:
+     big_row = suma_rel
 
    family_abs = {}
 
@@ -174,7 +210,12 @@ if lib_dict > 1:
     number = family_abs[defnames[n][0]]
     rel_number =  round(1.0*number/nucs,100)
     family_abs_def.append([defnames[n][1],number])
-    family_rel_def.append([defnames[n][1],rel_number])
+    family_rel_def.append([defnames[n][1],rel_number,divergence[defnames[n][0]]])
+
+   out = open(library+".abdiv","w")
+   for el in family_rel_def:
+    out.write("%s\t%s\t%s\n" % (el[0], str(el[1]), el[2]))
+   out.close()
 
    #convert matrix to dictionary
 
@@ -210,6 +251,8 @@ if lib_dict > 1:
 
    out.close()
 
+for library in lib_dict:
+
    rscript = open(library+"_rl.R","w")
 
    script = """library(ggplot2)
@@ -222,9 +265,9 @@ if lib_dict > 1:
    ref <- colorRampPalette(brewer.pal(12, "Paired"))(colourCount)
    palette1 <- rev(ref)
    pdf("%s_rl.pdf")
-   ggplot(data=lm, aes(x=lm$Div, y=lm$value, fill=lm$variable))+geom_bar(stat="identity", position = position_stack(reverse = TRUE)) + scale_fill_manual(name="satDNA Families", values = palette1)+labs(x="Kimura Substitution Level (%s)", y="Genome Proportion")+theme_bw()
+   ggplot(data=lm, aes(x=lm$Div, y=lm$value, fill=lm$variable))+geom_bar(stat="identity", position = position_stack(reverse = TRUE)) + scale_fill_manual(name="satDNA Families", values = palette1)+labs(x="Kimura Substitution Level (%s)", y="Genome Proportion") + ylim(0,%s) +theme_bw()
    dev.off()
-   """ % (library, str(len(matrix_rel_list)), library, "%")
+   """ % (library, str(len(matrix_rel_list)), library, "%", str(big_row))
 
    rscript.write(script)
    rscript.close()
