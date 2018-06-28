@@ -26,6 +26,7 @@ ngs-protocols
 * deconseq_run.py: Run DeconSeq automatically and with several threads.
 * divnuc_bam.py: Calculate nucleotide diversity per site from BAM files.
 * divnuc_plot.py: Calculate nucleotide diversity per window from the output of divnuc_bam.py.
+* divsum_ab.py: Used with satminer quantification.
 * divsum_count.py: Count the number of nucleotides per elements in a RepeatMasker's divsum file.
 * divsum_to_rl.py: Generates satDNA repeat lanscapes using satMiner's criteria.
 * dnapipete_createdb.py: Generate a database compatible with RepeatMasker from the dnaPipeTe
@@ -81,6 +82,7 @@ ngs-protocols
 * run_abyss.py: Run ABySS assembler with a range of kmers.
 * sat_cutter.py: Cut satellites in a FASTA alignment to align homologous regions.
 * sat_subfam2fam.py: Edit ALIGN file from RepatMasker to calc Kimura divergence by family instead of subfamily.
+* satminer_quant.py: satminer quantification protocol.
 * search_issr_1nt.py: Count the number of occurrences for each nucleotide before a SRR region to desing ISRR primers.
 * search_issr_2nt.py: Count the number of occurrences for each dinucleotide before a SRR region to desing ISRR primers.
 * sequence_ref_alt.py: Get sequences with REF and ALT variants after a SNP calling.
