@@ -24,6 +24,7 @@ ngs-protocols
 * coverage_window.py: Count number of mapped nucleotides in a sliding window of defined size.
 * cut_seq_unequal.py: Trim sequences from a FASTA file in subsequence of the defined size.
 * deconseq_run.py: Run DeconSeq automatically and with several threads.
+* dimerator.py: Convert a monomer fasta file in a dimer fasta file.
 * divnuc_bam.py: Calculate nucleotide diversity per site from BAM files.
 * divnuc_plot.py: Calculate nucleotide diversity per window from the output of divnuc_bam.py.
 * divsum_ab.py: Used with satminer quantification.
