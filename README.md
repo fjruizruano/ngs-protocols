@@ -88,6 +88,7 @@ ngs-protocols
 * search_issr_2nt.py: Count the number of occurrences for each dinucleotide before a SRR region to desing ISRR primers.
 * sequence_ref_alt.py: Get sequences with REF and ALT variants after a SNP calling.
 * snp_calling_bchr.py: SNP calling for B chromosomes.
+* snp_calling_bchr_z10.py: SNP calling for B chromosomes. Alt<10 in ZB.
 * snp_calling_dn_ds: Perform a SNP calling to calculate the dn/dS from a BAM file.
 * split_illumina.py: Split FASTQ files from Illumina sequencing in several files.
 * sra_download.py: Download SRA files using a list of SRA's accesion numbers.

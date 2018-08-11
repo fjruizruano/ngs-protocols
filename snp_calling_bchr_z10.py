@@ -59,7 +59,7 @@ for el in dictio:
     counts = dictio[el]["gdna_zerob"]
     total = sum(counts)
     for i in range(0,len(counts)):
-        if counts[i] > total-100 and total > 1:
+        if counts[i] > total-10 and total > 1:
             ref_dict[el] = i
 
 alt_dict = {}
