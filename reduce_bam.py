@@ -25,7 +25,9 @@ call("samtools view -b -f 4 -F 8 %s > temp2.bam" % file, shell=True)
 call("samtools view -b -f 8 -F 4 %s > temp3.bam" % file, shell=True)
 
 #to merge bam files and sort by name
-call("samtools merge -u - temp[123].bam | samtools sort - %s_mapped" % (name), shell=True)
+#call("samtools merge -u - temp[123].bam | samtools sort - %s_mapped" % (name), shell=True)
+call("samtools merge -u - temp[123].bam | samtools sort -T aln.sorted - -o %s_mapped.bam" % (name), shell=True) 
+
 
 #to index sorted bam file
 call("samtools index %s_mapped.bam" % (name), shell=True)
