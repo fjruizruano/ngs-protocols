@@ -59,6 +59,8 @@ ngs-protocols
 * mapping_blat_gs_hard.py: Extract matching reads with hard options of BLAT and optionally launch Newbler, RepeatMasker or SSAHA2.
 * mapping_blat_gs_saver.py: Version of mapping_blat_gs.py for big libraries.
 * mapping_blat_gs_single_end.py: Version of mapping_blat_gs.py for single-end libraries.
+* massive_phylogeny.py: Using an only FASTA file and gene list, it runs RAxML for each gene. 
+* massive_phylogeny_raxml_support.py: Support script for massive_phylogeny.py
 * mitobim_run.py: Run MITObim with several protocols.
 * mreps_extract.py: Generate a FASTA file with tandem sequences using a MREPS output.
 * reduce_bam.py: Filter out unmapped paired reads from a BAM file.
