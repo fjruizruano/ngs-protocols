@@ -3,6 +3,7 @@
 import sys
 from subprocess import call
 from Bio import SeqIO
+from Bio import AlignIO
 
 print "massive_phylo.py FastaFile GeneList"
 
@@ -18,8 +19,12 @@ except:
 
 genelist = open(genefile).readlines()
 genedict = {}
+cutdict = {}
 for gene in genelist:
-    genedict[gene[:-1]] = []
+    gene = gene.split()
+    genedict[gene[0]] = []
+    if len(gene) > 1:
+        cutdict[gene[0]]=gene[1]
 
 secus = SeqIO.parse(open(fasta), "fasta")
 for secu in secus:
@@ -32,7 +37,25 @@ for secu in secus:
 for el in genedict:
     out = open(el+".fasta", "w")
     for s in genedict[el]:
-        out.write(">%s\n%s\n" % (s[0], s[1]))
+        abbrev = s[0] 
+        abbrev = abbrev.split("_")
+        abbrev = abbrev[-1]
+        secu = s[1]
+        nnum = secu.count("N")
+        nprop = 1.0*nnum/len(secu)
+        if nprop < 0.2:
+            out.write(">%s\n%s\n" % (abbrev, secu))
     out.close()
     call("mafft %s.fasta > %s_ali.fasta" % (el, el) , shell=True)
-    call("massive_phylogeny_raxml_support.py %s_ali.fasta 100 100 12 %s" % (el, el), shell=True)
+    if el in cutdict:
+        ali = AlignIO.read(open("%s_ali.fasta" % el), "fasta")
+        cutinfo = cutdict[el]
+        cutparts = cutinfo.split(",")
+        for part in cutparts:
+            partinfo = part.split("-")
+            beg = int(partinfo[0])
+            end = int(partinfo[1])
+        AlignIO.write(ali[:,beg:end],open("%s_ali_sel.fasta" % el,"w"), "fasta")
+        call("./massive_phylogeny_raxml_support.py %s_ali_sel.fasta 100 100 12 %s" % (el, el), shell=True)
+    else:
+        call("./massive_phylogeny_raxml_support.py %s_ali.fasta 100 100 12 %s" % (el, el), shell=True)
