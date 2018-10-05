@@ -150,6 +150,20 @@ for gene in li_genes_corrected:
 
 out_av.close()
 
+snp_dict = {}
+
+if type(snp_data) is list:
+    for line in snp_data:
+        line = line.split()
+        a = line[0]
+        b = line[1]
+        if a in snp_dict:
+            snp_dict[a].append(b)
+        else:
+            snp_dict[a] = [b]
+
+#print snp_dict
+
 if plot_question == "PDF" or plot_question == "SVG":
   r_script = open("r_script.R","w")
   r_script.write("library(gridExtra)\nlibrary(ggplot2)\nlibrary(egg)\n")
@@ -204,7 +218,17 @@ if plot_question == "PDF" or plot_question == "SVG":
       out.close()
   
       r_script.write("""\nfas2 <- read.table("tmp_%s.txt", header=TRUE)\n""" % (str_i))
-  
+
+      snp_pos = 0
+      if len(snp_dict) > 0:
+          snp_pos = snp_dict[gene]
+
+          aa = """SNPS <- ggplot(fas2,aes(fas2$position))+geom_blank()+ylab("SNPs")"""
+          bb = """+geom_vline(xintercept=c(%s),linetype="solid")""" % ",".join(snp_pos)
+          cc = """+theme_bw()+theme(axis.title.x=element_blank(),axis.text.x=element_blank())"""
+          r_script.write(aa+bb+cc+"\n")
+#      print snp_dict
+
       k = 0
 
       cds = di_cds[gene]
@@ -255,6 +279,9 @@ if plot_question == "PDF" or plot_question == "SVG":
       condit = []
       for condition in li_conditions:
           condit.append("%s" % condition)
+
+      if len(snp_dict) > 0:
+          condit.insert(2,"SNPS")
 
       code = """pdf("tmp_%s.pdf", onefile = FALSE)\nggarrange(%s,ncol=1)\ndev.off()\n""" % (str_i, ",".join(condit))
       r_script.write(code)
