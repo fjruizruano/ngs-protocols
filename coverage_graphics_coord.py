@@ -277,17 +277,21 @@ if plot_question == "PDF" or plot_question == "SVG":
               code = code + """+scale_colour_manual(name="%s",values=c(%s),labels=c(%s))%s+ylab("Reads per million")+theme_bw()+theme(%s)%s\n""" % (condition,",".join(sta),",".join(pat),position_lab,theme_lab,title_code)
               r_script.write(code)
       condit = []
+      condit_len = []
       for condition in li_conditions:
           condit.append("%s" % condition)
+          condit_len.append(2)
 
       if len(snp_dict) > 0:
           condit.insert(2,"SNPS")
-
-      code = """pdf("tmp_%s.pdf", onefile = FALSE)\nggarrange(%s,ncol=1)\ndev.off()\n""" % (str_i, ",".join(condit))
+          condit_len.insert(2,0.5)
+      condit_len_str = [str(x) for x in condit_len]
+      condit_len_sum = sum(condit_len)
+      code = """pdf("tmp_%s.pdf",height=%s,onefile=FALSE)\nggarrange(%s,heights=c(%s),ncol=1)\ndev.off()\n""" % (str_i,str(condit_len_sum), ",".join(condit), ",".join(condit_len_str))
       r_script.write(code)
 
       if plot_question == "SVG":
-          code2 = """svg("tmp_%s.svg", onefile = FALSE)\nggarrange(%s,ncol=1)\ndev.off()\n""" % (str_i, ",".join(condit))
+          code2 = """svg("tmp_%s.svg",height=%s,onefile=FALSE)\nggarrange(%s,heights=c(%s),ncol=1)\ndev.off()\n""" % (str_i,str(condit_len_sum),",".join(condit), ",".join(condit_len_str))
           r_script.write(code2)
   
   r_script.close()
