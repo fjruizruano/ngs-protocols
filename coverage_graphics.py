@@ -4,7 +4,7 @@ import sys
 from numpy import mean,std
 from subprocess import call
 
-print "Usage: coverage_graphics.py CoverageFile SamplesFile FastaFile PDF/SVG/NOPLOT"
+print "Usage: coverage_graphics.py CoverageFile SamplesFile FastaFile PDF/SVG/NOPLOT [SNPsFile]" 
 
 try:
     coverage_file = sys.argv[1]
@@ -25,6 +25,15 @@ try:
     plot_question = sys.argv[4]
 except:
     plot_question = raw_input("Do you want to generate plots [PDF/SVG/NOPLOT]: ")
+
+snps_question = 0
+try:
+    snp_file = sys.argv[5]
+    snp_data = open(snp_file).readlines()
+    snps_question = 1
+except:
+    print "You didn't indicate SNPs file. Ignoring."
+    pass
 
 coverages = open(coverage_file).readlines()
 
@@ -78,12 +87,14 @@ coverages_norm = open(coverage_file+".norm").readlines()
 
 genes = {}
 li_genes = []
+di_cds = {} 
 
 fasta_read = open(fasta_file).readlines()
 for line in fasta_read:
     if line.startswith(">"):
-        line = line.split()
+        line = line.split(" ")
         li_genes.append(line[0][1:])
+        di_cds[line[0][1:]] = line[1]
 
 for line in coverages_norm[1:]:
     info = line.split()
@@ -141,9 +152,25 @@ for gene in li_genes_corrected:
 
 out_av.close()
 
+if snps_question == 1:
+  snp_data = open(snp_file).readlines()
+  snp_dict = {}
+
+  if type(snp_data) is list:
+    for line in snp_data:
+        line = line.split()
+        a = line[0]
+        b = line[1]
+        if a in snp_dict:
+            snp_dict[a].append(b)
+        else:
+            snp_dict[a] = [b]
+
+  #print snp_dict
+
 if plot_question == "PDF" or plot_question == "SVG":
   r_script = open("r_script.R","w")
-  r_script.write("library(grid)\nlibrary(gridExtra)\nlibrary(ggplot2)\n")
+  r_script.write("library(gridExtra)\nlibrary(ggplot2)\nlibrary(egg)\n")
   palette = ["blue", "red", "green3", "black", "cyan", "magenta", "yellow", "gray"]
   i = 0
   for gene in li_genes_corrected:
@@ -195,8 +222,30 @@ if plot_question == "PDF" or plot_question == "SVG":
       out.close()
   
       r_script.write("""\nfas2 <- read.table("tmp_%s.txt", header=TRUE)\n""" % (str_i))
-  
+
+
+      if snps_question == 1:
+
+        snp_pos = 0
+        if len(snp_dict) > 0:
+          try:
+            snp_pos = snp_dict[gene]
+
+            aa = """SNPS <- ggplot(fas2,aes(fas2$position))+geom_blank()+ylab("SNPs")"""
+            bb = """+geom_vline(xintercept=c(%s),linetype="solid")""" % ",".join(snp_pos)
+            cc = """+theme_bw()+theme(axis.title.x=element_blank(),axis.text.x=element_blank())"""
+            r_script.write(aa+bb+cc+"\n")
+          except:
+            aa = """SNPS <- ggplot(fas2,aes(fas2$position))+geom_blank()+ylab("SNPs")"""
+            cc = """+theme_bw()+theme(axis.title.x=element_blank(),axis.text.x=element_blank())"""
+            r_script.write(aa+cc+"\n")
+
+#         print snp_dict
+
       k = 0
+
+      cds = di_cds[gene]
+      cds = cds.replace("-",",")
   
       for condition in li_conditions: #gDNA or RNA
           #print condition
@@ -220,7 +269,7 @@ if plot_question == "PDF" or plot_question == "SVG":
           states = di_conditions[condition]
           states_inv = states[::-1]
           #print states
-          code = """%s <- ggplot(fas2,aes(fas2$position))""" % (condition)
+          code = """%s <- ggplot(fas2,aes(fas2$position))+geom_vline(xintercept=c(%s),linetype="dotted")""" % (condition,cds)
           color = len(states)
           for s in states_inv:
               #print s
@@ -240,14 +289,25 @@ if plot_question == "PDF" or plot_question == "SVG":
               code = code + """+scale_colour_manual(name="%s",values=c(%s),labels=c(%s))%s+ylab("Reads per million")+theme_bw()+theme(%s)%s\n""" % (condition,",".join(sta),",".join(pat),position_lab,theme_lab,title_code)
               r_script.write(code)
       condit = []
+      condit_len = []
       for condition in li_conditions:
-          condit.append("ggplotGrob(%s)" % condition)
+          condit.append("%s" % condition)
+          condit_len.append(2)
 
-      code = """pdf("tmp_%s.pdf", onefile = TRUE)\ngrid.newpage()\ngrid.draw(rbind(%s, size="max"))\ndev.off()\n""" % (str_i, ",".join(condit))
+      if snps_question == 1:
+        if len(snp_dict) > 0:
+          search_gdna = [s for s in condit if "gDNA" in s]
+          ind = condit.index(search_gdna[-1])
+          ind = ind+1
+          condit.insert(ind,"SNPS")
+          condit_len.insert(ind,0.5)
+      condit_len_str = [str(x) for x in condit_len]
+      condit_len_sum = sum(condit_len)
+      code = """pdf("tmp_%s.pdf",height=%s,onefile=FALSE)\nggarrange(%s,heights=c(%s),ncol=1)\ndev.off()\n""" % (str_i,str(condit_len_sum), ",".join(condit), ",".join(condit_len_str))
       r_script.write(code)
 
       if plot_question == "SVG":
-          code2 = """svg("tmp_%s.svg", onefile = TRUE)\ngrid.newpage()\ngrid.draw(rbind(%s, size="max"))\ndev.off()\n""" % (str_i, ",".join(condit))
+          code2 = """svg("tmp_%s.svg",height=%s,onefile=FALSE)\nggarrange(%s,heights=c(%s),ncol=1)\ndev.off()\n""" % (str_i,str(condit_len_sum),",".join(condit), ",".join(condit_len_str))
           r_script.write(code2)
   
   r_script.close()
