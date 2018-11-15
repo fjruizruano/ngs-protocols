@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys
-from numpy import mean,std
+from numpy import mean,std,var
 from subprocess import call
 
 print "Usage: coverage_graphics.py CoverageFile SamplesFile FastaFile PDF/SVG/NOPLOT [SNPsFile]" 
@@ -123,11 +123,15 @@ out_av = open(coverage_file+".av","w")
 
 
 #Writing header
-h = ["Sequence"]
+h = []
 for line in samples:
     l = line.split()
     h.append(l[0])
-out_av.write("\t".join(h)+"\n")
+out_av.write("\t")
+out_av.write("\t\t\t\t".join(h)+"\n")
+asvc = ["Av","SD","Var","CV"]
+asvc = asvc*len(samples)
+out_av.write("Sequence\t"+"\t".join(asvc)+"\n")
 
 print di_samples
 
@@ -143,10 +147,19 @@ for gene in li_genes_corrected:
             li_cov[n].append(float(number))
 
     li_averages = []
-
     for el in li_cov:
-        average = sum(el)/float(len(el))
+        average = mean(el)
+        stdev = std(el, ddof=1)
+        vari = var(el)
+        try:
+          coefvar = float(stdev)/float(average)
+        except:
+          coefvar = float(0)
         li_averages.append(average)
+        li_averages.append(stdev)
+        li_averages.append(vari)
+        li_averages.append(coefvar)
+
     li_averages = [str(i) for i in li_averages]
     out_av.write("%s\t%s\n" % (gene,"\t".join(li_averages)))
 
