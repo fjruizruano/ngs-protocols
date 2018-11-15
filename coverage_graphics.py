@@ -89,6 +89,7 @@ genes = {}
 li_genes = []
 di_cds = {}
 di_primers = {}
+di_highlow = {}
 
 fasta_read = open(fasta_file).readlines()
 for line in fasta_read:
@@ -100,6 +101,8 @@ for line in fasta_read:
             di_cds[line[0]] = line[1]
         if line[2] != "":
             di_primers[line[0]] = line[2]
+        if line[3] != "":
+            di_highlow[line[0]] = line[3]
 
 for line in coverages_norm[1:]:
     info = line.split()
@@ -167,6 +170,72 @@ for gene in li_genes_corrected:
 
     li_averages = [str(i) for i in li_averages]
     out_av.write("%s\t%s\n" % (gene,"\t".join(li_averages)))
+
+    if gene in di_highlow:
+      coords = di_highlow[gene]
+      coords = coords.split(",")
+
+      hi_coords = []
+      for coord in coords:
+          coord = coord.split("-")
+          hi_coords.append([int(coord[0]),int(coord[1])])
+      hi_first = hi_coords[0][0]
+      hi_last = hi_coords[-1][-1]
+      lo_coords = []
+      if len(hi_coords) > 2:
+          for i in range(0,len(hi_coords)-1):
+              one = hi_coords[i]
+              two = hi_coords[i+1]
+              lo_coords.append([one[-1]+1,two[0]-1])
+      if hi_first > 1:
+          lo_coords.insert(0,[1,hi_first-1])
+      if hi_last < len(el):
+          lo_coords.append([hi_last+1,len(el)])
+
+      li_high = []
+      li_low = []
+      li_highav = []
+      li_lowav = []
+
+      for el in li_cov:
+        for hi in hi_coords:
+          b = hi[0]-1
+          e = hi[1]
+          li_high.append(el[b:e])
+
+        for lo in lo_coords:
+          b = hi[0]-1
+          e = hi[1]
+          li_low.append(el[b:e])
+
+        average = mean(li_high)
+        stdev = std(li_high, ddof=1)
+        vari = var(li_high)
+        try:
+          coefvar = float(stdev)/float(average)
+        except:
+          coefvar = float(0)
+        li_highav.append(average)
+        li_highav.append(stdev)
+        li_highav.append(vari)
+        li_highav.append(coefvar)
+
+        average = mean(li_low)
+        stdev = std(li_low, ddof=1)
+        vari = var(li_low)
+        try:
+          coefvar = float(stdev)/float(average)
+        except:
+          coefvar = float(0)
+        li_lowav.append(average)
+        li_lowav.append(stdev)
+        li_lowav.append(vari)
+        li_lowav.append(coefvar)
+
+      li_highav = [str(i) for i in li_highav]
+      out_av.write("HIGH_%s\t%s\n" % (gene,"\t".join(li_highav)))
+      li_lowav = [str(i) for i in li_lowav]
+      out_av.write("LOW_%s\t%s\n" % (gene,"\t".join(li_lowav)))
 
 out_av.close()
 
