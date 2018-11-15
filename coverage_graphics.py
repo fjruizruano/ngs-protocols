@@ -4,7 +4,7 @@ import sys
 from numpy import mean,std,var
 from subprocess import call
 
-print "Usage: coverage_graphics.py CoverageFile SamplesFile FastaFile PDF/SVG/NOPLOT [SNPsFile]" 
+print "Usage: coverage_graphics.py CoverageFile SamplesFile CoordinatesFile PDF/SVG/NOPLOT [SNPsFile]" 
 
 try:
     coverage_file = sys.argv[1]
@@ -19,7 +19,7 @@ except:
 try:
     fasta_file = sys.argv[3]
 except:
-    fasta_file = raw_input("Introduce FASTA file: ")
+    fasta_file = raw_input("Introduce Coordinates file: ")
 
 try:
     plot_question = sys.argv[4]
@@ -87,14 +87,19 @@ coverages_norm = open(coverage_file+".norm").readlines()
 
 genes = {}
 li_genes = []
-di_cds = {} 
+di_cds = {}
+di_primers = {}
 
 fasta_read = open(fasta_file).readlines()
 for line in fasta_read:
-    if line.startswith(">"):
-        line = line.split(" ")
-        li_genes.append(line[0][1:])
-        di_cds[line[0][1:]] = line[1]
+#    if line.startswith(">"):
+        line = line[:-1]
+        line = line.split("\t")
+        li_genes.append(line[0])
+        if line[1] != "":
+            di_cds[line[0]] = line[1]
+        if line[2] != "":
+            di_primers[line[0]] = line[2]
 
 for line in coverages_norm[1:]:
     info = line.split()
@@ -236,6 +241,21 @@ if plot_question == "PDF" or plot_question == "SVG":
   
       r_script.write("""\nfas2 <- read.table("tmp_%s.txt", header=TRUE)\n""" % (str_i))
 
+      cds_code = ""
+      if gene in di_cds:
+          cds = di_cds[gene]
+          cds = cds.replace("-",",")
+          cds_code = """+geom_vline(xintercept=c(%s),linetype="dotted")""" % (cds)
+
+      primer_code = ""
+      if gene in di_primers:
+          primers = di_primers[gene]
+          primers = primers.split(",")
+          for p in primers:
+              p = p.split("-")
+              b = p[0]
+              e = p[1]
+              primer_code += """+annotate("rect",xmin=%s,xmax=%s,ymin=-Inf,ymax=Inf,alpha=0.1)""" % (str(b), str(e))
 
       if snps_question == 1:
 
@@ -244,11 +264,13 @@ if plot_question == "PDF" or plot_question == "SVG":
           try:
             snp_pos = snp_dict[gene]
 
+ #           aa = """SNPS <- ggplot(fas2,aes(fas2$position))+geom_blank()+ylab("SNPs")%s%s""" % (primer_code,cds_code)
             aa = """SNPS <- ggplot(fas2,aes(fas2$position))+geom_blank()+ylab("SNPs")"""
             bb = """+geom_vline(xintercept=c(%s),linetype="solid")""" % ",".join(snp_pos)
             cc = """+theme_bw()+theme(axis.title.x=element_blank(),axis.text.x=element_blank())"""
             r_script.write(aa+bb+cc+"\n")
           except:
+#            aa = """SNPS <- ggplot(fas2,aes(fas2$position))+geom_blank()+ylab("SNPs")%s%s""" % (primer_code,cds_code)
             aa = """SNPS <- ggplot(fas2,aes(fas2$position))+geom_blank()+ylab("SNPs")"""
             cc = """+theme_bw()+theme(axis.title.x=element_blank(),axis.text.x=element_blank())"""
             r_script.write(aa+cc+"\n")
@@ -257,9 +279,6 @@ if plot_question == "PDF" or plot_question == "SVG":
 
       k = 0
 
-      cds = di_cds[gene]
-      cds = cds.replace("-",",")
-  
       for condition in li_conditions: #gDNA or RNA
           #print condition
   
@@ -282,7 +301,8 @@ if plot_question == "PDF" or plot_question == "SVG":
           states = di_conditions[condition]
           states_inv = states[::-1]
           #print states
-          code = """%s <- ggplot(fas2,aes(fas2$position))+geom_vline(xintercept=c(%s),linetype="dotted")""" % (condition,cds)
+          code = """%s <- ggplot(fas2,aes(fas2$position))%s%s""" % (condition,primer_code,cds_code)
+
           color = len(states)
           for s in states_inv:
               #print s
