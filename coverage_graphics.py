@@ -244,15 +244,15 @@ for gene in li_genes_corrected:
         li_lowav.append(vari)
         li_lowav.append(coefvar)
 
-      li_highav = [str(i) for i in li_highav]
-      out_var.write("HIGH_%s\t%s\n" % (gene,"\t".join(li_highav)))
       li_lowav = [str(i) for i in li_lowav]
       out_var.write("LOW_%s\t%s\n" % (gene,"\t".join(li_lowav)))
+      li_highav = [str(i) for i in li_highav]
+      out_var.write("HIGH_%s\t%s\n" % (gene,"\t".join(li_highav)))
 
-      li_hav = [str(i) for i in li_hav]
-      out_av.write("HIGH_%s\t%s\n" % (gene,"\t".join(li_hav)))
       li_lav = [str(i) for i in li_lav]
       out_av.write("LOW_%s\t%s\n" % (gene,"\t".join(li_lav)))
+      li_hav = [str(i) for i in li_hav]
+      out_av.write("HIGH_%s\t%s\n" % (gene,"\t".join(li_hav)))
 
 out_av.close()
 out_var.close()
