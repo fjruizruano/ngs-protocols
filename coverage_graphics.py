@@ -128,6 +128,7 @@ for gene in li_genes:
 out_nf.close()
 
 out_av = open(coverage_file+".av","w")
+out_var = open(coverage_file+".var","w")
 
 
 #Writing header
@@ -135,11 +136,13 @@ h = []
 for line in samples:
     l = line.split()
     h.append(l[0])
-out_av.write("\t")
-out_av.write("\t\t\t\t".join(h)+"\n")
+out_var.write("\t")
+out_var.write("\t\t\t\t".join(h)+"\n")
 asvc = ["Av","SD","Var","CV"]
 asvc = asvc*len(samples)
-out_av.write("Sequence\t"+"\t".join(asvc)+"\n")
+out_var.write("Sequence\t"+"\t".join(asvc)+"\n")
+
+out_av.write("Sequence\t"+"\t".join(h)+"\n")
 
 print di_samples
 
@@ -155,6 +158,7 @@ for gene in li_genes_corrected:
             li_cov[n].append(float(number))
 
     li_averages = []
+    li_av = []
     for el in li_cov:
         average = mean(el)
         stdev = std(el, ddof=1)
@@ -164,12 +168,15 @@ for gene in li_genes_corrected:
         except:
           coefvar = float(0)
         li_averages.append(average)
+        li_av.append(average)
         li_averages.append(stdev)
         li_averages.append(vari)
         li_averages.append(coefvar)
 
     li_averages = [str(i) for i in li_averages]
-    out_av.write("%s\t%s\n" % (gene,"\t".join(li_averages)))
+    li_av = [str(i) for i in li_av]
+    out_var.write("%s\t%s\n" % (gene,"\t".join(li_averages)))
+    out_av.write("%s\t%s\n" % (gene,"\t".join(li_av)))
 
     if gene in di_highlow:
       coords = di_highlow[gene]
@@ -182,31 +189,34 @@ for gene in li_genes_corrected:
       hi_first = hi_coords[0][0]
       hi_last = hi_coords[-1][-1]
       lo_coords = []
-      if len(hi_coords) > 2:
+      if len(hi_coords) > 1:
           for i in range(0,len(hi_coords)-1):
               one = hi_coords[i]
               two = hi_coords[i+1]
               lo_coords.append([one[-1]+1,two[0]-1])
+              
       if hi_first > 1:
           lo_coords.insert(0,[1,hi_first-1])
       if hi_last < len(el):
           lo_coords.append([hi_last+1,len(el)])
 
-      li_high = []
-      li_low = []
       li_highav = []
       li_lowav = []
+      li_hav = []
+      li_lav = []
 
       for el in li_cov:
+        li_high = []
+        li_low = []
         for hi in hi_coords:
           b = hi[0]-1
           e = hi[1]
-          li_high.append(el[b:e])
+          li_high.extend(el[b:e])
 
         for lo in lo_coords:
-          b = hi[0]-1
-          e = hi[1]
-          li_low.append(el[b:e])
+          b = lo[0]-1
+          e = lo[1]
+          li_low.extend(el[b:e])
 
         average = mean(li_high)
         stdev = std(li_high, ddof=1)
@@ -216,6 +226,7 @@ for gene in li_genes_corrected:
         except:
           coefvar = float(0)
         li_highav.append(average)
+        li_hav.append(average)
         li_highav.append(stdev)
         li_highav.append(vari)
         li_highav.append(coefvar)
@@ -228,16 +239,23 @@ for gene in li_genes_corrected:
         except:
           coefvar = float(0)
         li_lowav.append(average)
+        li_lav.append(average)
         li_lowav.append(stdev)
         li_lowav.append(vari)
         li_lowav.append(coefvar)
 
       li_highav = [str(i) for i in li_highav]
-      out_av.write("HIGH_%s\t%s\n" % (gene,"\t".join(li_highav)))
+      out_var.write("HIGH_%s\t%s\n" % (gene,"\t".join(li_highav)))
       li_lowav = [str(i) for i in li_lowav]
-      out_av.write("LOW_%s\t%s\n" % (gene,"\t".join(li_lowav)))
+      out_var.write("LOW_%s\t%s\n" % (gene,"\t".join(li_lowav)))
+
+      li_hav = [str(i) for i in li_hav]
+      out_av.write("HIGH_%s\t%s\n" % (gene,"\t".join(li_hav)))
+      li_lav = [str(i) for i in li_lav]
+      out_av.write("LOW_%s\t%s\n" % (gene,"\t".join(li_lav)))
 
 out_av.close()
+out_var.close()
 
 if snps_question == 1:
   snp_data = open(snp_file).readlines()
