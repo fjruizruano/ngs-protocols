@@ -128,6 +128,7 @@ for gene in li_genes:
 out_nf.close()
 
 out_av = open(coverage_file+".av","w")
+out_av_high = open(coverage_file+".av.high","w")
 out_var = open(coverage_file+".var","w")
 
 
@@ -143,6 +144,7 @@ asvc = asvc*len(samples)
 out_var.write("Sequence\t"+"\t".join(asvc)+"\n")
 
 out_av.write("Sequence\t"+"\t".join(h)+"\n")
+out_av_high.write("Sequence\t"+"\t".join(h)+"\n")
 
 print di_samples
 
@@ -177,6 +179,9 @@ for gene in li_genes_corrected:
     li_av = [str(i) for i in li_av]
     out_var.write("%s\t%s\n" % (gene,"\t".join(li_averages)))
     out_av.write("%s\t%s\n" % (gene,"\t".join(li_av)))
+
+    if gene not in di_highlow:
+        out_av_high.write("%s\t%s\n" % (gene,"\t".join(li_av)))
 
     if gene in di_highlow:
       coords = di_highlow[gene]
@@ -254,7 +259,10 @@ for gene in li_genes_corrected:
       li_hav = [str(i) for i in li_hav]
       out_av.write("HIGH_%s\t%s\n" % (gene,"\t".join(li_hav)))
 
+      out_av_high.write("HIGH_%s\t%s\n" % (gene,"\t".join(li_hav)))
+
 out_av.close()
+out_av_high.close()
 out_var.close()
 
 if snps_question == 1:
