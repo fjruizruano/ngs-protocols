@@ -80,7 +80,7 @@ for n in range(0,len(files)):
     for n in range(0,len(splits)):
         fq_one = splits[n]
         com = "ssaha2 -solexa -score 40 -identity 80 -output sam -outfile %s -best 1 -save %s %s" % (fq_one+".sam",refname,fq_one)
-        rr = n/12
+        rr = n/int(thr)
         commands[rr].append(com)
 
     print "Running SSAHA2"
