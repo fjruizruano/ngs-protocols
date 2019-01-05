@@ -90,7 +90,7 @@ for n in range(0,len(files)/2):
         fq_one = splits[n]
         fq_two = fq_one.replace("tmp_queries_1", "tmp_queries_2")
         com = "ssaha2 -solexa -pair 20,400 -score 40 -identity 80 -output sam -outfile %s -best 1 -save %s %s %s" % (fq_one+".sam",refname,fq_one,fq_two)
-        rr = n/12
+        rr = n/int(thr)
         commands[rr].append(com)
 
     print "Running SSAHA2"
