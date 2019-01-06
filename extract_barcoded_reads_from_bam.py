@@ -52,7 +52,7 @@ elif bc_question == "gz":
 print bc_to_bcnames
 call(bc_to_bcnames, shell=True)
 
-bcnames_to_bcreads = """awk 'NR%2==1' barcodes_names.txt | awk {'print $1'} > barcodes_reads.txt"""
+bcnames_to_bcreads = """awk 'NR%2==1' barcodes_names.txt | awk {'print $1'} | sed 's/@//g' > barcodes_reads.txt"""
 
 print bcnames_to_bcreads
 call(bcnames_to_bcreads, shell=True)
