@@ -45,9 +45,9 @@ call(fastq_to_bc, shell=True)
 
 bc_to_bcnames = ""
 if bc_question == "fastq":
-    bc_to_bcnames = "grep -f mapped_reads_barcodes.txt %s > barcodes_names.txt" % (bc_file)
+    bc_to_bcnames = "grep -Ff mapped_reads_barcodes.txt %s > barcodes_names.txt" % (bc_file)
 elif bc_question == "gz":
-    bc_to_bcnames = "zgrep -f mapped_reads_barcodes.txt %s > barcodes_names.txt" % (bc_file)
+    bc_to_bcnames = "zgrep -Ff mapped_reads_barcodes.txt %s > barcodes_names.txt" % (bc_file)
 
 print bc_to_bcnames
 call(bc_to_bcnames, shell=True)
