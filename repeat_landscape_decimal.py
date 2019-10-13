@@ -27,7 +27,6 @@ for i in np.arange(0,20,0.1):
 data = {}
 
 for line in align:
-    print annotation
     info = line.split(" ")
 
     try:
@@ -60,9 +59,6 @@ for line in align:
     if info[0] == "Kimura":
         div = info[-1]
         div = div[0:-2]
-#        print annotation
-#        print div
-#        print length
         if float(div) < 20:
             data[annotation][div] += length
 
