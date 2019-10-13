@@ -18,8 +18,7 @@ annotation = ""
 
 divs_zero_list = []
 
-#for i in np.arange(0,70,0.1):
-for i in np.arange(0,20,0.1):
+for i in np.arange(0,70.1,0.1):
     i = round(i,1)
     i = str(i)
     divs_zero_list.append(i)
@@ -51,7 +50,7 @@ for line in align:
             annotation = annotation[1]
         if annotation not in data:
             data[annotation] = {} 
-            for i in np.arange(0,20,0.1):
+            for i in np.arange(0,70.1,0.1):
                 i = round(i,1)
                 i = str(i)
                 data[annotation][i] = 0
@@ -59,11 +58,12 @@ for line in align:
     if info[0] == "Kimura":
         div = info[-1]
         div = div[0:-2]
-        if float(div) < 20:
-            data[annotation][div] += length
-
+        data[annotation][div] += length
 
 out = open("output", "w")
+
+header = "Div\t" + "\t".join(divs_zero_list) + "\n"
+out.write(header)
 
 for el in data:
     collect = [el]
