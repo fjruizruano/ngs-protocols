@@ -49,6 +49,7 @@ ngs-protocols
 * find_exclusive_kmers.py: Extract exclusive kmers of a library in comparison with other using Jellyfish.
 * gatk_protocol.py: Run GATK in a list of FASTQ files with the same reference.
 * get_no_blat.py: Extract sequences from a FASTA file absent in a PSL output of BLAT.
+* gff_creator.py: Generate a GFF file for htseq-count from a FASTA file.
 * id_rmasker.py: Edit IDs from a FASTA file with a format compatible with RepeatMasker.
 * id_rmasker_rexp.py: Edit IDs from a FASTA file of RepeatExplorer contigs compatible with RepeatMasker.
 * join_multiple_lists.py: Join the results of two or more lists.
@@ -68,6 +69,7 @@ ngs-protocols
 * reduce_bam.py: Filter out unmapped paired reads from a BAM file.
 * remove_ns.py: Remove reads with Ns after a masking.
 * replace_patterns: Replace elements in a file.
+* repeat_landscape_decimal.py: Generates a repeat landscape table with divergence values adjusted to one decimal from an ALIGN file. 
 * repeat_masker_run.py: Run RepeatMasker alignment for small FASTA files.
 * repeat_masker_run_big.py: Run RepeatMasker alignment for several big FASTA files.
 * rexp_get_cluster.py: Get FASTA file concatenating all the contigs assembled with RepeatExplorer.
