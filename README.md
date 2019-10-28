@@ -69,7 +69,8 @@ ngs-protocols
 * reduce_bam.py: Filter out unmapped paired reads from a BAM file.
 * remove_ns.py: Remove reads with Ns after a masking.
 * replace_patterns: Replace elements in a file.
-* repeat_landscape_decimal.py: Generates a repeat landscape table with divergence values adjusted to one decimal from an ALIGN file. 
+* repeat_landscape_decimal.py: Generates a repeat landscape table with divergence values adjusted to one decimal (0.1%) from an ALIGN file. 
+* repeat_landscape_decimal_050.py: Generates a repeat landscape table with divergence values adjusted to 0.5% from an ALIGN file. 
 * repeat_masker_run.py: Run RepeatMasker alignment for small FASTA files.
 * repeat_masker_run_big.py: Run RepeatMasker alignment for several big FASTA files.
 * rexp_get_cluster.py: Get FASTA file concatenating all the contigs assembled with RepeatExplorer.
