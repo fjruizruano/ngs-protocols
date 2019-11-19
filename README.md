@@ -5,6 +5,7 @@ ngs-protocols
 
 * FastA.split.pl: Split FASTA files in several subfiles.
 * FastQ.split.pl: Split FASTQ files in several subfiles.
+* alignment_copy_paste.py: Cut alignment from the left until a position and paste to the right. 
 * annot_to_rexp.py: Annotate RepeatExplorer's contigs following a list.
 * bam_consensus.py: Get majority consensus sequences for BAM files.
 * bam_coverage_join.py: Generate a table of coverage along the contigs in several BAM files.
