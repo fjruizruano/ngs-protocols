@@ -58,6 +58,7 @@ ngs-protocols
 * join_rm_list.py: Join two files with RepatMasker nucleotide counts.
 * kimura_window.py: Calculate kimura divergence per window using the RepeatMasker's script.
 * kmer_to_fasta.py: Generate a FASTA file from a list of kmers.
+* longranger_prepare_reference.py: Prepare FASTA reference for longranger.
 * mapping_blat_gs.py: Extract matching reads with BLAT and optionally launch Newbler, RepeatMasker or SSAHA2.
 * mapping_blat_gs_hard.py: Extract matching reads with hard options of BLAT and optionally launch Newbler, RepeatMasker or SSAHA2.
 * mapping_blat_gs_saver.py: Version of mapping_blat_gs.py for big libraries.
