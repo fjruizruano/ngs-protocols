@@ -53,13 +53,6 @@ for n in range(0,len(files)/2):
         print "Uncompressing file %s" % file1
         call("seqtk seq %s > %s" % (file1, file1_n), shell=True)
         file1 = file1_n
-    ext2 = file2.split(".")
-    if ext2[-1] == "gz":
-        file2_n = ext2[0:-1]
-        file2_n = ".".join(file2_n)
-        print "Uncompressing file %s" % file2
-        call("seqtk seq %s > %s" % (file2, file2_n), shell=True)
-        file2 = file2_n
 
     print "Splitting FASTQ files"
     getpre = open(file1)
@@ -73,7 +66,20 @@ for n in range(0,len(files)/2):
     print n_splits
 
     call("FastQ.split.pl %s tmp_queries_1 %s" % (file1, str(n_splits)), shell=True)
+    if ext1[-1] == "gz":
+        call("rm %s" % (file1), shell=True)
+
+    ext2 = file2.split(".")
+    if ext2[-1] == "gz":
+        file2_n = ext2[0:-1]
+        file2_n = ".".join(file2_n)
+        print "Uncompressing file %s" % file2
+        call("seqtk seq %s > %s" % (file2, file2_n), shell=True)
+        file2 = file2_n
+
     call("FastQ.split.pl %s tmp_queries_2 %s" % (file2, str(n_splits)), shell=True)
+    if ext2[-1] == "gz":
+        call("rm %s" % (file2), shell=True)
 
     onlyfiles = [f for f in listdir(".") if isfile(join(".",f))]
     splits = []
@@ -89,7 +95,7 @@ for n in range(0,len(files)/2):
     for n in range(0,len(splits)):
         fq_one = splits[n]
         fq_two = fq_one.replace("tmp_queries_1", "tmp_queries_2")
-        com = "ssaha2 -solexa -pair 20,400 -score 40 -identity 80 -output sam -outfile %s -best 1 -save %s %s %s" % (fq_one+".sam",refname,fq_one,fq_two)
+        com = "ssaha2 -solexa -pair 20,400 -score 40 -identity 80 -output sam -outfile %s -best 1 -save %s %s %s; rm %s %s" % (fq_one+".sam",refname,fq_one,fq_two,fq_one,fq_two)
         rr = n/int(thr)
         commands[rr].append(com)
 
@@ -98,11 +104,8 @@ for n in range(0,len(files)/2):
         processes = [Popen(cmd, shell=True) for cmd in command]
         for p in processes:
             p.wait()
-    if ext1[-1] == "gz":
-        call("rm %s" % (file1), shell=True)
-    if ext2[-1] == "gz":
-        call("rm %s" % (file2), shell=True)
-    call("rm tmp_queries*.fastq", shell=True)
+
+#    call("rm tmp_queries*.fastq", shell=True)
     call("cat *sam > all.sam", shell=True)
     call("rm tmp_queries*.sam", shell=True)
 
@@ -118,3 +121,4 @@ for n in range(0,len(files)/2):
 #    call("rm %s" % (file1+".sort.bam"), shell=True)
 
 call("rm %s" % refname+".head "+refname+".body "+refname+".size "+refname+".name "+refname+".base", shell=True)
+
