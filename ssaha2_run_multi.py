@@ -113,17 +113,20 @@ for n in range(0,len(files)/2):
     call("samtools view -F 4 -bt %s.fai %s > %s" % (ref,"all.sam",ext1[0]+".bam"), shell=True)
     call("rm all.sam", shell=True)
 
-    call("samtools sort -T aln.sorted %s -o %s" % (ext1[0]+".bam", ext1[0]+"_mapped.bam"), shell=True)
+    try:
+        call("samtools sort -T aln.sorted %s -o %s" % (ext1[0]+".bam", ext1[0]+"_mapped.bam"), shell=True)
+    except:
+        pass
 
     onlyfiles = [f for f in listdir(".") if isfile(join(".",f))]
-    if ext1[0]+".bam" in onlyfiles:
+    if ext1[0]+"_mapped.bam" in onlyfiles:
         call("rm %s" % (ext1[0]+".bam"), shell=True)
         call("samtools index %s" % (ext1[0]+"_mapped.bam"), shell=True)
     else:
         call("samtools sort %s %s" % (ext1[0]+".bam", ext1[0]+"_mapped"), shell=True)
 
     onlyfiles = [f for f in listdir(".") if isfile(join(".",f))]
-    if ext1[0]+".bam" in onlyfiles:
+    if ext1[0]+"_mapped.bam" in onlyfiles:
         call("rm %s" % (ext1[0]+".bam"), shell=True)
         call("samtools index %s" % (ext1[0]+"_mapped.bam"), shell=True)
 
