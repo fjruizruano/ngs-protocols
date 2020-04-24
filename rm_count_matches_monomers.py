@@ -3,12 +3,17 @@
 import sys
 from Bio import SeqIO
 
-print "Usage: rm_count_matches.py FastaFile\n"
+print "Usage: rm_count_matches.py FastaFile MinimumLength\n"
 
 try:
     fasta = sys.argv[1]
 except:
     fasta = raw_input ("Introduce FastaFile: ")
+
+try:
+    minlen = sys.argv[2]
+except:
+    minlen = raw_input ("Introduce MinimumLength: ")
 
 seqs = SeqIO.parse(open(fasta),"fasta")
 
