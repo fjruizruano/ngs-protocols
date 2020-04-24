@@ -34,7 +34,7 @@ for seq in seqs:
         counter_dim[annot] = [0,0]
         counter_nodim[annot] = [0,0]
 
-    if len(secu) > 89:
+    if len(secu) > minlen: # previously 89
         a = counter_dim[annot][0]
         b = counter_dim[annot][1]
         counter_dim[annot] = [a+1,b+len(secu)]
@@ -46,7 +46,7 @@ for seq in seqs:
 out = open(fasta+".counts", "w")
 out.write("Annotation\tDIM_N\tDIM_MON\tNODIM_N\tNODIM_MON\n")
 
-for el in counter_dim:
+for el in sorted(counter_dim):
     dim = counter_dim[el]
     nodim = counter_nodim[el]
     lili = dim+nodim

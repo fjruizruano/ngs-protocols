@@ -25,7 +25,6 @@ except:
 limit_len = read_len - 11
 limit_len = str(limit_len)
 
-
 # Get pattern file 
 
 call(""" grep ">" %s | sed 's/>//g' | sed 's/#/\t/g' | awk {'print $1'} > names.txt""" % (fasta), shell=True)
