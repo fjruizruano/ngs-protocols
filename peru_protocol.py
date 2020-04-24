@@ -3,7 +3,7 @@
 import sys
 from subprocess import call
 
-print "Usage: peru_protocol.py list_out.txt FastaFile"
+print "Usage: peru_protocol.py list_out.txt FastaFile ReadLength "
 
 try:
     list_out = sys.argv[1]
@@ -14,6 +14,17 @@ try:
     fasta = sys.argv[2]
 except:
     fasta = raw_input("""Introduce Fasta File with IDs in RepeatMasker format (Names in format "LmiSat01A-185#Satellite/LmiSat01A-185"): """)
+
+try:
+    read_len = sys.argv[3]
+    read_len = int(read_len)
+except:
+    read_len = raw_input("Introduce read length: ")
+    read_len = int(read_len)
+
+limit_len = read_len - 11
+limit_len = str(limit_len)
+
 
 # Get pattern file 
 
@@ -54,4 +65,6 @@ for out in outs:
 
     call("rm_getseq_annot.py %s %s.fam.noasterisk 1" % (out[:-4],out), shell=True)
 
-    call("rm_count_matches_monomers.py %s.fam.noasterisk.fas" % out, shell=True)
+    call("rm_count_matches_monomers.py %s.fam.noasterisk.fas %s" % (out, limit_len), shell=True)
+
+    call("rm_cluster_external.py %s.fam.noasterisk %s pattern.txt" % (out, out[:-4]), shell=True)
