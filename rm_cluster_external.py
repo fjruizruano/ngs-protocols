@@ -51,10 +51,14 @@ for n in range(0, len(noheader)):
         sub_info = el.split()
         up_down.append([sub_info[4],sub_info[9]])
     if pair_line not in up_down:
-        seq_list[this_line[1]].append(pair_line[0])
+        try:
+            seq_list[this_line[1]].append(pair_line[0])
+        except:
+            pass
 
-call("mkdir sel_reads", shell=True)
-os.chdir("sel_reads")
+outname = outfile.split(".")
+call("mkdir %s_sel_reads" % outname[0] , shell=True)
+os.chdir("%s_sel_reads" % outname[0])
 
 library = "lmig_combo_plus_trna_rmod.fasta"
 lib = SeqIO.parse(open("../"+library), "fasta")
@@ -82,11 +86,11 @@ cap3_out.write(cap3_header+"\n")
 
 files = os.listdir(".")
 
-for el in seq_list:
+for el in sorted(seq_list):
 
     print "\n"+el+"\n"
 
-    if el+".txt" not in files:
+    if el+".txt" not in files and len(seq_list[el]) > 0:
         out = open(el+".txt","w")
         li = seq_list[el]
         li = set(li)
@@ -96,10 +100,12 @@ for el in seq_list:
 
         call("seqtk subseq %s %s.txt > %s.fasta" % ("../"+fastafile, el, el), shell=True)
 
-    sel_reads = list(SeqIO.parse(open(el+".fasta"), "fasta"))
-    num_reads = len(sel_reads)
+    num_reads = 0 
+    if len(seq_list[el]) > 0:
+        sel_reads = list(SeqIO.parse(open(el+".fasta"), "fasta"))
+        num_reads = len(sel_reads)
 
-    if el+".nr80" not in files:
+    if el+".nr80" not in files and len(seq_list[el]) > 0:
         call("cd-hit-est -T 12 -i %s.fasta -r 1 -M 0 -c 0.8 -o %s.nr80" % (el, el), shell=True)
 
         cdhit_list = []
@@ -139,17 +145,14 @@ for el in seq_list:
         cdhit_out.write("\t".join(cdhit_info)+"\n")
         cdhit_out.flush()
 
-    if el+".fasta.out" not in files:
+    if el+".fasta.out" not in files and len(seq_list[el]) > 0:
         call("RepeatMasker -par 12 -no_is -nolow -lib ../%s %s.fasta" % (library, el), shell=True)
 
         annots_dict = {}
         for a in annots:
             annots_dict[a] = 0
 
-        try:
-            rmout = open(el+".fasta.out").readlines()
-        except:
-            continue
+        rmout = open(el+".fasta.out").readlines()
 
         for line in rmout[3:]:
             info = line.split()
@@ -169,11 +172,11 @@ for el in seq_list:
 
     random = ""
     limit = 10000
-    if num_reads >= limit:
+    if num_reads >= limit and len(seq_list[el]) > 0:
         random = ".random"
         call("seqtk sample %s.fasta %s > %s.fasta%s" % (el, str(limit),el,random),shell=True)
 
-    if el+".fasta"+random+".cap.singlets" not in files:
+    if el+".fasta"+random+".cap.singlets" not in files and len(seq_list[el]) > 0:
         call("cap3 %s.fasta%s" % (el,random) , shell=True)
         ace = open(el+".fasta"+random+".cap.ace").readlines()
         nums = []
@@ -194,7 +197,7 @@ for el in seq_list:
         try:
             n_singlets = len(singlets)
         except:
-            singlets = []
+            singlets = [0]
         counts = [el,num_reads,n_singlets,sum(nums),len(nums),min(nums),max(nums),min(lens),max(lens)]
         counts_str = [str(elem) for elem in counts]
         cap3_out.write("\t".join(counts_str)+"\n")
