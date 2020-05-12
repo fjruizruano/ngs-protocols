@@ -3,7 +3,7 @@
 import sys
 from subprocess import call
 
-print "Usage: peru_protocol.py list_out.txt FastaFile ReadLength "
+print "Usage: peru_protocol.py list_out.txt FastaReference ReadLength "
 
 try:
     list_out = sys.argv[1]
@@ -48,8 +48,12 @@ for el in names_list:
     data = names_dict[el]
     if len(data) > 1:
         main = data[0]
-        for dat in data[1:]:
+        for dat in data:
             pattern.write("%s\t%s\n" % ("-".join(dat),"-".join(main)))
+    elif len(data) == 1:
+        main = data[0]
+        pattern.write("%s\t%s\n" % ("-".join(main),"-".join(main)))
+    
 
 pattern.close()
 
