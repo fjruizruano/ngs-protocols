@@ -3,7 +3,7 @@
 import sys
 from subprocess import call
 
-print "divsum_count.py ListOfDivsumFiles"
+print "divsum_count.py ListOfDivsumFiles\n"
 
 try:
     files = sys.argv[1]
@@ -42,15 +42,17 @@ for line in files:
     out.write("Sequence\tAbundance\n")
 
     stats = open(file+".stats","w")
-    stats.write("Sequence\tTotalAbundance\tMaxAbundance\tMaxPeak\tRPS\tDIVPEAK\n")
+    stats.write("Sequence\tDivergence\tTotalAbundance\tMaxAbundance\tMaxPeak\tRPS\tDIVPEAK\n")
 
     for el in li[1:]:
         numbers = el[1:]
         numbers = [int(x) for x in numbers]
         numbers_prop = [1.0*x/size for x in numbers]
         prop_dict = {}
+        prop_li = []
         for prop in range(0,len(numbers_prop)):
             prop_dict[prop] = numbers_prop[prop]
+            prop_li.append(numbers_prop[prop])
         prop_dict_sorted = sorted(prop_dict.items(), key=lambda x: x[1], reverse=True)
         total = sum(numbers_prop)
         top = prop_dict_sorted[0]
@@ -70,10 +72,18 @@ for line in files:
         divpeak = top_div
         out.write(el[0]+"\t"+str(sum(numbers))+"\n")
 
-        data = "%s\t%s\t%s\t%s\t%s\t%s\n" % (el[0],str(total),str(top_ab),str(sum_peak),str(rps),str(divpeak))
+        all_divs = []
+        for d in li[0][1:]:
+            all_divs.append(int(d)+0.5)
+        div_sumproduct = 0
+        for x,y in zip(all_divs,prop_li):
+            div_sumproduct += x * y
+        divergence = div_sumproduct/total
+
+        data = "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (el[0],str(divergence),str(total),str(top_ab),str(sum_peak),str(rps),str(divpeak))
         stats.write(data)
 
-        data2 = "%s\t%s\t%s\t%s\t%s\t%s\n" % (file,str(total),str(top_ab),str(sum_peak),str(rps),str(divpeak))
+        data2 = "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (file, str(divergence),str(total),str(top_ab),str(sum_peak),str(rps),str(divpeak))
 
         if el[0] in results:
              results[el[0]].append(data2)
@@ -89,10 +99,10 @@ out = open("results.txt", "w")
 
 for el in sorted(results):
     info = results[el]
-    out.write("%s\tTotalAbundance\tMaxAbundance\tMaxPeak\tRPS\tDIVPEAK\n" % (el))
+    out.write("%s\tDivergence\tTotalAbundance\tMaxAbundance\tMaxPeak\tRPS\tDIVPEAK\n" % (el))
     for i in info:
         out.write(i)
-    out.write("\n\n")
+    out.write("\n\n\n")
 out.close()
 
 call("join_multiple_lists.py %s" % (" ".join(to_join)), shell=True)
