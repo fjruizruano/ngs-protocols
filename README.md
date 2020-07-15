@@ -92,6 +92,7 @@ ngs-protocols
 * rm_join_tbl.py: Join TBL files from several RepeatMaseker's run.
 * rm_homology.py: Find homologies searching with RepeatMasker sequence by sequence.
 * run_abyss.py: Run ABySS assembler with a range of kmers.
+* sat_cross_libraries.py: Generate FASTA files to assembly satellites with RepeatExplorer.
 * sat_cutter.py: Cut satellites in a FASTA alignment to align homologous regions.
 * sat_subfam2fam.py: Edit ALIGN file from RepatMasker to calc Kimura divergence by family instead of subfamily.
 * satminer_quant.py: satminer quantification protocol.
