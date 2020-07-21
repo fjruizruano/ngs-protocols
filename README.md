@@ -70,6 +70,7 @@ ngs-protocols
 * mitobim_run.py: Run MITObim with several protocols.
 * mreps_extract.py: Generate a FASTA file with tandem sequences using a MREPS output.
 * peru_protocol.py: Protocol to estimate number of external repeat_units in satellite DNA sequences.
+* raxml_protocol.py: RAxML protocol.
 * reduce_bam.py: Filter out unmapped paired reads from a BAM file.
 * remove_ns.py: Remove reads with Ns after a masking.
 * replace_patterns: Replace elements in a file.
