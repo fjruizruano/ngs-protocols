@@ -1,6 +1,12 @@
 #! /usr/bin/python
 
-files = open("lista_out.txt")
+import sys
+
+try:
+        inp = sys.argv[1]
+        files = open(inp)
+except:
+        files = open("lista_out.txt")
 
 # process RM *.out file
 dict_count = {}
@@ -11,7 +17,11 @@ score   div. del. ins.  sequence                                     begin end  
 
 """
 
-outout = open("test.all.out", "w")
+try:
+        out_name = sys.argv[2]
+        outout = open(out_name,"w")
+except:
+        outout = open("test.all.out", "w")
 outout.write(header)
 
 def process_out(file):
