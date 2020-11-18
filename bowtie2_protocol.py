@@ -48,10 +48,11 @@ for pair in l_files:
     name = pair[0]
     name = name.split(".")
     name = name[0][:-2]
-    call("bowtie2 -p %s -x %s -1 %s -2 %s | samtools view -bS -> %s_fastq.bam" % (threads, ref_pref, pair[0], pair[1], name), shell=True)
-    call("samtools sort %s_fastq.bam %s_sort" % (name, name), shell=True)
+    call("bowtie2 --very-sensitive -p %s -x %s -1 %s -2 %s | samtools view -bS -> %s_fastq.bam" % (threads, ref_pref, pair[0], pair[1], name), shell=True)
+    call("samtools sort -T aln.sorted %s_fastq.bam -o %s_sort.bam" % (name, name), shell=True)
     call("samtools index %s_sort.bam" % (name), shell=True)
     call("rm %s_fastq.bam" % (name), shell=True)
     call("samtools flagstat %s_sort.bam > %s_sort.flagstat" % (name, name), shell=True)
     if reduce == "reduce":
         call("reduce_bam.py %s_sort.bam && rm %s_sort.bam" % (name, name), shell=True)
+        call("rm %s_sort.bam.bai" % (name), shell=True)
