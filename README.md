@@ -14,7 +14,8 @@ ngs-protocols
 * blat_recursive.py: Parallelize a BLAT run in several threads.
 * blat_recursive_hard.py: Parallelize a BLAT run in several threads with hard options.
 * bowtie2_recursive.py: Map using Bowtie2 with several libraries consecutively.
-* bwa_protocol.py: Map using BWA in a single library.
+* bwa_protocol.py: Map using BWA in multiple libraries.
+* bwa_mem_protocol.py: Map using BWA-MEM in multiple libraries.
 * cd_hit_filter_size.py: Filter out sequences from small CD-HIT clusters.
 * count_acgtn.py: Count number of A, C, G, T and N in a multifasta file.
 * count_bases_fastq.py: Count number of nucleotides in one o several FASTQ(.GZ) files.
