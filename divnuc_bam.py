@@ -17,7 +17,7 @@ try:
 except:
     bam = raw_input("Introduce BAM File: ")
 
-call("pysamstats -f %s --type variation %s > %s.var" % (ref,bam,bam), shell=True)
+call("pysamstats --max-depth=999999 -f %s --type variation %s > %s.var" % (ref,bam,bam), shell=True)
 
 #Selected columns in the pysamstats output
 #id,pos,cov,del,ins,A,C,T,G,N
