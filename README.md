@@ -52,6 +52,7 @@ ngs-protocols
 * find_exclusive_kmers.py: Extract exclusive kmers of a library in comparison with other using Jellyfish.
 * gatk_protocol.py: Run GATK in a list of FASTQ files with the same reference.
 * get_no_blat.py: Extract sequences from a FASTA file absent in a PSL output of BLAT.
+* get_shared_pw_shared_sunks.py: Get shared SUNKS for each pair combination in a set of reads.
 * gff_creator.py: Generate a GFF file for htseq-count from a FASTA file.
 * id_rmasker.py: Edit IDs from a FASTA file with a format compatible with RepeatMasker.
 * id_rmasker_rexp.py: Edit IDs from a FASTA file of RepeatExplorer contigs compatible with RepeatMasker.
