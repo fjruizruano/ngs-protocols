@@ -285,7 +285,12 @@ if plot_question == "PDF" or plot_question == "SVG":
   r_script = open("r_script.R","w")
   r_script.write("library(gridExtra)\nlibrary(ggplot2)\nlibrary(egg)\n")
   palette = ["blue", "red", "green3", "black", "cyan", "magenta", "yellow", "gray"]
+
+  trunc_sum = open("trunc_sum.txt", "w")
+  trunc_sum.write("Sequence\tTotal PB High\tTotal nt\tProportion\n")
+
   i = 0
+
   for gene in li_genes_corrected:
       i += 1
       str_i = str(i)
@@ -293,7 +298,10 @@ if plot_question == "PDF" or plot_question == "SVG":
           str_i = "0"+str_i
       print gene
       out = open("tmp_%s.txt" % str_i, "w")
-  
+ 
+      zb_trunc = -1
+      pb_trunc = -1
+
       #Writing header
       header = ["position"]
       for conditions in li_conditions:
@@ -301,12 +309,20 @@ if plot_question == "PDF" or plot_question == "SVG":
           di_selection={}
           for c in di_conditions[conditions]:
               di_selection[c] = di_samples[c]
-  
+
+          n = 0
           for s in di_selection:
               header.extend((s+"_mean",s+"_stdev",s+"_stdevd",s+"_stdevu"))
+
+              kind_of_sample = s.split("_")
+              if kind_of_sample[1].startswith("zzz"):
+                  zb_trunc = 1+4*n
+              elif kind_of_sample[1].startswith("ppp"):
+                  pb_trunc = 1+4*n
+              n+=1
   
       out.write("\t".join(header)+"\n")
-  
+
       #Writing transformed data
       data = genes[gene]
       for d in data: # for each position
@@ -330,10 +346,41 @@ if plot_question == "PDF" or plot_question == "SVG":
                   if len(join) > 1:
                       stdev = std(join, ddof=1)
                   calcs.extend((media,stdev,media-stdev,media+stdev))
+
           out.write("\t".join(str(f) for f in calcs))
           out.write("\n")
       out.close()
-  
+
+      out_trunc = open("trunc_%s.txt" % str_i, "w")
+
+      get_tmp = open("tmp_%s.txt" % str_i).readlines()
+
+      trunc_hdr = get_tmp[0]
+      t = trunc_hdr.split()
+      out_trunc.write("%s\t%s\t%s\tpb>zb\n" % (t[0],t[zb_trunc],t[pb_trunc]))
+
+      nt_count = 0
+      hi_count = 0
+      for temp in get_tmp[1:]:
+          nt_count += 1
+          t = temp.split()
+          zb_num = t[zb_trunc]
+          pb_num = t[pb_trunc]
+          compar = "False"
+          if float(pb_num) > float(zb_num):
+              compar = "True"
+              hi_count += 1
+          out_trunc.write("%s\t%s\t%s\t%s\n" % (t[0],t[zb_trunc],t[pb_trunc],compar))
+
+      out_trunc.close()
+
+      print str(hi_count) + "/" + str(nt_count)
+
+      trunc_sum.write("%s\t%s\t%s\t%s\n" % (gene,str(hi_count),str(nt_count),str(1.0*hi_count/nt_count)))
+
+
+
+
       r_script.write("""\nfas2 <- read.table("tmp_%s.txt", header=TRUE)\n""" % (str_i))
 
       cds_code = ""
@@ -439,6 +486,8 @@ if plot_question == "PDF" or plot_question == "SVG":
           r_script.write(code2)
   
   r_script.close()
+
+  trunc_sum.close()
   
   call("Rscript r_script.R", shell=True)
   
