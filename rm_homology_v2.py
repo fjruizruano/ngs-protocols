@@ -38,9 +38,9 @@ for seq in seq_list:
 
     tmp_out = "EMPTY"
 
-    w = open("output", "a")
-    w.write(seq+":\n")
-    w.close()
+#    w = open("output", "a")
+#    w.write(seq+":\n")
+#    w.close()
 
     while tmp_out[0] != "There were no repetitive sequences detected in tmp_query.fas\n":
         tmp_query = open("tmp_query.fas", "w")
@@ -62,15 +62,15 @@ for seq in seq_list:
                 info = line.split()
                 name = "%s#%s" % (info[9],info[10])
                 print name
-                w = open("output", "a")
-                w.write("--"+name+"\n")
-                w.close()
+#                w = open("output", "a")
+#                w.write("--"+name+"\n")
+#                w.close()
                 try:
                     tmp_list.remove(name)
                 except:
                     pass
                 matches[m].append(name)
-        print matches
+#        print matches
 
 call("rm tmp_query.fas",shell=True)
 call("rm tmp_db.fas",shell=True)
@@ -98,11 +98,11 @@ print resultlist
 num = 0
 
 for group in resultlist:
-    print group
     num += 1
     numstr = str(num)
-    while len(numstr) <= 3:
+    while len(numstr) <= 2:
         numstr = "0"+numstr
+    print "Group %s: %s" (numstr, ", ".join(group))
     query = open("group"+numstr+".fas", "w")
     for s in group:
         query.write(">%s\n%s\n" % (s, seq_dict[s]))
