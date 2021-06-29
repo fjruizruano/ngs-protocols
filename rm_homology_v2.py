@@ -70,7 +70,7 @@ for seq in seq_list:
                 except:
                     pass
                 matches[m].append(name)
-#        print matches
+        print matches
 
 call("rm tmp_query.fas",shell=True)
 call("rm tmp_db.fas",shell=True)
