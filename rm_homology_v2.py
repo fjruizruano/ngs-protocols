@@ -102,7 +102,7 @@ for group in resultlist:
     numstr = str(num)
     while len(numstr) <= 2:
         numstr = "0"+numstr
-    print "Group %s: %s" % (numstr, ", ".join(group))
+    print "\n-- Group %s: %s" % (numstr, ", ".join(group))
     query = open("group"+numstr+".fas", "w")
     for s in group:
         query.write(">%s\n%s\n" % (s, seq_dict[s]))
