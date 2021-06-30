@@ -34,7 +34,10 @@ for seq in seq_list:
         if seq in group:
             for el in group:
                 if seq != el:
-                    tmp_list.remove(el)
+                    try:
+                        tmp_list.remove(el)
+                    except:
+                        pass
 
     tmp_out = "EMPTY"
 
@@ -42,7 +45,7 @@ for seq in seq_list:
 #    w.write(seq+":\n")
 #    w.close()
 
-    while tmp_out[0] != "There were no repetitive sequences detected in tmp_query.fas\n":
+    while len(tmp_list) > 0 and tmp_out[0] != "There were no repetitive sequences detected in tmp_query.fas\n":
         tmp_query = open("tmp_query.fas", "w")
         tmp_db = open("tmp_db.fas", "w")
         tmp_query.write(">%s\n%s\n" % (seq, seq_dict[seq]))
@@ -53,7 +56,7 @@ for seq in seq_list:
         tmp_db.close()
 
         call("RepeatMasker -nolow -no_is -s -engine crossmatch -lib tmp_db.fas tmp_query.fas", shell=True)
-        
+
         tmp_out = open("tmp_query.fas.out").readlines()
         print tmp_out
         call("rm -r tmp_query.fas.*", shell=True)
