@@ -66,6 +66,7 @@ ngs-protocols
 * mapping_blat_gs_hard.py: Extract matching reads with hard options of BLAT and optionally launch Newbler, RepeatMasker or SSAHA2.
 * mapping_blat_gs_saver.py: Version of mapping_blat_gs.py for big libraries.
 * mapping_blat_gs_single_end.py: Version of mapping_blat_gs.py for single-end libraries.
+* mapping_blat_gs_nonormal.py: Version of mapping_blat_gs for read with no normal header.
 * massive_phylogeny.py: Using an only FASTA file and gene list, it runs RAxML for each gene. 
 * massive_phylogenies_figure.py: Generate pdf phylogenies using a list of Newick files. 
 * massive_phylogeny_raxml_support.py: Support script for massive_phylogeny.py.
