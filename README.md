@@ -51,6 +51,7 @@ ngs-protocols
 * fastq_paired_combine_id: Extract paired reads looking at its ids.
 * find_exclusive_kmers.py: Extract exclusive kmers of a library in comparison with other using Jellyfish.
 * gatk_protocol.py: Run GATK in a list of FASTQ files with the same reference.
+* get coordinates.py: Get coordinate file for coverage_graphics.py.
 * get_no_blat.py: Extract sequences from a FASTA file absent in a PSL output of BLAT.
 * get_shared_pw_shared_sunks.py: Get shared SUNKS for each pair combination in a set of reads.
 * gff_creator.py: Generate a GFF file for htseq-count from a FASTA file.
