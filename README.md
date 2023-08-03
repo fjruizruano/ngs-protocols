@@ -35,6 +35,7 @@ ngs-protocols
 * divsum_stats.py: Generates interesting stats from repeat landscapes from a list of divsum files.
 * divsum_to_rl.py: Generates satDNA repeat lanscapes using satMiner's criteria.
 * dnapipete_createdb.py: Generate a database compatible with RepeatMasker from the dnaPipeTe
+* extract_gfa.py: Extract sequences based on their kmer content
 * extract_member_reads_rexp.py: Extract reads in a specific cluster of RepeatExplorer.
 * extract_no_seq.py: Extract sequecences from a FASTA file absent in a list.
 * extract_reads_blat.py: Extract matching reads in a PSL output from BLAT.
@@ -54,6 +55,7 @@ ngs-protocols
 * get coordinates.py: Get coordinate file for coverage_graphics.py.
 * get_no_blat.py: Extract sequences from a FASTA file absent in a PSL output of BLAT.
 * get_shared_pw_shared_sunks.py: Get shared SUNKS for each pair combination in a set of reads.
+* gfa2fas.py: convert from GFA to FASTA.
 * gff_creator.py: Generate a GFF file for htseq-count from a FASTA file.
 * id_rmasker.py: Edit IDs from a FASTA file with a format compatible with RepeatMasker.
 * id_rmasker_rexp.py: Edit IDs from a FASTA file of RepeatExplorer contigs compatible with RepeatMasker.
